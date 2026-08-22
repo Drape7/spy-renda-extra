@@ -1,0 +1,1467 @@
+<title>Spy Dashboard</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root {
+  --bg-0: #06090f;
+  --bg-1: #0c1220;
+  --bg-2: #131d33;
+  --bg-3: #1a2744;
+  --bg-4: #223055;
+  --bg-hover: #1e2d4a;
+  --border: #1e2d4a;
+  --border-2: #2a3d5e;
+  --text-1: #eaf0fa;
+  --text-2: #94a3c0;
+  --text-3: #5e7094;
+  --text-4: #3d4f6e;
+  --accent: #3b82f6;
+  --accent-2: #60a5fa;
+  --accent-bg: rgba(59,130,246,0.10);
+  --green: #22c55e;
+  --green-bg: rgba(34,197,94,0.10);
+  --yellow: #eab308;
+  --yellow-bg: rgba(234,179,8,0.10);
+  --red: #ef4444;
+  --red-bg: rgba(239,68,68,0.10);
+  --orange: #f97316;
+  --orange-bg: rgba(249,115,22,0.10);
+  --purple: #a855f7;
+  --purple-bg: rgba(168,85,247,0.10);
+  --cyan: #06b6d4;
+  --cyan-bg: rgba(6,182,212,0.10);
+  --pink: #ec4899;
+  --pink-bg: rgba(236,72,153,0.10);
+  --sidebar-w: 240px;
+  --header-h: 60px;
+}
+@media(prefers-color-scheme:light){:root:not([data-theme="dark"]){
+  --bg-0:#f0f2f5;--bg-1:#ffffff;--bg-2:#f8f9fc;--bg-3:#eef1f6;--bg-4:#e2e7f0;
+  --bg-hover:#f0f3f8;--border:#dce1ea;--border-2:#c8cfdb;
+  --text-1:#0f172a;--text-2:#475569;--text-3:#94a3b8;--text-4:#cbd5e1;
+  --accent:#2563eb;--accent-2:#3b82f6;--accent-bg:rgba(37,99,235,0.06);
+  --green:#16a34a;--green-bg:rgba(22,163,74,0.06);
+  --yellow:#ca8a04;--yellow-bg:rgba(202,138,4,0.06);
+  --red:#dc2626;--red-bg:rgba(220,38,38,0.06);
+  --orange:#ea580c;--orange-bg:rgba(234,88,12,0.06);
+  --purple:#9333ea;--purple-bg:rgba(147,51,234,0.06);
+  --cyan:#0891b2;--cyan-bg:rgba(8,145,178,0.06);
+  --pink:#db2777;--pink-bg:rgba(219,39,119,0.06);
+}}
+:root[data-theme="dark"]{
+  --bg-0:#06090f;--bg-1:#0c1220;--bg-2:#131d33;--bg-3:#1a2744;--bg-4:#223055;
+  --bg-hover:#1e2d4a;--border:#1e2d4a;--border-2:#2a3d5e;
+  --text-1:#eaf0fa;--text-2:#94a3c0;--text-3:#5e7094;--text-4:#3d4f6e;
+  --accent:#3b82f6;--accent-2:#60a5fa;--accent-bg:rgba(59,130,246,0.10);
+  --green:#22c55e;--green-bg:rgba(34,197,94,0.10);
+  --yellow:#eab308;--yellow-bg:rgba(234,179,8,0.10);
+  --red:#ef4444;--red-bg:rgba(239,68,68,0.10);
+  --orange:#f97316;--orange-bg:rgba(249,115,22,0.10);
+  --purple:#a855f7;--purple-bg:rgba(168,85,247,0.10);
+  --cyan:#06b6d4;--cyan-bg:rgba(6,182,212,0.10);
+  --pink:#ec4899;--pink-bg:rgba(236,72,153,0.10);
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-0);color:var(--text-1);line-height:1.5;overflow-x:hidden}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border-2);border-radius:3px}
+
+/* LAYOUT */
+.app{display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);background:var(--bg-1);border-right:1px solid var(--border);position:fixed;top:0;left:0;bottom:0;z-index:100;display:flex;flex-direction:column;transition:transform .3s}
+.main{margin-left:var(--sidebar-w);flex:1;min-width:0}
+.topbar{height:var(--header-h);background:var(--bg-1);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:50;backdrop-filter:blur(12px)}
+.content{padding:24px 28px}
+
+/* SIDEBAR */
+.sidebar-brand{padding:20px 20px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border)}
+.brand-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--accent),var(--purple));border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;color:#fff;flex-shrink:0}
+.brand-text{font-size:15px;font-weight:700;letter-spacing:-.3px}
+.brand-sub{font-size:10px;color:var(--text-3);font-weight:500;text-transform:uppercase;letter-spacing:.5px}
+.sidebar-nav{flex:1;padding:12px 10px;overflow-y:auto}
+.nav-section{font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.8px;padding:16px 12px 6px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;color:var(--text-2);transition:all .15s;margin-bottom:2px}
+.nav-item:hover{background:var(--bg-hover);color:var(--text-1)}
+.nav-item.active{background:var(--accent-bg);color:var(--accent)}
+.nav-item .icon{width:18px;text-align:center;font-size:14px;flex-shrink:0}
+.nav-badge{margin-left:auto;background:var(--accent-bg);color:var(--accent);font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px;font-family:'JetBrains Mono',monospace}
+.sidebar-footer{padding:14px 16px;border-top:1px solid var(--border);font-size:11px;color:var(--text-3)}
+
+/* TOPBAR */
+.topbar-left{display:flex;align-items:center;gap:16px}
+.topbar-title{font-size:16px;font-weight:700}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;font-family:'JetBrains Mono',monospace}
+.pill-live{background:var(--green-bg);color:var(--green)}
+.pill-live::before{content:'';width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.pill-info{background:var(--bg-3);color:var(--text-2)}
+.burger{display:none;background:none;border:none;color:var(--text-1);font-size:20px;cursor:pointer;padding:4px}
+
+/* SECTIONS */
+.section{display:none}
+.section.active{display:block}
+
+/* KPI GRID */
+.kpi-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:28px}
+.kpi{background:var(--bg-2);border:1px solid var(--border);border-radius:12px;padding:16px 18px;position:relative;overflow:hidden;transition:border-color .2s}
+.kpi:hover{border-color:var(--border-2)}
+.kpi-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+.kpi-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.kpi-trend{font-size:11px;font-weight:600;display:flex;align-items:center;gap:3px;padding:3px 8px;border-radius:6px}
+.kpi-trend.up{background:var(--green-bg);color:var(--green)}
+.kpi-trend.down{background:var(--red-bg);color:var(--red)}
+.kpi-trend.neutral{background:var(--bg-3);color:var(--text-3)}
+.kpi-value{font-size:26px;font-weight:800;letter-spacing:-.5px;font-variant-numeric:tabular-nums;line-height:1.1}
+.kpi-value span{font-size:14px;font-weight:600;color:var(--text-3)}
+.kpi-label{font-size:11px;color:var(--text-3);margin-top:4px;font-weight:500}
+
+/* INSIGHTS BANNER */
+.insights{background:linear-gradient(135deg,var(--bg-2),var(--bg-3));border:1px solid var(--border);border-radius:14px;padding:20px 24px;margin-bottom:28px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px}
+.insight{padding:0 16px;border-left:3px solid var(--accent)}
+.insight:first-child{border-left:none;padding-left:0}
+.insight-tag{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.insight-text{font-size:13px;color:var(--text-2);line-height:1.5}
+.insight-text strong{color:var(--text-1)}
+
+/* RANKING TABLE */
+.ranking{background:var(--bg-2);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:28px}
+.ranking-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.ranking-header h3{font-size:14px;font-weight:700}
+.ranking table{width:100%;border-collapse:collapse}
+.ranking th{text-align:left;padding:10px 16px;font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);background:var(--bg-3)}
+.ranking td{padding:12px 16px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle}
+.ranking tr:last-child td{border-bottom:none}
+.ranking tr:hover td{background:var(--bg-hover)}
+.rank-num{font-size:16px;font-weight:800;width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center}
+.rank-1{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#000}
+.rank-2{background:var(--bg-4);color:var(--text-2)}
+.rank-3{background:var(--bg-4);color:var(--text-2)}
+.rank-4{background:var(--bg-3);color:var(--text-3)}
+.page-info{display:flex;flex-direction:column;gap:2px}
+.page-name{font-weight:600;font-size:13px}
+.page-domain{font-size:11px;color:var(--text-3);font-family:'JetBrains Mono',monospace}
+.status-chip{padding:3px 10px;border-radius:6px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;white-space:nowrap}
+.status-escalado{background:var(--green-bg);color:var(--green)}
+.status-lancamento{background:var(--orange-bg);color:var(--orange)}
+.status-teste{background:var(--yellow-bg);color:var(--yellow)}
+.status-pausado{background:var(--red-bg);color:var(--red)}
+.score-bar{width:120px;height:8px;background:var(--bg-4);border-radius:4px;overflow:hidden}
+.score-fill{height:100%;border-radius:4px}
+.score-val{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px}
+td.mono{font-family:'JetBrains Mono',monospace;font-size:12px}
+
+/* PAGE DETAIL CARDS */
+.detail-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(420px,1fr));gap:16px;margin-bottom:28px}
+.detail-card{background:var(--bg-2);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:border-color .2s}
+.detail-card:hover{border-color:var(--border-2)}
+.detail-card-header{padding:18px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);background:var(--bg-3)}
+.detail-card-header h4{font-size:14px;font-weight:700}
+.detail-card-body{padding:18px 20px}
+.detail-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.dm{text-align:center;padding:10px 8px;background:var(--bg-1);border-radius:8px}
+.dm-val{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums}
+.dm-label{font-size:9px;color:var(--text-3);text-transform:uppercase;letter-spacing:.4px;margin-top:2px}
+.detail-info{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px}
+.detail-row{display:flex;justify-content:space-between;padding:6px 10px;background:var(--bg-1);border-radius:6px}
+.detail-row .label{color:var(--text-3)}
+.detail-row .val{font-weight:600;font-family:'JetBrains Mono',monospace;font-size:11px}
+.detail-obs{margin-top:12px;padding:10px 14px;background:var(--accent-bg);border-radius:8px;font-size:12px;color:var(--accent-2);line-height:1.5}
+
+/* HEATMAP */
+.heatmap-card{background:var(--bg-2);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:28px}
+.heatmap-card h3{font-size:14px;font-weight:700;margin-bottom:16px}
+.heatmap{display:flex;gap:3px;flex-wrap:wrap}
+.heat-cell{width:18px;height:18px;border-radius:3px;position:relative;cursor:default}
+.heat-cell[data-tip]:hover::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:var(--bg-4);color:var(--text-1);padding:4px 8px;border-radius:4px;font-size:10px;white-space:nowrap;z-index:10;pointer-events:none}
+.heat-0{background:var(--bg-4)}
+.heat-1{background:rgba(59,130,246,.25)}
+.heat-2{background:rgba(59,130,246,.45)}
+.heat-3{background:rgba(59,130,246,.65)}
+.heat-4{background:rgba(59,130,246,.85)}
+.heat-5{background:var(--accent)}
+
+/* CHARTS */
+.charts-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:16px;margin-bottom:28px}
+.chart-card{background:var(--bg-2);border:1px solid var(--border);border-radius:14px;padding:20px;overflow:hidden}
+.chart-card h3{font-size:13px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.chart-card h3 .dot{width:8px;height:8px;border-radius:50%}
+canvas{width:100%!important;display:block}
+
+/* ADS TABLE */
+.table-card{background:var(--bg-2);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:28px}
+.table-top{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.table-top h3{font-size:14px;font-weight:700}
+.table-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.search-input{background:var(--bg-1);border:1px solid var(--border);border-radius:8px;padding:6px 12px;font-size:12px;color:var(--text-1);font-family:'Inter',sans-serif;outline:none;width:180px;transition:border-color .2s}
+.search-input:focus{border-color:var(--accent)}
+.search-input::placeholder{color:var(--text-4)}
+.filter-btn{padding:5px 12px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text-3);font-size:11px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s}
+.filter-btn:hover{border-color:var(--accent);color:var(--accent)}
+.filter-btn.active{background:var(--accent-bg);border-color:var(--accent);color:var(--accent)}
+.table-wrap{overflow-x:auto}
+.table-wrap table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.table-wrap th{text-align:left;padding:9px 14px;font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);background:var(--bg-3);cursor:pointer;user-select:none;white-space:nowrap}
+.table-wrap th:hover{color:var(--text-2)}
+.table-wrap td{padding:9px 14px;font-size:12px;border-bottom:1px solid var(--border);white-space:nowrap}
+.table-wrap tr:last-child td{border-bottom:none}
+.table-wrap tr:hover td{background:var(--bg-hover)}
+.type-chip{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600}
+.type-video{background:var(--purple-bg);color:var(--purple)}
+.type-image{background:var(--cyan-bg);color:var(--cyan)}
+.table-footer{padding:12px 20px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--text-3)}
+.table-footer .count{font-weight:600;color:var(--text-2)}
+
+/* TIMELINE */
+.timeline-card{background:var(--bg-2);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:28px}
+.timeline-card h3{font-size:14px;font-weight:700;margin-bottom:16px}
+.tl{position:relative;padding-left:28px}
+.tl::before{content:'';position:absolute;left:8px;top:6px;bottom:6px;width:2px;background:var(--border)}
+.tl-item{position:relative;padding:14px 18px;background:var(--bg-3);border:1px solid var(--border);border-radius:10px;margin-bottom:12px}
+.tl-item::before{content:'';position:absolute;left:-24px;top:18px;width:10px;height:10px;background:var(--accent);border:2px solid var(--bg-2);border-radius:50%}
+.tl-date{font-size:11px;font-weight:600;color:var(--accent);font-family:'JetBrains Mono',monospace;margin-bottom:6px}
+.tl-body{font-size:12px;color:var(--text-2);line-height:1.6}
+.tl-tags{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.tl-tag{font-size:10px;font-weight:600;padding:3px 8px;border-radius:5px;font-family:'JetBrains Mono',monospace}
+
+/* KEYWORDS SECTION */
+.kw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:28px}
+.kw-card{background:var(--bg-2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;transition:border-color .2s}
+.kw-card:hover{border-color:var(--border-2)}
+.kw-text{font-size:12px;font-weight:600}
+.kw-freq{font-size:11px;color:var(--text-3);font-family:'JetBrains Mono',monospace}
+.kw-status{font-size:9px;font-weight:600;padding:2px 6px;border-radius:4px;text-transform:uppercase}
+.kw-pending{background:var(--yellow-bg);color:var(--yellow)}
+.kw-done{background:var(--green-bg);color:var(--green)}
+
+/* ACTIVITY FEED */
+.feed{display:flex;flex-direction:column;gap:8px;margin-bottom:28px}
+.feed-item{display:flex;align-items:flex-start;gap:12px;padding:12px 16px;background:var(--bg-2);border:1px solid var(--border);border-radius:10px}
+.feed-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0}
+.feed-content{flex:1;min-width:0}
+.feed-text{font-size:12px;color:var(--text-2)}
+.feed-text strong{color:var(--text-1)}
+.feed-time{font-size:10px;color:var(--text-4);font-family:'JetBrains Mono',monospace;margin-top:2px}
+
+/* REPORTS */
+.rpt-tracking{background:var(--bg-2);border:1px solid var(--border);border-radius:14px;padding:20px 24px;margin-bottom:24px}
+.rpt-tracking h4{font-size:13px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.rpt-tracking-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.rpt-tracking-cell{text-align:center;padding:10px 8px;background:var(--bg-3);border-radius:10px}
+.rpt-tracking-cell .rpt-page{font-size:11px;font-weight:600;color:var(--text-2);margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rpt-tracking-cell .rpt-count{font-size:22px;font-weight:800;font-family:'JetBrains Mono',monospace}
+.rpt-tracking-cell .rpt-delta{font-size:11px;font-weight:600;font-family:'JetBrains Mono',monospace;margin-top:2px}
+.rpt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
+.rpt-card{background:var(--bg-2);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:border-color .15s}
+.rpt-card:hover{border-color:var(--accent)}
+.rpt-card-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg-3)}
+.rpt-card-head h4{font-size:13px;font-weight:700}
+.rpt-card-head .rpt-badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:12px;font-family:'JetBrains Mono',monospace}
+.rpt-card-body{padding:16px 18px}
+.rpt-card-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.rpt-metric{text-align:center;padding:8px 6px;background:var(--bg-3);border-radius:8px}
+.rpt-metric-val{font-size:18px;font-weight:800;font-family:'JetBrains Mono',monospace}
+.rpt-metric-label{font-size:9px;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+.rpt-card-summary{font-size:11px;color:var(--text-2);line-height:1.6;margin-bottom:14px;max-height:80px;overflow:hidden;position:relative}
+.rpt-card-summary::after{content:'';position:absolute;bottom:0;left:0;right:0;height:30px;background:linear-gradient(transparent,var(--bg-2))}
+.rpt-card-actions{display:flex;gap:8px}
+.rpt-btn{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:12px;font-weight:600;font-family:'Inter',sans-serif;transition:all .15s}
+.rpt-btn-primary{background:var(--accent);color:#fff}
+.rpt-btn-primary:hover{background:var(--accent-2)}
+.rpt-btn-secondary{background:var(--bg-3);color:var(--text-2);border:1px solid var(--border)}
+.rpt-btn-secondary:hover{background:var(--bg-4);color:var(--text-1)}
+@media(max-width:600px){.rpt-tracking-grid{grid-template-columns:repeat(2,1fr)}.rpt-grid{grid-template-columns:1fr}}
+
+/* INTEL - CONTROLE DETECTION */
+.intel-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:16px;margin-bottom:28px}
+.intel-card{background:var(--bg-2);border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.intel-card-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg-3)}
+.intel-card-header h4{font-size:13px;font-weight:700}
+.intel-card-body{padding:16px 18px}
+.signal-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px}
+.signal-row:last-child{border-bottom:none}
+.signal-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.signal-label{flex:1;color:var(--text-2)}
+.signal-val{font-weight:700;font-family:'JetBrains Mono',monospace;font-size:11px}
+.signal-badge{padding:2px 8px;border-radius:4px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+.badge-controle{background:var(--green-bg);color:var(--green)}
+.badge-teste{background:var(--orange-bg);color:var(--orange)}
+.badge-novo{background:var(--yellow-bg);color:var(--yellow)}
+.badge-inativo{background:var(--red-bg);color:var(--red)}
+.badge-na{background:var(--bg-4);color:var(--text-4)}
+
+.checklist{list-style:none;padding:0}
+.checklist li{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:11px;color:var(--text-2);border-bottom:1px solid var(--border)}
+.checklist li:last-child{border-bottom:none}
+.check-done{color:var(--green);font-weight:700}
+.check-miss{color:var(--red);font-weight:700}
+
+.pipeline-steps{display:flex;flex-direction:column;gap:6px}
+.p-step{display:flex;align-items:flex-start;gap:10px;padding:8px 12px;background:var(--bg-1);border-radius:8px;font-size:11px}
+.p-step-num{width:22px;height:22px;border-radius:6px;background:var(--accent-bg);color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:10px;flex-shrink:0}
+.p-step-text{color:var(--text-2);line-height:1.4}
+.p-step-text strong{color:var(--text-1)}
+
+/* CONFIG */
+.config-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.config-card{background:var(--bg-2);border:1px solid var(--border);border-radius:14px;padding:20px}
+.config-card h4{font-size:13px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.config-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px}
+.config-row:last-child{border-bottom:none}
+.config-row .label{color:var(--text-3)}
+.config-row .val{font-weight:600;font-family:'JetBrains Mono',monospace;font-size:11px}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}
+  .burger{display:block}
+  .kpi-grid{grid-template-columns:repeat(3,1fr)}
+  .detail-grid{grid-template-columns:1fr}
+  .insights{grid-template-columns:1fr}
+  .insight{border-left:none;padding-left:0;border-top:1px solid var(--border);padding-top:12px}
+  .insight:first-child{border-top:none;padding-top:0}
+}
+@media(max-width:600px){
+  .kpi-grid{grid-template-columns:repeat(2,1fr)}
+  .charts-grid{grid-template-columns:1fr}
+  .kw-grid{grid-template-columns:repeat(2,1fr)}
+}
+.cc-btn{padding:3px 10px;border-radius:4px;border:1px solid var(--accent);background:var(--accent-bg);color:var(--accent);font-size:10px;font-weight:600;cursor:pointer;transition:all .15s}
+.cc-btn:hover,.cc-btn.active{background:var(--accent);color:#fff}
+.copycat-detail-row td{background:var(--bg-1)!important;border-top:none!important}
+.cc-panel{padding:16px 20px;display:grid;grid-template-columns:1fr 1fr;gap:16px 24px;font-size:12px;line-height:1.5}
+.cc-section{display:flex;flex-direction:column;gap:10px}
+.cc-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-3);margin-bottom:2px;display:block}
+.cc-val{color:var(--text-1);word-break:break-word}
+.cc-copy-text{background:var(--bg-0);border:1px solid var(--border);border-radius:6px;padding:10px 12px;white-space:pre-wrap;max-height:160px;overflow-y:auto;font-size:11px;color:var(--text-2);line-height:1.6}
+.cc-url{color:var(--accent);text-decoration:none;word-break:break-all;font-size:11px}
+.cc-url:hover{text-decoration:underline}
+.cc-chip{display:inline-block;padding:2px 8px;border-radius:3px;background:var(--bg-3);color:var(--text-2);font-size:10px;margin:1px 2px}
+.cc-adv{display:grid;grid-template-columns:1fr 1fr;gap:6px 16px}
+.cc-adv-header{margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
+@media(max-width:768px){.cc-panel{grid-template-columns:1fr}}
+
+/* EVOLUTION */
+.evo-page{background:var(--bg-2);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:16px}
+.evo-page-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg-3);flex-wrap:wrap;gap:8px}
+.evo-page-header h4{font-size:14px;font-weight:700}
+.evo-summary{display:flex;gap:12px;font-size:11px;font-family:'JetBrains Mono',monospace}
+.evo-summary span{padding:3px 8px;border-radius:5px}
+.evo-body{padding:16px 20px;overflow-x:auto}
+.evo-bar-row{display:flex;align-items:center;gap:8px;padding:3px 0;border-bottom:1px solid var(--border);font-size:11px}
+.evo-bar-row:last-child{border-bottom:none}
+.evo-id{width:130px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);flex-shrink:0;overflow:hidden;text-overflow:ellipsis;cursor:pointer;text-decoration:none}
+.evo-id:hover{text-decoration:underline}
+.evo-bar-wrap{flex:1;min-width:100px;height:16px;background:var(--bg-4);border-radius:3px;overflow:hidden}
+.evo-bar-fill{height:100%;border-radius:3px;min-width:3px;display:flex;align-items:center;justify-content:flex-end;padding-right:4px;font-size:8px;font-weight:700;color:rgba(255,255,255,.9)}
+.evo-days{width:48px;text-align:right;font-weight:700;font-family:'JetBrains Mono',monospace;font-size:12px;flex-shrink:0}
+.evo-class{width:76px;text-align:center;flex-shrink:0}
+.evo-vars{width:28px;text-align:center;font-size:10px;color:var(--text-3);flex-shrink:0;font-family:'JetBrains Mono',monospace}
+.class-veterano{background:var(--green-bg);color:var(--green);padding:2px 6px;border-radius:4px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+.class-campeao{background:var(--accent-bg);color:var(--accent);padding:2px 6px;border-radius:4px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+.class-validando{background:var(--yellow-bg);color:var(--yellow);padding:2px 6px;border-radius:4px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+.class-teste-evo{background:var(--orange-bg);color:var(--orange);padding:2px 6px;border-radius:4px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+.delta-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:28px}
+.delta-card{background:var(--bg-2);border:1px solid var(--border);border-radius:12px;padding:16px;overflow:hidden}
+.delta-name{font-size:12px;font-weight:700;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.delta-row{display:flex;justify-content:space-between;padding:4px 0;font-size:11px;border-bottom:1px solid var(--border)}
+.delta-row:last-child{border-bottom:none}
+.delta-label{color:var(--text-3)}
+.delta-val{font-weight:700;font-family:'JetBrains Mono',monospace}
+.delta-up{color:var(--green)}
+.delta-down{color:var(--red)}
+.delta-same{color:var(--text-4)}
+.evo-legend{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;padding:12px 16px;background:var(--bg-2);border:1px solid var(--border);border-radius:10px;font-size:11px;align-items:center}
+.evo-legend-item{display:flex;align-items:center;gap:6px}
+.evo-legend-dot{width:10px;height:10px;border-radius:2px}
+.evo-highlight-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+@media(max-width:768px){.evo-highlight-grid{grid-template-columns:1fr}}
+.evo-highlight{background:var(--bg-2);border:1px solid var(--border);border-radius:14px;padding:20px;position:relative;overflow:hidden}
+.evo-highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.evo-highlight-longevity::before{background:linear-gradient(90deg,var(--green),var(--accent))}
+.evo-highlight-variants::before{background:linear-gradient(90deg,var(--accent),var(--purple))}
+.evo-highlight-tag{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:4px 10px;border-radius:6px;margin-bottom:12px}
+.evo-highlight-value{font-size:32px;font-weight:900;font-family:'JetBrains Mono',monospace;line-height:1;margin-bottom:4px}
+.evo-highlight-sub{font-size:12px;color:var(--text-3);margin-bottom:12px}
+.evo-highlight-id{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--accent);text-decoration:none;display:block;margin-bottom:8px}
+.evo-highlight-id:hover{text-decoration:underline}
+.evo-highlight-meta{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--text-3)}
+.evo-highlight-meta span{padding:3px 8px;background:var(--bg-3);border-radius:5px}
+</style>
+
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">S</div>
+      <div>
+        <div class="brand-text">Spy Dashboard</div>
+        <div class="brand-sub">Renda Extra BR</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section">Principal</div>
+      <div class="nav-item active" data-section="overview"><span class="icon">&#9678;</span>Overview<span class="nav-badge">LIVE</span></div>
+      <div class="nav-item" data-section="pages"><span class="icon">&#9733;</span>Paginas<span class="nav-badge">5</span></div>
+      <div class="nav-item" data-section="ads"><span class="icon">&#9881;</span>Ads Coletados<span class="nav-badge" id="ads-count-badge">94</span></div>
+      <div class="nav-item" data-section="evolucao"><span class="icon">&#9650;</span>Evolucao<span class="nav-badge" style="background:var(--green-bg);color:var(--green)">90</span></div>
+      <div class="nav-section">Analise</div>
+      <div class="nav-item" data-section="charts"><span class="icon">&#9670;</span>Graficos</div>
+      <div class="nav-item" data-section="timeline"><span class="icon">&#8986;</span>Timeline</div>
+      <div class="nav-item" data-section="reports"><span class="icon">&#128196;</span>Relatorios<span class="nav-badge" style="background:var(--cyan-bg);color:var(--cyan)">4</span></div>
+      <div class="nav-item" data-section="activity"><span class="icon">&#9889;</span>Atividade</div>
+      <div class="nav-item" data-section="intel"><span class="icon">&#128373;</span>Intel Competitiva</div>
+      <div class="nav-section">Discovery</div>
+      <div class="nav-item" data-section="discovery"><span class="icon">&#127919;</span>Concorrentes<span class="nav-badge">14</span></div>
+      <div class="nav-item" data-section="keywords"><span class="icon">&#128270;</span>Keywords<span class="nav-badge">19/89</span></div>
+      <div class="nav-section">Sistema</div>
+      <div class="nav-item" data-section="config"><span class="icon">&#9881;</span>Configuracoes</div>
+    </nav>
+    <div class="sidebar-footer">
+      v3.2 &bull; Operador: Tiago Felipe<br>
+      Atualizado: 22/ago/2026 (supabase)
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="burger" id="burger">&#9776;</button>
+        <span class="topbar-title" id="topbar-title">Overview</span>
+      </div>
+      <div class="topbar-right">
+        <span class="pill pill-live">ATIVO</span>
+        <span class="pill pill-info">4x/DIA</span>
+        <span class="pill pill-info">22/AGO 23:00</span>
+      </div>
+    </header>
+
+    <div class="content">
+
+      <!-- ===== OVERVIEW ===== -->
+      <div class="section active" id="sec-overview">
+        <div class="kpi-grid" id="kpi-grid"></div>
+        <div class="insights" id="insights-banner"></div>
+        <div class="ranking" id="ranking-table"></div>
+        <div class="heatmap-card">
+          <h3>Mapa de Lancamentos (Ultimos 30 Dias)</h3>
+          <div class="heatmap" id="heatmap"></div>
+        </div>
+      </div>
+
+      <!-- ===== PAGES ===== -->
+      <div class="section" id="sec-pages">
+        <div class="detail-grid" id="detail-grid"></div>
+      </div>
+
+      <!-- ===== ADS ===== -->
+      <div class="section" id="sec-ads">
+        <div class="table-card" id="ads-table-card"></div>
+      </div>
+
+      <!-- ===== EVOLUCAO ===== -->
+      <div class="section" id="sec-evolucao">
+        <div style="margin-bottom:20px">
+          <h3 style="font-size:14px;font-weight:700;margin-bottom:4px">Evolucao de Criativos</h3>
+          <p style="font-size:12px;color:var(--text-3)">Lifecycle de cada criativo por pagina. Classificacao automatica por dias ativo. Dados: 22/ago/2026, ronda 12h (r4). 90 ads unicos monitorados.</p>
+        </div>
+        <div class="kpi-grid" id="evo-kpis" style="grid-template-columns:repeat(6,1fr)"></div>
+        <div class="evo-highlight-grid" id="evo-highlights"></div>
+        <div class="evo-legend">
+          <span style="font-weight:600;color:var(--text-3)">Classificacao:</span>
+          <div class="evo-legend-item"><div class="evo-legend-dot" style="background:var(--green)"></div>Veterano (100+d)</div>
+          <div class="evo-legend-item"><div class="evo-legend-dot" style="background:var(--accent)"></div>Campeao (30-99d)</div>
+          <div class="evo-legend-item"><div class="evo-legend-dot" style="background:var(--yellow)"></div>Validando (7-29d)</div>
+          <div class="evo-legend-item"><div class="evo-legend-dot" style="background:var(--orange)"></div>Teste (&lt;7d)</div>
+        </div>
+        <div style="margin:20px 0 12px"><h3 style="font-size:14px;font-weight:700">Delta entre Rondas (Quem Parou, Quem Acelerou)</h3><p style="font-size:12px;color:var(--text-3);margin-top:4px">Comparacao de contagem de ads entre rondas. 4 rondas completadas em 22/ago.</p></div>
+        <div class="delta-grid" id="delta-grid"></div>
+        <div style="margin:28px 0 12px"><h3 style="font-size:14px;font-weight:700">Ads por Pagina (ordenados por longevidade)</h3></div>
+        <div id="evo-pages"></div>
+      </div>
+
+      <!-- ===== CHARTS ===== -->
+      <div class="section" id="sec-charts">
+        <div class="charts-grid">
+          <div class="chart-card"><h3><span class="dot" style="background:var(--accent)"></span>Ads por Pagina</h3><canvas id="c-ads" height="240"></canvas></div>
+          <div class="chart-card"><h3><span class="dot" style="background:var(--purple)"></span>Videos por Pagina</h3><canvas id="c-vids" height="240"></canvas></div>
+          <div class="chart-card"><h3><span class="dot" style="background:var(--green)"></span>Scale Score</h3><canvas id="c-score" height="240"></canvas></div>
+          <div class="chart-card"><h3><span class="dot" style="background:var(--orange)"></span>Dias Monitorando</h3><canvas id="c-dias" height="240"></canvas></div>
+        </div>
+      </div>
+
+      <!-- ===== TIMELINE ===== -->
+      <div class="section" id="sec-timeline">
+        <div class="timeline-card"><h3>Historico de Rondas</h3><div class="tl" id="timeline"></div></div>
+      </div>
+
+      <!-- ===== REPORTS ===== -->
+      <div class="section" id="sec-reports">
+        <div style="margin-bottom:20px">
+          <h3 style="font-size:14px;font-weight:700;margin-bottom:4px">Relatorios de Ronda</h3>
+          <p style="font-size:12px;color:var(--text-3)">Historico completo de todas as rondas. Baixe o relatorio em .md para acompanhamento offline.</p>
+        </div>
+        <div class="rpt-tracking" id="rpt-tracking"></div>
+        <div class="rpt-grid" id="rpt-grid"></div>
+      </div>
+
+      <!-- ===== ACTIVITY ===== -->
+      <div class="section" id="sec-activity">
+        <h3 style="font-size:14px;font-weight:700;margin-bottom:16px">Feed de Atividade</h3>
+        <div class="feed" id="feed"></div>
+      </div>
+
+      <!-- ===== INTEL COMPETITIVA ===== -->
+      <div class="section" id="sec-intel">
+        <div style="margin-bottom:20px">
+          <h3 style="font-size:14px;font-weight:700;margin-bottom:4px">Intel Competitiva (Protocolo W1)</h3>
+          <p style="font-size:12px;color:var(--text-3)">Sinais de controle, dados fundamentais por pagina, e pipeline operacional.</p>
+        </div>
+        <div class="intel-grid" id="intel-controles"></div>
+        <div style="margin:28px 0 16px"><h3 style="font-size:14px;font-weight:700">Pipeline W1 (Espionagem Operacional)</h3></div>
+        <div class="intel-grid">
+          <div class="intel-card">
+            <div class="intel-card-header"><h4>Pipeline de Mineracao (12 passos)</h4></div>
+            <div class="intel-card-body">
+              <div class="pipeline-steps" id="pipeline-steps"></div>
+            </div>
+          </div>
+          <div class="intel-card">
+            <div class="intel-card-header"><h4>Heuristicos-Chave</h4></div>
+            <div class="intel-card-body">
+              <div class="pipeline-steps" id="heuristics"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== DISCOVERY ===== -->
+      <div class="section" id="sec-discovery">
+        <div style="margin-bottom:20px">
+          <h3 style="font-size:14px;font-weight:700;margin-bottom:4px">Concorrentes Descobertos (Discovery por Keywords)</h3>
+          <p style="font-size:12px;color:var(--text-3)">19 keywords buscadas na Ad Library. 14 concorrentes mapeados. Referencia: Elida Dias.</p>
+        </div>
+        <div class="ranking" id="discovery-table"></div>
+        <div class="intel-grid" id="discovery-cards"></div>
+      </div>
+
+      <!-- ===== KEYWORDS ===== -->
+      <div class="section" id="sec-keywords">
+        <div style="margin-bottom:20px">
+          <h3 style="font-size:14px;font-weight:700;margin-bottom:4px">Discovery por Keywords</h3>
+          <p style="font-size:12px;color:var(--text-3)">89 keywords extraidas do corpus. Buscar na Ad Library para descobrir novos concorrentes.</p>
+        </div>
+        <div class="kw-grid" id="kw-grid"></div>
+      </div>
+
+      <!-- ===== CONFIG ===== -->
+      <div class="section" id="sec-config">
+        <div class="config-grid" id="config-grid"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== DATA =====
+const PAGES = [
+  {name:'Elida Dias',fullName:'Elida Dias - Empreendedora Digital',pageId:'110024568187997',domain:'inlead.digital',ads:68,dias:3,oldest:'20/ago/2026',videos:57,prints:57,status:'lancamento',label:'LANCAMENTO',score:217,plat:'FB, IG, AN, MSG, Threads',obs:'68 entradas (era 85, caiu -17 na ronda 4). 21 unicos. Teste massivo com otimizacao ativa.',color:'var(--orange)',
+    adIds:['1730806774747128','2267078390712535','1423995609623462','945419997808871','1845278709785805','1751000105935873','2465912197253798','1568185014810637','4592430854334501','1686849215736789','1867383040900554','2834788313565398','1011172491955628','1083888477481310','1960454111332694','1743174026624983','1697009504718050','1575994787554450','1781625766361588','2049267353128466','1069069168962358','1564316255485150','1030251813152654','1066275209109130','2106113799984719','3276667335876344','28202194619375979','994578046939405','1693559685064213','2597031387405871','3219905471543371','1363924088664643','1071363872117573','1042579405231240','2116230672583953','2275643429886835','969315979531616','1019920224244369','1044096654779086','1049656978061916','1056254210458152','1079513495032018','1131322006250232','1138580338495003','1310140762174858','1359008722544182','1380906754237315','1556281725370522','1564507498666296','1583778866726656','1593167089262644','1611960627264077','1715976586374315','1760200181848410','2016447142409831','2022624568383087','2249480842518674'],
+    dates:['20/ago/2026','20/ago/2026','20/ago/2026','20/ago/2026','20/ago/2026','20/ago/2026','20/ago/2026','20/ago/2026','20/ago/2026','20/ago/2026','20/ago/2026','20/ago/2026','20/ago/2026','20/ago/2026','20/ago/2026','20/ago/2026','20/ago/2026','20/ago/2026','21/ago/2026','21/ago/2026','21/ago/2026','21/ago/2026','21/ago/2026','21/ago/2026','21/ago/2026','21/ago/2026','21/ago/2026','21/ago/2026','21/ago/2026','21/ago/2026','21/ago/2026','21/ago/2026','21/ago/2026','21/ago/2026','21/ago/2026','21/ago/2026','21/ago/2026','21/ago/2026','21/ago/2026','21/ago/2026','21/ago/2026','21/ago/2026','21/ago/2026','21/ago/2026','21/ago/2026','21/ago/2026','21/ago/2026','21/ago/2026','21/ago/2026','21/ago/2026','21/ago/2026','21/ago/2026','21/ago/2026','21/ago/2026','21/ago/2026','21/ago/2026','21/ago/2026']},
+  {name:'For Traders Global',fullName:'For Traders Global',pageId:'712240488633970',domain:'fortraders.com',ads:85,dias:424,oldest:'25/jun/2025',videos:6,prints:6,status:'escalado',label:'ESCALADO',score:184,plat:'FB, IG, AN, MSG, Threads',obs:'85 entradas / 28 unicos. Operacao multinacional EN/CZ/PT. Ad mais antigo: 424 dias. Nicho adjacente: prop trading.',color:'var(--green)',
+    adIds:['1897521051070652','1919486882784870','1419534399551977','1238869005069460','968221929094366','1341038344513226'],
+    dates:['25/jun/2025','15/jan/2026','18/fev/2026','27/mar/2026','26/abr/2026','15/abr/2026']},
+  {name:'Rafaela Chagas',fullName:'Rafaela Chagas',pageId:'108726887198665',domain:'rafaelachagas.com.br',ads:26,dias:419,oldest:'30/jun/2025',videos:26,prints:26,status:'escalado',label:'ESCALADO',score:91,plat:'FB, IG',obs:'Ads rodando ha 419 dias. Operacao lucrativa comprovada de longo prazo. Cluster de 6 novos ads em 31/jul.',color:'var(--green)',
+    adIds:['1017470541264695','2166725930750674','723211677274469','927888070253355','1197113835482081','1307043574104424','1356419335936414','553898977795993','1076975194541988','1283455396697074','1087143490582764','1316375060627564','1206178988421556','1287019560561020','1129268649446606','960747613497218','1091488283439900','1196153069452330','1268963958834604','1334820582178824','1186730640751890','1261236943256398','1285367854186498','1344908168278246','1346516068247832','1362498098195694'],
+    dates:['30/jun/2025','05/jan/2026','05/jan/2026','05/jan/2026','16/jan/2026','01/fev/2026','01/fev/2026','01/fev/2026','15/fev/2026','15/fev/2026','01/mar/2026','01/mar/2026','15/mar/2026','15/mar/2026','01/abr/2026','01/abr/2026','15/abr/2026','15/abr/2026','01/mai/2026','01/mai/2026','31/jul/2026','31/jul/2026','31/jul/2026','31/jul/2026','31/jul/2026','31/jul/2026']},
+  {name:'Natalia Beauty',fullName:'Natalia Beauty',pageId:'347189425772727',domain:'nataliabeauty.com.br',ads:12,dias:2,oldest:'21/ago/2026',videos:5,prints:5,status:'teste',label:'TESTE',score:32,plat:'FB, IG',obs:'12 entradas (+2 vs ronda 3). 2 dominios (nataliabeauty + protocoloaura). Teste ativo com 4 criativos no novo ad.',color:'var(--yellow)',
+    adIds:['1392948559450256','1596597078494044','1470016874849610','924000846814569','1024310960610863'],
+    dates:['21/ago/2026','21/ago/2026','21/ago/2026','21/ago/2026','21/ago/2026']},
+  {name:'Elida Digital',fullName:'Elida Dias - Digital',pageId:'879705961901136',domain:'elidadias.blog',ads:8,dias:1,oldest:'22/ago/2026',videos:8,prints:8,status:'lancamento',label:'LANCAMENTO',score:16,plat:'FB, IG',obs:'Pausa noturna CONFIRMADA (zera a noite, reativa de manha). 8 ads lancados 22/ago. Dominio elidadias.blog.',color:'var(--orange)',ads:7,adIds:['1597982658629188','1088710530383841','4026957884263156','1408204167921819','2895369740826618','2926854784322391','1036768035635998','1461738725766510'],dates:['22/ago/2026','22/ago/2026','22/ago/2026','22/ago/2026','22/ago/2026','22/ago/2026','22/ago/2026','22/ago/2026']}
+];
+
+const KEYWORDS = [
+  {text:'renda extra',freq:64,status:'done',results:24000},{text:'ganhar dinheiro',freq:33,status:'done',results:50000},
+  {text:'funcao oculta',freq:17,status:'done',results:120},{text:'comida do futuro',freq:16,status:'pending'},
+  {text:'inteligencia artificial + renda',freq:19,status:'done',results:2200},{text:'codigo lucrativo',freq:14,status:'pending'},
+  {text:'sem aparecer + ganhar',freq:16,status:'done',results:7200},{text:'trabalho remoto online',freq:7,status:'done',results:170},
+  {text:'avaliador fake news',freq:7,status:'pending'},{text:'smartcash',freq:22,status:'pending'},
+  {text:'tiktok shop + renda',freq:17,status:'done',results:160},{text:'vitrine invisivel',freq:10,status:'pending'},
+  {text:'home cash',freq:10,status:'pending'},{text:'passo a passo + dinheiro',freq:22,status:'pending'},
+  {text:'ugc + renda',freq:41,status:'pending'},
+  {text:'mudei de vida renda',freq:0,status:'done',results:83},
+  {text:'empreendedora digital renda',freq:0,status:'done',results:110},
+  {text:'inlead.digital',freq:0,status:'done',results:6000},
+  {text:'ganhar dinheiro celular sem aparecer',freq:0,status:'done',results:4000},
+  {text:'nao precisa aparecer nao precisa vender',freq:0,status:'done',results:5200},
+  {text:'metodo simples ganhar dinheiro celular',freq:0,status:'done',results:3600},
+  {text:'assista ao video surpreendente',freq:0,status:'done',results:250},
+  {text:'mudei de vida trabalhando pelo celular',freq:0,status:'done',results:59},
+  {text:'MUDEII DE VIDA',freq:0,status:'done',results:36},
+  {text:'ganhar dinheiro pelo celular',freq:0,status:'done',results:6200},
+  {text:'renda online sem aparecer',freq:0,status:'done',results:530},
+  {text:'video curto renda dolar',freq:0,status:'done',results:28}
+];
+
+const DISCOVERIES = [
+  {name:'Ricieri Rosset',domain:'ricierirosset.com.br',dias:86,tier:1,match:'ALTISSIMO',mecanismo:'Renda em dolar via video curto',copy:'Nao precisa largar seu emprego. Nao precisa aparecer. Nao precisa vender nada.',keywords:4,color:'var(--green)',bib:'https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=BR&search_type=keyword_unordered&q=ricierirosset'},
+  {name:'Raphael Mancini',domain:'eurodrop.com.br',dias:121,tier:1,match:'MEDIO',mecanismo:'Dropshipping EUR sem estoque',copy:'NAO precisa de estoque. NAO precisa aparecer.',keywords:2,color:'var(--accent)',bib:'https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=BR&search_type=keyword_unordered&q=eurodrop'},
+  {name:'radarugc.com',domain:'radarugc.com',dias:79,tier:2,match:'A VALIDAR',mecanismo:'UGC-related',copy:'-',keywords:1,color:'var(--yellow)',bib:'https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=BR&search_type=keyword_unordered&q=radarugc'},
+  {name:'manualdaweb.com',domain:'manualdaweb.com',dias:100,tier:2,match:'A VALIDAR',mecanismo:'-',copy:'-',keywords:1,color:'var(--yellow)',bib:'https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=BR&search_type=keyword_unordered&q=manualdaweb'},
+  {name:'Rian Medeiross',domain:'rianmedeiros.com',dias:47,tier:2,match:'MEDIO',mecanismo:'Video UGC',copy:'-',keywords:1,color:'var(--accent)',bib:'https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=BR&search_type=keyword_unordered&q=rianmedeiros'},
+  {name:'geniunshop.online',domain:'geniunshop.online',dias:31,tier:2,match:'BAIXO',mecanismo:'-',copy:'-',keywords:2,color:'var(--text-3)',bib:'https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=BR&search_type=keyword_unordered&q=geniunshop'},
+  {name:'Gabriel Navarro',domain:'gabrielnavarro.com.br',dias:96,tier:2,match:'BAIXO',mecanismo:'Investimentos / renda passiva',copy:'-',keywords:2,color:'var(--text-3)',bib:'https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=BR&search_type=keyword_unordered&q=gabrielnavarro'},
+  {name:'aprovabancarios.com',domain:'aprovabancarios.com',dias:1565,tier:3,match:'A VALIDAR',mecanismo:'Concursos/finance?',copy:'-',keywords:1,color:'var(--purple)',bib:'https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=BR&search_type=keyword_unordered&q=aprovabancarios'},
+  {name:'ganhandotempo.com',domain:'ganhandotempo.com',dias:1252,tier:3,match:'A VALIDAR',mecanismo:'Renda-extra?',copy:'-',keywords:1,color:'var(--purple)',bib:'https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=BR&search_type=keyword_unordered&q=ganhandotempo'},
+  {name:'agenciaempregador.com.br',domain:'agenciaempregador.com.br',dias:333,tier:3,match:'BAIXO',mecanismo:'Trabalho remoto',copy:'-',keywords:1,color:'var(--orange)',bib:'https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=BR&search_type=keyword_unordered&q=agenciaempregador'},
+  {name:'tiktokizando.com.br',domain:'tiktokizando.com.br',dias:118,tier:3,match:'MEDIO',mecanismo:'TikTok monetizacao',copy:'-',keywords:1,color:'var(--orange)',bib:'https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=BR&search_type=keyword_unordered&q=tiktokizando'},
+  {name:'infinitepay.io',domain:'infinitepay.io',dias:108,tier:3,match:'BAIXO',mecanismo:'Fintech',copy:'-',keywords:1,color:'var(--text-3)',bib:'https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=BR&search_type=keyword_unordered&q=infinitepay'},
+  {name:'viverlivre.site',domain:'viverlivre.site',dias:18,tier:4,match:'A VALIDAR',mecanismo:'-',copy:'-',keywords:1,color:'var(--text-4)',bib:'https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=BR&search_type=keyword_unordered&q=viverlivre'},
+  {name:'nomadglobal.com',domain:'nomadglobal.com',dias:10,tier:4,match:'BAIXO',mecanismo:'Fintech',copy:'-',keywords:1,color:'var(--text-4)',bib:'https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=BR&search_type=keyword_unordered&q=nomadglobal'}
+];
+
+const SUPABASE_BASE='https://kykudpqqrkigbpkkyren.supabase.co/storage/v1/object/public/spy-media';
+const PAGE_SLUGS={'Elida Dias':'elida-dias','Elida Digital':'elida-dias-digital','Rafaela Chagas':'rafaela-chagas','Natalia Beauty':'natalia-beauty','For Traders Global':'for-traders-global'};
+function mediaUrl(page,adId,ext){const s=PAGE_SLUGS[page];if(!s)return null;return SUPABASE_BASE+'/'+s+'/'+adId+'.'+ext}
+
+const RAFAELA_COPY=`Muitas pessoas buscam uma forma de gerar renda online, mas o desafio é encontrar algo que funcione de verdade — sem precisar aparecer, sem ter seguidores, sem investir alto.
+
+Eu compreendo essa busca. Depois de testar diferentes caminhos, encontrei um método que mudou tudo.
+
+Foi assim que descobri o potencial de ser uma "influenciadora anônima" — criando conteúdos simples para marcas que pagam de R$ 150 a R$ 500 por vídeo.
+
+E o melhor: sem mostrar o rosto. Sem precisar de milhares de seguidores. Sem sair de casa.
+Este método foi desenvolvido para qualquer pessoa começar do zero, mesmo sem experiência.
+
+Preparei uma aula gratuita onde mostro o passo a passo de como funciona e você pode receber seu primeiro pagamento em 7 dias.
+
+Toque em Saiba Mais e descubra como começar.`;
+
+const COPYCAT_DATA={
+'1730806774747128':{texto:'MUDEII DE VIDA',titulo:'assista ao vídeo',desc:'surpreendente',url:'https://inlead.digital/teste-2-quiz-reduzido/',cta:'Saiba mais',tipo:'Vídeo único',criativos:1,plat:'FACEBOOK, INSTAGRAM, AUDIENCE NETWORK, MESSENGER, WHATSAPP, THREADS',inicio:'20/08/2026',dias:1,adv:{nome:'Elida Dias - Empreendedora Digital',cat:'Publicidade/marketing',criacao:'06/12/2021',ativDias:1719,likes:3496,verif:false,ig:27043,igUser:'elidadias_v'}},
+'1069069168962358':{texto:'MUDEII DE VIDAAA',titulo:'ASSISTA AO VÍDEO',desc:'surpreendente...',url:'https://inlead.digital/teste-2-quiz-reduzido/',cta:'Saiba mais',tipo:'Vídeo único',criativos:4,plat:'FACEBOOK, INSTAGRAM, AUDIENCE NETWORK, MESSENGER, THREADS',inicio:'21/08/2026',dias:0,adv:{nome:'Elida Dias - Empreendedora Digital',cat:'Publicidade/marketing',criacao:'06/12/2021',ativDias:1719,likes:3496,verif:false,ig:27043,igUser:'elidadias_v'}},
+'2049267353128466':{texto:'VEJAA ISSOO',titulo:'assista ao vídeo',desc:'surpreendente...',url:'https://inlead.digital/teste-2-quiz-reduzido/',cta:'Saiba mais',tipo:'Vídeo único',criativos:4,plat:'FACEBOOK, INSTAGRAM, AUDIENCE NETWORK, MESSENGER, THREADS',inicio:'21/08/2026',dias:0,adv:{nome:'Elida Dias - Empreendedora Digital',cat:'Publicidade/marketing',criacao:'06/12/2021',ativDias:1719,likes:3496,verif:false,ig:27043,igUser:'elidadias_v'}},
+'1017470541264695':{texto:RAFAELA_COPY,titulo:'ASSISTA AGORA!',desc:'',url:'http://lp.rafaelachagas.com.br/fpf-vsl-v1?sck=iz-adv-vendas-f-fase02-pre-escala-ad51',cta:'Saiba mais',tipo:'Vídeo único',criativos:2,plat:'FACEBOOK, INSTAGRAM, AUDIENCE NETWORK, MESSENGER, THREADS',inicio:'02/07/2026',dias:50,adv:{nome:'Rafaela Chagas',cat:'Blog pessoal',criacao:'30/09/2019',ativDias:2517,likes:5918,verif:false,ig:894717,igUser:'rafaelachagas'}},
+'2166725930750674':{texto:RAFAELA_COPY,titulo:'ASSISTA AGORA!',desc:'',url:'http://lp.rafaelachagas.com.br/fpf-vsl-v1?sck=iz-adv-vendas-f-fase02-pre-escala-ad27',cta:'Saiba mais',tipo:'Vídeo único',criativos:1,plat:'FACEBOOK, INSTAGRAM, AUDIENCE NETWORK, MESSENGER, THREADS',inicio:'16/06/2026',dias:66,adv:{nome:'Rafaela Chagas',cat:'Blog pessoal',criacao:'30/09/2019',ativDias:2517,likes:5918,verif:false,ig:894717,igUser:'rafaelachagas'}},
+'723211677274469':{texto:'Brasileira descobre nova profissão do futuro e está em busca de pessoas comuns para faturar até R$ 333 reais por dia.',titulo:'Nova Profissão do Futuro - Rafaela Chagas',desc:'',url:'http://www.rafaelachagas.com.br/',cta:'Saiba mais',tipo:'Vídeo único',criativos:1,plat:'FACEBOOK, INSTAGRAM, AUDIENCE NETWORK, MESSENGER',inicio:'07/07/2025',dias:410,adv:{nome:'Rafaela Chagas',cat:'Blog pessoal',criacao:'30/09/2019',ativDias:2517,likes:5918,verif:false,ig:894717,igUser:'rafaelachagas'}},
+'927888070253355':{texto:RAFAELA_COPY,titulo:'ASSISTA AGORA!',desc:'',url:'http://lp.rafaelachagas.com.br/fpf-vsl-v1?sck=iz-adv-vendas-f-fase02-pre-escala-ad12',cta:'Saiba mais',tipo:'Vídeo único',criativos:1,plat:'FACEBOOK, INSTAGRAM, AUDIENCE NETWORK, MESSENGER, THREADS',inicio:'20/05/2026',dias:93,adv:{nome:'Rafaela Chagas',cat:'Blog pessoal',criacao:'30/09/2019',ativDias:2517,likes:5918,verif:false,ig:894717,igUser:'rafaelachagas'}}
+};
+const EVO_DATA={
+'Elida Digital':{unicos:8,entradas:8,ads:[
+['1597982658629188',1,1],['1088710530383841',1,1],['4026957884263156',1,1],['1408204167921819',1,1],
+['2895369740826618',1,1],['2926854784322391',1,1],['1036768035635998',1,1],['1461738725766510',1,1]]},
+'Elida Dias':{unicos:21,entradas:85,ads:[
+['1730806774747128',3,1],['2267078390712535',3,1],['1423995609623462',3,1],['945419997808871',3,1],
+['1845278709785805',3,1],['1751000105935873',3,1],['1568185014810637',3,1],['4461339637488325',3,1],
+['2834788313565398',3,1],['1420833123234491',3,1],['1363924088664643',3,1],['1011172491955628',3,1],
+['1083888477481310',3,1],['1960454111332694',3,1],['1743174026624983',3,1],['5467953123429333',3,1],
+['4592430854334501',3,2],['2465912197253798',2,4],['1686849215736789',2,4],['1323916949580229',2,2],
+['1697009504718050',2,4]]},
+'Rafaela Chagas':{unicos:26,entradas:56,ads:[
+['1262329632343808',419,1],['3072452909573755',419,1],['723211677274469',412,1],['3749889461811448',298,1],
+['1127101239329686',230,1],['1420441219634463',230,1],['854289290543531',230,1],['2115079225723173',230,1],
+['4193833704188607',209,1],['927888070253355',95,1],['2166725930750674',68,1],['27276214055404828',60,1],
+['1761777035261193',60,1],['1672401640476547',58,1],['1017470541264695',52,2],['2079731512578337',52,1],
+['1341961058035669',52,2],['1370999108304431',41,2],['1922072918468789',26,2],['1049820007699255',26,1],
+['846796631699751',26,1],['1353146593043540',23,2],['2122806101665159',23,2],['1771588657420517',23,2],
+['1575751994144593',23,2],['1572626367931793',22,1]]},
+'Natalia Beauty':{unicos:7,entradas:10,ads:[
+['1392948559450256',2,2],['1596597078494044',2,1],['2329694811110779',2,1],['1457215169773330',2,1],
+['1099439383039909',2,1],['1540975220596414',2,1],['1079476271282458',1,4]]},
+'For Traders Global':{unicos:28,entradas:150,ads:[
+['1897521051070652',424,1],['1419534399551977',186,1],['2055346385037895',186,1],['602001773008403',186,1],
+['946845524585984',186,1],['1413331123389357',153,1],['2410985602706394',149,3],['1238869005069460',149,1],
+['910468431830215',149,1],['954615123885783',144,1],['1504244315044927',132,2],['2187252682090604',132,1],
+['1628276695103859',132,1],['1341038344513226',130,2],['995236239829482',119,1],['968221929094366',119,2],
+['35092112843769324',116,1],['967814142655529',109,1],['1705874517265883',108,1],['1622688852362684',105,2],
+['961166313456743',94,1],['2325083604686836',94,1],['3783131838537930',72,1],['2434916216920987',33,1],
+['817454878029508',30,3],['2000692073907891',30,3],['4580321805582607',30,2],['2142172746641854',26,1]]}
+};
+const ROUND_DELTAS=[
+{name:'Elida Digital',rounds:[{r:'Noite',c:0,u:0},{r:'06h',c:8,u:8},{r:'12h',c:8,u:8},{r:'12h-r4',c:7,u:8}]},
+{name:'Elida Empreendedora',rounds:[{r:'Noite',c:62,u:0},{r:'06h',c:85,u:0},{r:'12h',c:85,u:21},{r:'12h-r4',c:68,u:21}]},
+{name:'Rafaela Chagas',rounds:[{r:'Noite',c:26,u:0},{r:'06h',c:56,u:0},{r:'12h',c:56,u:26},{r:'12h-r4',c:56,u:26}]},
+{name:'Natalia Beauty',rounds:[{r:'Noite',c:10,u:0},{r:'06h',c:10,u:0},{r:'12h',c:10,u:7},{r:'12h-r4',c:12,u:7}]},
+{name:'For Traders',rounds:[{r:'Noite',c:84,u:0},{r:'06h',c:150,u:0},{r:'12h',c:150,u:28},{r:'12h-r4',c:150,u:28}]}
+];
+
+function escHtml(s){if(!s)return '';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function renderCCPanel(cc){
+  var plats=cc.plat.split(', ').map(function(p){return '<span class="cc-chip">'+escHtml(p)+'</span>'}).join('');
+  return '<div class="cc-panel">'
+  +'<div class="cc-section">'
+  +'<div><span class="cc-label">Texto Principal</span><div class="cc-copy-text">'+escHtml(cc.texto)+'</div></div>'
+  +'<div><span class="cc-label">Titulo</span><div class="cc-val" style="font-weight:600">'+escHtml(cc.titulo)+'</div></div>'
+  +(cc.desc?'<div><span class="cc-label">Descricao</span><div class="cc-val">'+escHtml(cc.desc)+'</div></div>':'')
+  +'<div><span class="cc-label">URL Destino</span><a class="cc-url" href="'+cc.url+'" target="_blank">'+escHtml(cc.url)+'</a></div>'
+  +'</div>'
+  +'<div class="cc-section">'
+  +'<div class="cc-adv">'
+  +'<div><span class="cc-label">Tipo</span><div class="cc-val">'+escHtml(cc.tipo)+'</div></div>'
+  +'<div><span class="cc-label">Criativos Iguais</span><div class="cc-val" style="font-weight:700;color:var(--yellow)">'+cc.criativos+'</div></div>'
+  +'<div><span class="cc-label">CTA</span><div class="cc-val">'+escHtml(cc.cta)+'</div></div>'
+  +'<div><span class="cc-label">Data Inicio</span><div class="cc-val">'+cc.inicio+'</div></div>'
+  +'</div>'
+  +'<div style="margin-top:4px"><span class="cc-label">Posicionamentos</span><div style="margin-top:4px">'+plats+'</div></div>'
+  +'<div class="cc-adv-header">'
+  +'<span class="cc-label" style="font-size:11px;color:var(--accent-2)">Anunciante</span>'
+  +'<div class="cc-adv" style="margin-top:6px">'
+  +'<div><span class="cc-label" style="font-size:9px">Pagina</span><div class="cc-val">'+escHtml(cc.adv.nome)+'</div></div>'
+  +'<div><span class="cc-label" style="font-size:9px">Categoria</span><div class="cc-val">'+escHtml(cc.adv.cat)+'</div></div>'
+  +'<div><span class="cc-label" style="font-size:9px">Criacao</span><div class="cc-val">'+cc.adv.criacao+' ('+cc.adv.ativDias+'d)</div></div>'
+  +'<div><span class="cc-label" style="font-size:9px">Curtidas</span><div class="cc-val">'+cc.adv.likes.toLocaleString()+'</div></div>'
+  +'<div><span class="cc-label" style="font-size:9px">IG Seguidores</span><div class="cc-val">'+cc.adv.ig.toLocaleString()+' (@'+escHtml(cc.adv.igUser)+')</div></div>'
+  +'<div><span class="cc-label" style="font-size:9px">Verificacao</span><div class="cc-val">'+(cc.adv.verif?'Verificada':'Nao verificada')+'</div></div>'
+  +'</div></div></div></div>';
+}
+function toggleCC(adId){
+  var row=document.getElementById('cc-'+adId);
+  var btn=document.querySelector('[data-ccid="'+adId+'"]');
+  if(!row)return;
+  if(row.style.display==='none'){row.style.display='table-row';if(btn){btn.textContent='- Info';btn.classList.add('active')}}
+  else{row.style.display='none';if(btn){btn.textContent='+ Info';btn.classList.remove('active')}}
+}
+
+const totalAds=PAGES.reduce((s,p)=>s+p.ads,0);
+const totalVids=PAGES.reduce((s,p)=>s+p.videos,0);
+const totalPrints=PAGES.reduce((s,p)=>s+p.prints,0);
+const activePages=PAGES.filter(p=>p.ads>0).length;
+const maxScore=Math.max(...PAGES.map(p=>p.score));
+
+// ===== NAVIGATION =====
+document.querySelectorAll('.nav-item[data-section]').forEach(item=>{
+  item.addEventListener('click',()=>{
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    item.classList.add('active');
+    document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+    document.getElementById('sec-'+item.dataset.section).classList.add('active');
+    document.getElementById('topbar-title').textContent=item.textContent.trim().replace(/[0-9]+$/,'').replace('LIVE','').trim();
+    if(item.dataset.section==='charts')setTimeout(initCharts,50);
+    document.getElementById('sidebar').classList.remove('open');
+  });
+});
+document.getElementById('burger').addEventListener('click',()=>{
+  document.getElementById('sidebar').classList.toggle('open');
+});
+
+// ===== KPIs =====
+const kpis=[
+  {label:'Paginas Ativas',value:activePages,unit:'/5',icon:'var(--accent)',iconBg:'var(--accent-bg)',trend:'neutral',trendVal:'-'},
+  {label:'Ads Ativos',value:totalAds,unit:'',icon:'var(--green)',iconBg:'var(--green-bg)',trend:'down',trendVal:'4a ronda (-16)'},
+  {label:'Videos Coletados',value:totalVids,unit:'',icon:'var(--purple)',iconBg:'var(--purple-bg)',trend:'up',trendVal:'+94'},
+  {label:'Prints Salvos',value:totalPrints,unit:'',icon:'var(--cyan)',iconBg:'var(--cyan-bg)',trend:'up',trendVal:'+94'},
+  {label:'Armazenamento',value:'940',unit:'MB',icon:'var(--orange)',iconBg:'var(--orange-bg)',trend:'up',trendVal:'Supabase ATIVO'},
+  {label:'Rondas',value:'4',unit:'',icon:'var(--yellow)',iconBg:'var(--yellow-bg)',trend:'up',trendVal:'completadas'}
+];
+document.getElementById('kpi-grid').innerHTML=kpis.map(k=>`
+  <div class="kpi">
+    <div class="kpi-top">
+      <div class="kpi-icon" style="background:${k.iconBg};color:${k.icon}">&#9679;</div>
+      <div class="kpi-trend ${k.trend}">${k.trendVal}</div>
+    </div>
+    <div class="kpi-value">${k.value}<span>${k.unit}</span></div>
+    <div class="kpi-label">${k.label}</div>
+  </div>
+`).join('');
+
+// ===== INSIGHTS =====
+document.getElementById('insights-banner').innerHTML=`
+  <div class="insight">
+    <div class="insight-tag" style="color:var(--orange)">ALERTA</div>
+    <div class="insight-text"><strong>Elida Dias</strong> lancou <strong>62 criativos em 2 dias</strong>. Teste agressivo de escala. Monitorar quais sobrevivem nas proximas rondas.</div>
+  </div>
+  <div class="insight">
+    <div class="insight-tag" style="color:var(--green)">ESCALA COMPROVADA</div>
+    <div class="insight-text"><strong>Rafaela Chagas</strong> e <strong>For Traders</strong> tem ads rodando <strong>400+ dias</strong>. Operacoes lucrativas de longo prazo confirmadas.</div>
+  </div>
+  <div class="insight">
+    <div class="insight-tag" style="color:var(--yellow)">MONITORAR</div>
+    <div class="insight-text"><strong>Natalia Beauty</strong> acabou de lancar 9 ads. Sinal precoce. Se sobreviverem 7+ dias = potencial escala.</div>
+  </div>
+  <div class="insight">
+    <div class="insight-tag" style="color:var(--cyan)">MEDIA</div>
+    <div class="insight-text">Thumbnails e player de video funcionam no <strong>arquivo local</strong>. No artifact online, clique nos links <strong>Video/Print</strong> para abrir em aba nova (Supabase publico). Botao <strong>+ Info</strong> (CopyCat) funciona em ambos.</div>
+  </div>
+`;
+
+// ===== RANKING =====
+const sorted=[...PAGES].sort((a,b)=>b.score-a.score);
+document.getElementById('ranking-table').innerHTML=`
+  <div class="ranking-header"><h3>Ranking por Scale Score</h3><span style="font-size:11px;color:var(--text-3);font-family:'JetBrains Mono',monospace">Formula: (ads x 2) + (variacoes x 1.5)</span></div>
+  <table><thead><tr><th style="width:50px">#</th><th>Pagina</th><th>Ads</th><th>Dias</th><th>Videos</th><th>Status</th><th>Sinal</th><th>Scale Score</th><th style="min-width:140px">Barra</th></tr></thead>
+  <tbody>${sorted.map((p,i)=>{
+    const pct=maxScore>0?Math.round(p.score/maxScore*100):0;
+    const sinal=p.dias>=30?{t:'CONTROLE',c:'controle'}:p.dias>=7?{t:'VALIDANDO',c:'teste'}:p.dias>0?{t:'NOVO',c:'novo'}:{t:'INATIVO',c:'pausado'};
+    return`<tr>
+      <td><div class="rank-num rank-${i+1}">${i+1}</div></td>
+      <td><div class="page-info"><span class="page-name">${p.name}</span><span class="page-domain">${p.domain}</span></div></td>
+      <td style="font-weight:700">${p.ads}</td>
+      <td class="mono">${p.dias}d</td>
+      <td>${p.videos}</td>
+      <td><span class="status-chip status-${p.status}">${p.label}</span></td>
+      <td><span class="status-chip status-${sinal.c==='controle'?'escalado':sinal.c==='teste'?'lancamento':sinal.c==='novo'?'teste':'pausado'}">${sinal.t}</span></td>
+      <td><span class="score-val" style="color:${p.color}">${p.score}</span></td>
+      <td><div class="score-bar"><div class="score-fill" style="width:${pct}%;background:${p.color}"></div></div></td>
+    </tr>`;
+  }).join('')}</tbody></table>
+`;
+
+// ===== HEATMAP =====
+const heatData={};
+PAGES.forEach(p=>{p.dates.forEach(d=>{heatData[d]=(heatData[d]||0)+1})});
+const hmEl=document.getElementById('heatmap');
+for(let i=30;i>=0;i--){
+  const dt=new Date(2026,7,22);dt.setDate(dt.getDate()-i);
+  const d=dt.getDate();const m=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'][dt.getMonth()];
+  const key=`${String(d).padStart(2,'0')}/${m}/${dt.getFullYear()}`;
+  const count=heatData[key]||0;
+  const level=count===0?0:count<=2?1:count<=5?2:count<=15?3:count<=30?4:5;
+  const cell=document.createElement('div');
+  cell.className=`heat-cell heat-${level}`;
+  cell.dataset.tip=`${key}: ${count} ads`;
+  hmEl.appendChild(cell);
+}
+
+// ===== PAGE DETAILS =====
+document.getElementById('detail-grid').innerHTML=PAGES.map(p=>`
+  <div class="detail-card">
+    <div class="detail-card-header">
+      <h4>${p.name}</h4>
+      <span class="status-chip status-${p.status}">${p.label}</span>
+    </div>
+    <div class="detail-card-body">
+      <div class="detail-metrics">
+        <div class="dm"><div class="dm-val" style="color:${p.color}">${p.ads}</div><div class="dm-label">Ads Ativos</div></div>
+        <div class="dm"><div class="dm-val">${p.dias}</div><div class="dm-label">Dias</div></div>
+        <div class="dm"><div class="dm-val" style="color:var(--purple)">${p.videos}</div><div class="dm-label">Videos</div></div>
+        <div class="dm"><div class="dm-val" style="color:var(--cyan)">${p.prints}</div><div class="dm-label">Prints</div></div>
+      </div>
+      <div class="detail-info">
+        <div class="detail-row"><span class="label">Page ID</span><span class="val">${p.pageId}</span></div>
+        <div class="detail-row"><span class="label">Dominio</span><span class="val">${p.domain}</span></div>
+        <div class="detail-row"><span class="label">Ad Mais Antigo</span><span class="val">${p.oldest}</span></div>
+        <div class="detail-row"><span class="label">Scale Score</span><span class="val" style="color:${p.color}">${p.score}</span></div>
+        <div class="detail-row"><span class="label">Plataformas</span><span class="val">${p.plat}</span></div>
+        <div class="detail-row"><span class="label">IDs Coletados</span><span class="val">${p.adIds.length}</span></div>
+      </div>
+      <div class="detail-obs">${p.obs}</div>
+    </div>
+  </div>
+`).join('');
+
+// ===== ADS TABLE =====
+let allAds=[];
+const months={jan:0,fev:1,mar:2,abr:3,mai:4,jun:5,jul:6,ago:7,set:8,out:9,nov:10,dez:11};
+const today=new Date(2026,7,22);
+PAGES.forEach(p=>{
+  p.adIds.forEach((id,i)=>{
+    const d=p.dates[i]||p.oldest;
+    const pts=d.split('/');
+    let dateObj=today;
+    if(pts.length===3){dateObj=new Date(parseInt(pts[2]),months[pts[1].toLowerCase()],parseInt(pts[0]))}
+    const dias=Math.max(0,Math.floor((today-dateObj)/86400000));
+    allAds.push({page:p.name,id,date:d,dateObj,dias,type:p.videos>0?'Video':'Imagem',domain:p.domain,pageId:p.pageId,color:p.color});
+  });
+});
+document.getElementById('ads-count-badge').textContent=allAds.length;
+
+function renderAdsTable(ads){
+  const card=document.getElementById('ads-table-card');
+  card.innerHTML=`
+    <div class="table-top">
+      <h3>Ads Coletados (${ads.length})</h3>
+      <div class="table-controls">
+        <input class="search-input" placeholder="Buscar por ID..." id="search-ads" type="text">
+        <button class="filter-btn active" data-f="all">Todos</button>
+        ${PAGES.filter(p=>p.ads>0).map(p=>`<button class="filter-btn" data-f="${p.name}">${p.name.split(' ')[0]}</button>`).join('')}
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table><thead><tr>
+        <th data-s="page">Pagina</th><th data-s="id">Ad ID</th><th data-s="date">Data Inicio</th>
+        <th data-s="dias">Dias Ativo</th><th data-s="type">Tipo</th><th>Dominio</th><th>Media</th><th>Link</th><th>Detalhes</th>
+      </tr></thead><tbody id="ads-body"></tbody></table>
+    </div>
+    <div class="table-footer"><span>Mostrando <span class="count" id="showing-count">${ads.length}</span> de ${allAds.length} ads</span><span>Ultima atualizacao: 22/ago/2026</span></div>
+  `;
+  renderRows(ads);
+  card.querySelectorAll('.filter-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      card.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      const f=btn.dataset.f;
+      const filtered=f==='all'?allAds:allAds.filter(a=>a.page===f);
+      renderRows(filtered);
+    });
+  });
+  card.querySelector('#search-ads').addEventListener('input',e=>{
+    const q=e.target.value.trim();
+    if(!q){renderRows(allAds);return}
+    renderRows(allAds.filter(a=>a.id.includes(q)));
+  });
+  card.querySelectorAll('th[data-s]').forEach(th=>{
+    th.addEventListener('click',()=>{
+      const col=th.dataset.s;
+      const dir=th._dir===1?-1:1;th._dir=dir;
+      const s=[...allAds].sort((a,b)=>{
+        let va=a[col],vb=b[col];
+        if(col==='date'){va=a.dateObj;vb=b.dateObj}
+        if(col==='dias'){va=a.dias;vb=b.dias}
+        return va<vb?-dir:va>vb?dir:0;
+      });
+      renderRows(s);
+    });
+  });
+}
+function renderRows(ads){
+  const body=document.getElementById('ads-body');
+  if(!body)return;
+  body.innerHTML=ads.map(a=>{
+    const thumbUrl=mediaUrl(a.page,a.id,'jpg');
+    const vidUrl=mediaUrl(a.page,a.id,'mp4');
+    const cc=COPYCAT_DATA[a.id];
+    const mediaCell=thumbUrl?`<td style="padding:4px">
+      <div style="display:flex;align-items:center;gap:6px">
+        <div class="media-thumb" style="position:relative;cursor:pointer;display:inline-block;flex-shrink:0" onclick="openVideoModal('${vidUrl||''}','${thumbUrl}','${a.id}')">
+          <img src="${thumbUrl}" loading="lazy" style="width:80px;height:45px;object-fit:cover;border-radius:4px;border:1px solid var(--border)" onerror="this.style.display='none';this.parentElement.style.width='80px';this.parentElement.style.height='45px';this.parentElement.style.background='var(--bg-2)';this.parentElement.style.borderRadius='4px';this.parentElement.style.display='flex';this.parentElement.style.alignItems='center';this.parentElement.style.justifyContent='center';this.parentElement.innerHTML='<span style=font-size:18px>&#127910;</span>'">
+          ${vidUrl?'<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:20px;height:20px;background:rgba(0,0,0,.65);border-radius:50%;display:flex;align-items:center;justify-content:center"><div style="width:0;height:0;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:8px solid #fff;margin-left:2px"></div></div>':''}
+        </div>
+        <div style="display:flex;flex-direction:column;gap:3px">
+          ${vidUrl?`<a href="${vidUrl}" target="_blank" style="font-size:10px;color:var(--accent);text-decoration:none;font-weight:600;white-space:nowrap">&#9654; Video</a>`:''}
+          <a href="${thumbUrl}" target="_blank" style="font-size:10px;color:var(--cyan);text-decoration:none;font-weight:600;white-space:nowrap">&#128247; Print</a>
+        </div>
+      </div>
+    </td>`:'<td style="font-size:10px;color:var(--text-3)">-</td>';
+    return `<tr>
+    <td style="font-weight:600">${a.page}</td>
+    <td class="mono" style="font-size:11px">${a.id}</td>
+    <td>${a.date}</td>
+    <td style="font-weight:700">${a.dias}d</td>
+    <td><span class="type-chip type-${a.type.toLowerCase()}">${a.type}</span></td>
+    <td class="mono" style="font-size:11px">${a.domain}</td>
+    ${mediaCell}
+    <td><a href="https://www.facebook.com/ads/library/?id=${a.id}" target="_blank" style="color:var(--accent);text-decoration:none;font-size:11px;font-weight:600">Abrir</a></td>
+    ${cc?`<td><button class="cc-btn" data-ccid="${a.id}" onclick="toggleCC('${a.id}')">+ Info</button></td>`:'<td style="font-size:10px;color:var(--text-4)">-</td>'}
+  </tr>${cc?`<tr id="cc-${a.id}" class="copycat-detail-row" style="display:none"><td colspan="9" style="padding:0">${renderCCPanel(cc)}</td></tr>`:''}`;
+  }).join('');
+  const cnt=document.getElementById('showing-count');
+  if(cnt)cnt.textContent=ads.length;
+}
+renderAdsTable(allAds);
+
+// ===== VIDEO MODAL =====
+(function(){
+  const overlay=document.createElement('div');
+  overlay.id='video-modal';
+  overlay.style.cssText='display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);z-index:9999;align-items:center;justify-content:center;flex-direction:column';
+  overlay.innerHTML=`<div style="position:relative;max-width:90vw;max-height:85vh">
+    <video id="modal-video" controls autoplay style="max-width:90vw;max-height:80vh;border-radius:8px;background:#000"></video>
+    <div id="modal-img-fallback" style="display:none"><img id="modal-img" style="max-width:90vw;max-height:80vh;border-radius:8px"></div>
+    <button onclick="closeVideoModal()" style="position:absolute;top:-12px;right:-12px;width:32px;height:32px;border-radius:50%;border:none;background:var(--accent);color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700">&#10005;</button>
+  </div>
+  <div style="margin-top:12px;display:flex;gap:8px" id="modal-actions"></div>`;
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click',e=>{if(e.target===overlay)closeVideoModal()});
+})();
+function openVideoModal(vidUrl,thumbUrl,adId){
+  const m=document.getElementById('video-modal');
+  const v=document.getElementById('modal-video');
+  const imgF=document.getElementById('modal-img-fallback');
+  const img=document.getElementById('modal-img');
+  const acts=document.getElementById('modal-actions');
+  if(vidUrl){v.src=vidUrl;v.style.display='block';imgF.style.display='none'}
+  else{v.style.display='none';v.src='';imgF.style.display='block';img.src=thumbUrl}
+  const btnStyle='padding:6px 16px;border-radius:6px;text-decoration:none;font-size:12px;font-weight:600;';
+  let btns='';
+  if(vidUrl)btns+=`<a href="${vidUrl}" target="_blank" style="${btnStyle}background:var(--accent);color:#fff">&#9654; Video</a>`;
+  btns+=`<a href="${thumbUrl}" target="_blank" style="${btnStyle}background:var(--cyan);color:#fff">&#128247; Print</a>`;
+  if(vidUrl)btns+=`<button onclick="toggleModalView()" style="${btnStyle}background:var(--bg-2);color:var(--text-1);border:1px solid var(--border);cursor:pointer" id="modal-toggle-btn">Ver Print</button>`;
+  btns+=`<a href="https://www.facebook.com/ads/library/?id=${adId}" target="_blank" style="${btnStyle}background:var(--bg-2);color:var(--text-1);border:1px solid var(--border)">Ad Library</a>`;
+  acts.innerHTML=btns;
+  acts._vidUrl=vidUrl;acts._thumbUrl=thumbUrl;
+  m.style.display='flex';
+  document.addEventListener('keydown',escModal);
+}
+function closeVideoModal(){
+  const m=document.getElementById('video-modal');
+  const v=document.getElementById('modal-video');
+  v.pause();v.src='';m.style.display='none';
+  document.removeEventListener('keydown',escModal);
+}
+function escModal(e){if(e.key==='Escape')closeVideoModal()}
+function toggleModalView(){
+  const v=document.getElementById('modal-video');
+  const imgF=document.getElementById('modal-img-fallback');
+  const img=document.getElementById('modal-img');
+  const btn=document.getElementById('modal-toggle-btn');
+  const acts=document.getElementById('modal-actions');
+  if(v.style.display!=='none'){
+    v.pause();v.style.display='none';imgF.style.display='block';img.src=acts._thumbUrl;
+    if(btn)btn.textContent='Ver Video';
+  }else{
+    imgF.style.display='none';v.style.display='block';v.src=acts._vidUrl;v.play();
+    if(btn)btn.textContent='Ver Print';
+  }
+}
+
+// ===== CHARTS =====
+function drawBar(id,labels,data,colors,maxVal){
+  const canvas=document.getElementById(id);if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  const dpr=window.devicePixelRatio||1;
+  const W=canvas.parentElement.clientWidth-40;
+  canvas.style.width=W+'px';canvas.style.height='240px';
+  canvas.width=W*dpr;canvas.height=240*dpr;
+  ctx.scale(dpr,dpr);
+  const pad={t:24,r:16,b:56,l:48};
+  const cW=W-pad.l-pad.r,cH=240-pad.t-pad.b;
+  const mx=maxVal||Math.max(...data);
+  const barW=Math.min(48,cW/data.length*.55);
+  const gap=(cW-barW*data.length)/(data.length+1);
+  const cs=getComputedStyle(document.documentElement);
+  const gridC=cs.getPropertyValue('--border').trim();
+  const txtC=cs.getPropertyValue('--text-3').trim();
+  ctx.clearRect(0,0,W,240);
+  for(let i=0;i<=4;i++){
+    const y=pad.t+(cH/4)*i;
+    ctx.strokeStyle=gridC;ctx.lineWidth=.5;
+    ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(W-pad.r,y);ctx.stroke();
+    ctx.fillStyle=txtC;ctx.font='500 9px JetBrains Mono';ctx.textAlign='right';
+    ctx.fillText(Math.round(mx-mx/4*i),pad.l-6,y+3);
+  }
+  data.forEach((v,i)=>{
+    const x=pad.l+gap+i*(barW+gap);
+    const bH=mx>0?(v/mx)*cH:0;
+    const y=pad.t+cH-bH;
+    const g=ctx.createLinearGradient(x,y,x,pad.t+cH);
+    g.addColorStop(0,colors[i%colors.length]);g.addColorStop(1,colors[i%colors.length]+'22');
+    ctx.fillStyle=g;
+    ctx.beginPath();ctx.roundRect(x,y,barW,bH,[5,5,0,0]);ctx.fill();
+    ctx.fillStyle=colors[i%colors.length];ctx.font='700 11px Inter';ctx.textAlign='center';
+    ctx.fillText(v,x+barW/2,y-7);
+    ctx.fillStyle=txtC;ctx.font='500 10px Inter';
+    ctx.save();ctx.translate(x+barW/2,pad.t+cH+10);ctx.rotate(.4);ctx.textAlign='left';
+    ctx.fillText(labels[i],0,0);ctx.restore();
+  });
+}
+function initCharts(){
+  const names=PAGES.filter(p=>p.ads>0).map(p=>p.name);
+  const c=['#f97316','#22c55e','#3b82f6','#eab308'];
+  drawBar('c-ads',names,PAGES.filter(p=>p.ads>0).map(p=>p.ads),c);
+  drawBar('c-vids',names,PAGES.filter(p=>p.ads>0).map(p=>p.videos),['#a855f7','#06b6d4','#ec4899','#3b82f6']);
+  drawBar('c-score',names,PAGES.filter(p=>p.ads>0).map(p=>p.score),c);
+  drawBar('c-dias',names,PAGES.filter(p=>p.ads>0).map(p=>p.dias),['#22c55e','#22c55e','#3b82f6','#eab308']);
+}
+setTimeout(initCharts,100);
+window.addEventListener('resize',()=>setTimeout(initCharts,100));
+
+// ===== REPORTS DATA + RENDERING =====
+const ROUND_REPORTS=[
+{id:'r4',name:'Ronda 4 (12h)',date:'22/ago/2026',time:'12:00',tipo:'Manual',pages:5,ads:293,delta:-16,novos:2,removidos:18,
+ highlights:'Elida Empreendedora caiu 20% (85 para 68, -17 ads). Natalia +2 (novo dominio protocoloaura). Rafaela e ForTraders estaveis.',
+ filename:'2026-08-22-12h-ronda.md',
+ content:`# Ronda 12h - 22/ago/2026\n\n> 4a ronda do sistema. Manual (sessao ativa, continuacao).\n\n## Resumo\n\n- **Paginas visitadas:** 5/5\n- **Ads totais:** 293 (era 309, **-16 vs ronda anterior**)\n- **Ads novos (Natalia):** +2\n- **Ads removidos (Elida):** -18 (Digital -1, Empreendedora -17)\n- **Videos salvos:** 0\n\n## Contagens por Pagina\n\n| # | Pagina | 06h (anterior) | 12h (agora) | Delta | Obs |\n|---|--------|---------------|-------------|-------|-----|\n| 1 | Elida Dias - Digital | 8 | **7** | **-1** | Removeu 1 ad |\n| 2 | Elida Dias - Empreendedora Digital | 85 | **68** | **-17** | Queda forte (-20%), otimizacao ou pausa de campanha |\n| 3 | Rafaela Chagas | 56 | **56** | 0 | Estavel |\n| 4 | Natalia Beauty | 10 | **12** | **+2** | Novo dominio protocoloaura.com.br com 4 criativos |\n| 5 | For Traders Global | 150 | **150** | 0 | Estavel, ad campeao 148 DIAS |\n\n**Total: 293 (-16 vs 309 da ronda 06h)**\n\n## Analise dos Movimentos\n\n### Elida Empreendedora: queda de 20% (-17 ads)\n- De 85 para 68 entradas ativas\n- Possivel: (a) otimizacao de campanha cortando ads de baixo desempenho, (b) pausa temporaria de um conjunto, (c) ajuste orcamentario\n- Significativo porque e a pagina principal da Elida com maior volume\n- **Monitorar na proxima ronda** se estabiliza, cai mais, ou recupera\n\n### Elida Digital: -1 ad\n- De 8 para 7\n- Movimento pequeno, pode ser rotina de teste (pausou 1 variante)\n\n### Natalia Beauty: +2 ads, novo dominio\n- De 10 para 12\n- Ad novo: ID 1392948559450256 (21/ago, 2 criativos, nataliabeauty.com.br, 1 DIA)\n- Ad novo: ID 1079476271282458 (22/ago, 4 criativos, **protocoloaura.com.br**, HOJE)\n- O ad de protocoloaura com 4 criativos indica teste A/B/C/D ativo\n\n### Rafaela Chagas e For Traders: estaveis\n- Rafaela: 56 resultados, ad campeao 94 DIAS (ID 927888070253355, 20/mai/2026)\n- For Traders: 150 resultados, ad campeao 148 DIAS (ID 2410985602706394, 27/mar/2026)\n\n## Evolucao Historica (4 rondas)\n\n| Pagina | Noite (r1) | 06h (r2) | 12h (r3) | 12h (r4) | Tendencia |\n|--------|-----------|----------|----------|----------|----------|\n| Elida Digital | 0 | 8 | 8 | 7 | Pausa noturna, leve queda |\n| Elida Empreendedora | 62 | 85 | 85 | 68 | Subiu forte, agora caiu 20% |\n| Rafaela Chagas | 26 | 56 | 56 | 56 | Estavel desde 06h |\n| Natalia Beauty | 10 | 10 | 10 | 12 | Leve crescimento |\n| For Traders Global | 84 | 150 | 150 | 150 | Estavel desde 06h |\n| **Total** | **182** | **309** | **309** | **293** | **-5% vs pico** |\n\n## Proxima ronda: 18h\n- Prioridade: confirmar se Elida Empreendedora estabilizou ou segue caindo\n- Monitorar se Natalia sobe mais (testes ativos)\n`},
+{id:'r3',name:'Ronda 3 (12h)',date:'22/ago/2026',time:'12:00',tipo:'Manual',pages:5,ads:309,delta:0,novos:0,removidos:0,
+ highlights:'Contagens estaveis. Captura de prints (metodologia Fogaca). Rafaela e For Traders com ads 400+ dias confirmados.',
+ filename:'2026-08-22-12h-ronda-r3.md',
+ content:`# Ronda 12h - 22/ago/2026\n\n> 3a ronda do sistema. Manual (sessao ativa).\n\n## Resumo\n\n- **Paginas visitadas:** 5/5\n- **Ads totais:** 309 (=0 vs ronda 6h, estavel)\n- **Videos salvos:** 0 (nenhum ad novo nesta ronda)\n- **Objetivo principal:** capturar prints da Ad Library (grid de anuncios) para acompanhar evolucao de criativos (metodologia Fogaca)\n\n## Contagens por Pagina\n\n| # | Pagina | 6h (anterior) | 12h (agora) | Delta | CopyCat Unicos | Dominio |\n|---|--------|--------------|-------------|-------|----------------|---------|\n| 1 | Elida Dias - Digital | 8 | 8 | 0 | 8 | elidadias.blog |\n| 2 | Elida Dias - Empreendedora Digital | 85 | 85 | 0 | 21 | inlead.digital |\n| 3 | Rafaela Chagas | 56 | 56 | 0 | 26 | rafaelachagas.com.br |\n| 4 | Natalia Beauty | 10 | 10 | 0 | 7 | nataliabeauty.com.br / protocoloaura.com.br |\n| 5 | For Traders Global | 150 | 150 | 0 | 28 | fortraders.com |\n\n**Total: 309 (estavel desde 6h)**\n\n## Descobertas desta ronda\n\n### Rafaela e For Traders com ads de mais de 1 ANO\n- **Rafaela Chagas** tem ad ativo desde **30/jun/2025** (419 dias!)\n- **For Traders Global** tem ad ativo desde **25/jun/2025** (424 dias!)\n- Ads que rodam por mais de 1 ano = ROI positivo consistente.\n\n### Natalia Beauty opera 2 funis separados\n- nataliabeauty.com.br (dominio principal)\n- protocoloaura.com.br (produto/protocolo especifico)\n\n### Contagens estaveis no meio do dia\n- Zero variacao entre 6h e 12h nas 5 paginas\n\n## Proxima ronda: 18h\n`},
+{id:'r2',name:'Ronda 2 (06h)',date:'22/ago/2026',time:'06:03',tipo:'Cron',pages:5,ads:309,delta:127,novos:127,removidos:0,
+ highlights:'Salto de 182 para 309 (+127). Elida Digital reativou (pausa noturna confirmada). Rafaela mais que dobrou (26 para 56).',
+ filename:'2026-08-22-06h-ronda.md',
+ content:`# Ronda 06h - 22/ago/2026\n\n> 2a ronda do sistema. Automatizada via cron (6h03).\n\n## Resumo\n\n- **Paginas visitadas:** 5/5\n- **Ads totais:** 309 (+127 vs ronda noturna)\n- **Videos salvos:** 0 (nenhum ad novo baixado nesta ronda)\n\n## Contagens por Pagina\n\n| # | Pagina | Noite (anterior) | Manha (agora) | Delta | Obs |\n|---|--------|-----------------|---------------|-------|-----|\n| 1 | Elida Dias - Digital | 0 | 8 | +8 | Pausa noturna CONFIRMADA. Dominio: elidadias.blog |\n| 2 | Elida Dias - Empreendedora Digital | 62 | 85 | +23 | Escalada agressiva. Dominio: inlead.digital |\n| 3 | Rafaela Chagas | 26 | 56 | +30 | Escalada forte, mais que dobrou |\n| 4 | Natalia Beauty | 9 | 10 | +1 | Estavel. Dois dominios |\n| 5 | For Traders Global | 85 | 150 | +65 | 28 unicos (CopyCat), 150 entradas (Meta) |\n\n## Descobertas\n\n### Elida Dias opera 2 paginas com 2 dominios diferentes\n- Elida Dias - Digital: elidadias.blog (8 ads)\n- Elida Dias - Empreendedora Digital: inlead.digital (85 ads)\n- A pagina Digital faz pausa noturna e reativa de manha\n\n### Rafaela Chagas escalando forte\n- De 26 para 56 ads em menos de 12h\n- Ad mais antigo: 94 dias (20/mai)\n\n## Proxima ronda: 12h\n`},
+{id:'r1',name:'Ronda 1 (Noite)',date:'22/ago/2026',time:'23:00',tipo:'Inaugural',pages:5,ads:182,delta:0,novos:182,removidos:0,
+ highlights:'Primeira ronda. Elida Digital zerada (pausa noturna). Rafaela e For Traders 400+ dias. Elida Empreendedora lancamento massivo (62 ads em 2 dias).',
+ filename:'2026-08-22-noite-ronda.md',
+ content:`# Ronda 2026-08-22 (noite) - INAUGURAL\n\n> Primeira ronda do sistema de espionagem. Horario: noturno (~23h BRT).\n\n## Resumo\n\n| Pagina | Ads Ativos | Ad Mais Antigo | Dias Rodando | Sinal |\n|--------|-----------|----------------|--------------|-------|\n| Elida Dias - Digital | 0 | - | - | Pausado (noturno) |\n| Elida Dias - Empreendedora Digital | 62 | 20/ago/2026 | 2 | Lancamento massivo |\n| Rafaela Chagas | 26 | 30/jun/2025 | 419 | Escala comprovada |\n| Natalia Beauty | 9 | 21/ago/2026 | 1 | Lancamento novo |\n| For Traders Global | 85 entradas (28 unicos) | 25/jun/2025 | 424 | Escala comprovada |\n\n**Total de ads monitorados:** 182 entradas / 125 unicos (aprox)\n**Paginas visitadas:** 5/5\n\n## Insights da Ronda\n\n1. Rafaela Chagas e For Traders Global sao os players mais estabelecidos (400+ dias)\n2. Elida Dias esta num lancamento massivo (62 ads em 2 dias)\n3. Natalia Beauty acabou de lancar (9 ads ontem)\n4. For Traders Global opera em nicho adjacente (trading/forex)\n5. Proxima ronda (manha): verificar se Elida Dias - Digital reativa os ads\n`}
+];
+
+const latestRound=ROUND_REPORTS[0];
+const trackingData=ROUND_DELTAS.map(function(p){
+  var last=p.rounds[p.rounds.length-1];
+  var prev=p.rounds.length>1?p.rounds[p.rounds.length-2]:null;
+  var d=prev?last.c-prev.c:0;
+  return {name:p.name,count:last.c,delta:d};
+});
+
+(function renderReports(){
+  var track=document.getElementById('rpt-tracking');
+  track.innerHTML='<h4><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 2s infinite"></span> Tracking em Tempo Real (Ultima Ronda: '+latestRound.name+')</h4>'
+  +'<div class="rpt-tracking-grid">'+trackingData.map(function(t){
+    var clr=t.delta>0?'var(--green)':t.delta<0?'var(--red)':'var(--text-3)';
+    var sign=t.delta>0?'+':'';
+    return '<div class="rpt-tracking-cell"><div class="rpt-page">'+t.name+'</div><div class="rpt-count" style="color:var(--text-1)">'+t.count+'</div><div class="rpt-delta" style="color:'+clr+'">'+sign+t.delta+'</div></div>';
+  }).join('')+'</div>';
+
+  var grid=document.getElementById('rpt-grid');
+  grid.innerHTML=ROUND_REPORTS.map(function(r){
+    var badgeClr=r.delta>0?'background:var(--green-bg);color:var(--green)':r.delta<0?'background:var(--red-bg);color:var(--red)':'background:var(--bg-4);color:var(--text-3)';
+    var deltaSign=r.delta>0?'+':'';
+    var deltaStr=r.delta===0?'=0':deltaSign+r.delta;
+    return '<div class="rpt-card"><div class="rpt-card-head"><h4>'+r.name+'</h4><span class="rpt-badge" style="'+badgeClr+'">'+r.tipo+'</span></div>'
+    +'<div class="rpt-card-body">'
+    +'<div class="rpt-card-metrics">'
+    +'<div class="rpt-metric"><div class="rpt-metric-val" style="color:var(--accent)">'+r.pages+'</div><div class="rpt-metric-label">Paginas</div></div>'
+    +'<div class="rpt-metric"><div class="rpt-metric-val" style="color:var(--green)">'+r.ads+'</div><div class="rpt-metric-label">Ads Total</div></div>'
+    +'<div class="rpt-metric"><div class="rpt-metric-val" style="color:'+(r.delta<0?'var(--red)':r.delta>0?'var(--green)':'var(--text-3)')+'">'+deltaStr+'</div><div class="rpt-metric-label">Delta</div></div>'
+    +'</div>'
+    +'<div class="rpt-card-summary">'+r.highlights+'</div>'
+    +'<div class="rpt-card-actions">'
+    +'<button class="rpt-btn rpt-btn-primary" data-rpt-id="'+r.id+'">Copiar .md</button>'
+    +'<button class="rpt-btn rpt-btn-secondary" data-rpt-expand="'+r.id+'">Ver Completo</button>'
+    +'</div></div></div>';
+  }).join('');
+})();
+
+document.querySelectorAll('[data-rpt-id]').forEach(function(btn){
+  btn.addEventListener('click',async function(){
+    var rid=btn.getAttribute('data-rpt-id');
+    var rpt=ROUND_REPORTS.find(function(r){return r.id===rid});
+    if(!rpt)return;
+    btn.textContent='Copiando...';
+    try{
+      await navigator.clipboard.writeText(rpt.content);
+      btn.textContent='Copiado!';
+      setTimeout(function(){btn.textContent='Copiar .md'},2000);
+    }catch(e){
+      var ta=document.createElement('textarea');
+      ta.value=rpt.content;ta.style.position='fixed';ta.style.left='-9999px';
+      document.body.appendChild(ta);ta.select();document.execCommand('copy');
+      document.body.removeChild(ta);
+      btn.textContent='Copiado!';
+      setTimeout(function(){btn.textContent='Copiar .md'},2000);
+    }
+  });
+});
+
+document.querySelectorAll('[data-rpt-expand]').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    var rid=btn.getAttribute('data-rpt-expand');
+    var rpt=ROUND_REPORTS.find(function(r){return r.id===rid});
+    if(!rpt)return;
+    var existing=document.getElementById('rpt-full-'+rid);
+    if(existing){existing.remove();btn.textContent='Ver Completo';return}
+    var div=document.createElement('div');
+    div.id='rpt-full-'+rid;
+    div.style.cssText='margin-top:14px;padding:16px;background:var(--bg-3);border-radius:10px;font-family:JetBrains Mono,monospace;font-size:11px;color:var(--text-2);white-space:pre-wrap;line-height:1.6;max-height:400px;overflow-y:auto';
+    div.textContent=rpt.content;
+    btn.closest('.rpt-card-body').appendChild(div);
+    btn.textContent='Fechar';
+  });
+});
+
+// ===== TIMELINE =====
+document.getElementById('timeline').innerHTML=`
+  <div class="tl-item">
+    <div class="tl-date">2026-08-22 23:00 BRT &bull; RONDA INAUGURAL</div>
+    <div class="tl-body">
+      Primeira ronda do sistema de espionagem. 5 paginas visitadas e catalogadas.
+      Elida Dias Digital zerada (provavel pausa noturna).
+      Identificados 2 players com escala comprovada (400+ dias): Rafaela Chagas e For Traders Global.
+      Elida Empreendedora em lancamento massivo (62 criativos em 2 dias).
+      Natalia Beauty com lancamento novo (9 ads).
+      Download de 94 videos + 94 prints (thumbnails) concluido com sucesso (~940MB).
+      5 ads indisponiveis (removidos). 4 ads da Natalia eram image-only.
+    </div>
+    <div class="tl-tags">
+      <span class="tl-tag" style="background:var(--accent-bg);color:var(--accent)">5 PAGINAS</span>
+      <span class="tl-tag" style="background:var(--green-bg);color:var(--green)">182 ADS</span>
+      <span class="tl-tag" style="background:var(--purple-bg);color:var(--purple)">94 VIDEOS</span>
+      <span class="tl-tag" style="background:var(--cyan-bg);color:var(--cyan)">94 PRINTS</span>
+      <span class="tl-tag" style="background:var(--orange-bg);color:var(--orange)">940MB</span>
+    </div>
+  </div>
+`;
+
+// ===== ACTIVITY FEED =====
+const feedItems=[
+  {dot:'var(--orange)',text:'<strong>Ronda 4 (12h real)</strong>: Elida Empreendedora caiu 20% (85 para 68, -17 ads). Elida Digital -1. Natalia Beauty +2 (novo dominio protocoloaura.com.br). Rafaela e ForTraders estaveis. Total: 293 (-16).',time:'22/ago 12:00'},
+  {dot:'var(--green)',text:'Dashboard v3.0: <strong>Evolucao de Criativos</strong>. Lifecycle de 90 ads unicos com classificacao automatica (Veterano/Campeao/Validando/Teste). Delta entre 3 rondas. Barras horizontais por pagina. Elida Digital atualizada (8 ads). GoatSpy features integrados.',time:'22/ago 23:30'},
+  {dot:'var(--accent)',text:'Dashboard v2.4: <strong>Fix media no artifact</strong>. Links Video/Print agora ficam visiveis mesmo quando a thumbnail nao carrega (CSP do artifact bloqueia imagens externas, mas links abrem em nova aba).',time:'22/ago 09:00'},
+  {dot:'var(--accent)',text:'Dashboard v2.3: <strong>CopyCat Ads integrado</strong>. 7 ads com dados completos (texto, titulo, desc, URL, CTA, tipo, criativos, posicionamentos, info anunciante). Botao "+ Info" na tabela.',time:'22/ago 06:30'},
+  {dot:'var(--green)',text:'<strong>Supabase ATIVO</strong>: 188 arquivos (94 videos + 94 thumbs) enviados para bucket publico spy-media. 949.5 MB, 0 erros.',time:'22/ago 05:30'},
+  {dot:'var(--purple)',text:'Dashboard v2.2: media preview na tabela de ads + modal de video com Supabase.',time:'22/ago 05:45'},
+  {dot:'var(--green)',text:'<strong>94 videos</strong> baixados com sucesso via yt-dlp',time:'22/ago 03:45'},
+  {dot:'var(--cyan)',text:'<strong>94 thumbnails</strong> gerados via ffmpeg (1 print por video)',time:'22/ago 03:46'},
+  {dot:'var(--orange)',text:'<strong>Elida Dias</strong>: 57/62 videos baixados. 5 ads removidos.',time:'22/ago 03:40'},
+  {dot:'var(--green)',text:'<strong>Rafaela Chagas</strong>: 26/26 videos baixados (100%)',time:'22/ago 02:30'},
+  {dot:'var(--purple)',text:'<strong>Natalia Beauty</strong>: 5/9 videos baixados. 4 ads sao image-only.',time:'22/ago 02:45'},
+  {dot:'var(--accent)',text:'<strong>For Traders Global</strong>: 6 videos baixados. Maioria dos 85 ads sao imagem.',time:'22/ago 02:50'},
+  {dot:'var(--yellow)',text:'Ronda inaugural executada. 5 paginas visitadas e catalogadas.',time:'22/ago 01:00'},
+  {dot:'var(--accent)',text:'Sistema de monitoramento inicializado. Registro JSON e MD criados.',time:'22/ago 00:30'},
+  {dot:'var(--pink)',text:'Dashboard v2.0 publicado como artifact.',time:'22/ago 04:00'},
+];
+document.getElementById('feed').innerHTML=feedItems.map(f=>`
+  <div class="feed-item">
+    <div class="feed-dot" style="background:${f.dot}"></div>
+    <div class="feed-content">
+      <div class="feed-text">${f.text}</div>
+      <div class="feed-time">${f.time}</div>
+    </div>
+  </div>
+`).join('');
+
+// ===== DISCOVERY =====
+const tierLabels={1:'TIER 1 - MATCH FORTE',2:'TIER 2 - SOLIDO',3:'TIER 3 - MEGA ESCALA',4:'TIER 4 - RECENTE'};
+const matchColors={ALTISSIMO:'var(--green)',MEDIO:'var(--accent)','A VALIDAR':'var(--yellow)',BAIXO:'var(--text-3)'};
+const discSorted=[...DISCOVERIES].sort((a,b)=>a.tier-b.tier||b.dias-a.dias);
+document.getElementById('discovery-table').innerHTML=`
+  <div class="ranking-header"><h3>Concorrentes por Similaridade com Elida</h3><span style="font-size:11px;color:var(--text-3);font-family:'JetBrains Mono',monospace">19 keywords buscadas, 14 descobertos</span></div>
+  <table><thead><tr><th style="width:40px">#</th><th>Nome</th><th>Dominio</th><th>Dias</th><th>Tier</th><th>Match</th><th>Mecanismo</th><th>Keywords</th><th>Biblioteca</th></tr></thead>
+  <tbody>${discSorted.map((d,i)=>{
+    const matchCls=d.match==='ALTISSIMO'?'escalado':d.match==='MEDIO'?'lancamento':d.match==='A VALIDAR'?'teste':'pausado';
+    const tierCls=d.tier===1?'escalado':d.tier===2?'lancamento':d.tier===3?'teste':'pausado';
+    return`<tr>
+      <td><div class="rank-num rank-${i<3?i+1:4}">${i+1}</div></td>
+      <td style="font-weight:600">${d.name}</td>
+      <td class="mono" style="font-size:11px">${d.domain}</td>
+      <td style="font-weight:700;color:${d.dias>=100?'var(--green)':d.dias>=30?'var(--accent)':'var(--yellow)'}">${d.dias}d</td>
+      <td><span class="status-chip status-${tierCls}">T${d.tier}</span></td>
+      <td><span class="status-chip status-${matchCls}">${d.match}</span></td>
+      <td style="font-size:11px;color:var(--text-2)">${d.mecanismo}</td>
+      <td class="mono">${d.keywords}x</td>
+      <td><a href="${d.bib}" target="_blank" style="color:var(--accent);text-decoration:none;font-size:11px;font-weight:600">Abrir</a></td>
+    </tr>`}).join('')}</tbody></table>`;
+
+const topDisc=DISCOVERIES.filter(d=>d.tier<=2&&d.copy!=='-');
+document.getElementById('discovery-cards').innerHTML=topDisc.map(d=>`
+  <div class="intel-card">
+    <div class="intel-card-header">
+      <h4>${d.name}</h4>
+      <span class="status-chip status-${d.match==='ALTISSIMO'?'escalado':'lancamento'}">${d.match}</span>
+    </div>
+    <div class="intel-card-body">
+      <div class="signal-row"><div class="signal-dot" style="background:var(--accent)"></div><span class="signal-label">Dominio</span><span class="signal-val">${d.domain}</span></div>
+      <div class="signal-row"><div class="signal-dot" style="background:var(--green)"></div><span class="signal-label">Dias rodando</span><span class="signal-badge badge-controle">${d.dias}d</span></div>
+      <div class="signal-row"><div class="signal-dot" style="background:var(--purple)"></div><span class="signal-label">Mecanismo</span><span class="signal-val">${d.mecanismo}</span></div>
+      <div class="signal-row"><div class="signal-dot" style="background:var(--orange)"></div><span class="signal-label">Apareceu em</span><span class="signal-val">${d.keywords} keywords</span></div>
+      <div class="signal-row"><div class="signal-dot" style="background:var(--cyan)"></div><span class="signal-label">Biblioteca</span><a href="${d.bib}" target="_blank" style="color:var(--accent);text-decoration:none;font-size:11px;font-weight:600">Abrir Ad Library</a></div>
+      <div class="detail-obs" style="margin-top:12px">"${d.copy}"</div>
+    </div>
+  </div>
+`).join('');
+
+// ===== KEYWORDS =====
+const kwDone=KEYWORDS.filter(k=>k.status==='done').length;
+document.getElementById('kw-grid').innerHTML=`<div style="margin-bottom:16px;padding:12px 16px;background:var(--accent-bg);border-radius:10px;font-size:13px;color:var(--accent)"><strong>${kwDone}/${KEYWORDS.length}</strong> keywords buscadas. Resultados detalhados em <code>rondas/2026-08-22-discovery-keywords.md</code></div>`+
+KEYWORDS.map(k=>`
+  <div class="kw-card">
+    <div>
+      <div class="kw-text">${k.text}</div>
+      <div class="kw-freq">${k.status==='done'?k.results.toLocaleString()+' resultados':'freq: '+k.freq}</div>
+    </div>
+    <span class="kw-status kw-${k.status}">${k.status==='pending'?'PENDENTE':'BUSCADO'}</span>
+  </div>
+`).join('');
+
+// ===== INTEL COMPETITIVA =====
+const controleData = PAGES.map(p => {
+  const signals = [];
+  if (p.dias >= 30) signals.push({label:'Ad >30 dias = CONTROLE confirmado',badge:'controle',val:p.dias+'d'});
+  else if (p.dias >= 7) signals.push({label:'Ad 7-30 dias = validando',badge:'teste',val:p.dias+'d'});
+  else if (p.dias > 0) signals.push({label:'Ad <7 dias = lancamento recente',badge:'novo',val:p.dias+'d'});
+  else signals.push({label:'Sem ads ativos',badge:'inativo',val:'-'});
+  if (p.ads >= 30) signals.push({label:'30+ criativos = teste massivo de escala',badge:'teste',val:p.ads+' ads'});
+  else if (p.ads >= 10) signals.push({label:'10-30 criativos = testes ativos',badge:'teste',val:p.ads+' ads'});
+  else if (p.ads >= 3) signals.push({label:'3-10 criativos = operacao normal',badge:'novo',val:p.ads+' ads'});
+  const uniqueDates = [...new Set(p.dates)];
+  if (uniqueDates.length >= 2 && p.ads >= 5) signals.push({label:'Variacoes em datas distintas = A/B testing',badge:'teste',val:uniqueDates.length+' datas'});
+  if (p.dias >= 400) signals.push({label:'400+ dias = operacao lucrativa COMPROVADA',badge:'controle',val:p.dias+'d'});
+  const dados10 = [
+    {item:'Nome da oferta',done:!!p.domain && p.domain!=='-'},
+    {item:'Bibliotecas (URLs)',done:true},
+    {item:'Paginas FB',done:true},
+    {item:'Dominio(s)',done:!!p.domain && p.domain!=='-'},
+    {item:'Link da oferta',done:false},
+    {item:'Keywords detectadas',done:false},
+    {item:'Mecanismo',done:false},
+    {item:'Credibilidade',done:false},
+    {item:'Insights de URL',done:false},
+    {item:'Back-redirect + checkout',done:false}
+  ];
+  const done10 = dados10.filter(d=>d.done).length;
+  return {name:p.name,signals,dados10,done10,status:p.status,color:p.color};
+});
+document.getElementById('intel-controles').innerHTML = controleData.filter(c=>c.status!=='pausado').map(c=>`
+  <div class="intel-card">
+    <div class="intel-card-header">
+      <h4>${c.name}</h4>
+      <span style="font-size:11px;color:var(--text-3);font-family:'JetBrains Mono',monospace">${c.done10}/10 dados</span>
+    </div>
+    <div class="intel-card-body">
+      <div style="font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Sinais de Controle (Passo 12)</div>
+      ${c.signals.map(s=>`<div class="signal-row">
+        <div class="signal-dot" style="background:${s.badge==='controle'?'var(--green)':s.badge==='teste'?'var(--orange)':s.badge==='novo'?'var(--yellow)':'var(--red)'}"></div>
+        <span class="signal-label">${s.label}</span>
+        <span class="signal-badge badge-${s.badge}">${s.val}</span>
+      </div>`).join('')}
+      <div style="font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;margin:14px 0 8px">10 Dados Fundamentais (Passo 3)</div>
+      <ul class="checklist">
+        ${c.dados10.map(d=>`<li><span class="${d.done?'check-done':'check-miss'}">${d.done?'[x]':'[ ]'}</span>${d.item}</li>`).join('')}
+      </ul>
+    </div>
+  </div>
+`).join('');
+
+const pipelineSteps = [
+  {n:1,text:'<strong>Definir nicho-alvo</strong> (nicho primeiro, formato depois)'},
+  {n:2,text:'<strong>Historico via swipe interno</strong> (wiki/swipefile-analise)'},
+  {n:3,text:'<strong>10 dados fundamentais</strong> (nome, biblioteca, dominio, mecanismo...)'},
+  {n:4,text:'<strong>Biblioteca de Anuncios</strong> (Meta, filtrar por video)'},
+  {n:5,text:'<strong>Pesquisa por mecanismo</strong> (super-hack: acha TODOS os ads)'},
+  {n:6,text:'<strong>Pesquisa por credibilidade</strong> (USP, doutor, especialista)'},
+  {n:7,text:'<strong>Analise de URL</strong> (revelar campanha, VSL, headline, lead)'},
+  {n:8,text:'<strong>Spy nativo FB</strong> (Ad Liberty Cloud, show only ads)'},
+  {n:9,text:'<strong>Spy nativo YouTube</strong> (Stats for Nerds, Video ID)'},
+  {n:10,text:'<strong>Spy nativo TikTok</strong> (conta gringa + proxy)'},
+  {n:11,text:'<strong>Disparo</strong> (receptivo, para black/escondido)'},
+  {n:12,text:'<strong>Identificar controles</strong> (>30d, variacoes, mesmo corpo)'}
+];
+document.getElementById('pipeline-steps').innerHTML = pipelineSteps.map(s=>`
+  <div class="p-step">
+    <div class="p-step-num">${s.n}</div>
+    <div class="p-step-text">${s.text}</div>
+  </div>
+`).join('');
+
+const heuristics = [
+  {n:'H1',text:'<strong>Comece pelo nicho</strong>, nunca pelo formato ou gancho'},
+  {n:'H2',text:'<strong>Pense como a caca</strong>, nao como o cacador (elementos de credibilidade)'},
+  {n:'H3',text:'<strong>Mecanismo > keyword > dominio</strong> (ordem de pesquisa)'},
+  {n:'H5',text:'<strong>Disparo para black</strong>; Biblioteca para o resto'},
+  {n:'H10',text:'<strong>Entrevista domina</strong> em publico mais velho (ED, memoria, diabetes)'},
+  {n:'H12',text:'<strong>Horarios ideais:</strong> 0h, 6h, 12h, 18h (quando sobem ads novos)'},
+  {n:'H13',text:'<strong>Hook rate impacta menos</strong> do que o mercado acha (testado na Six)'},
+  {n:'H16',text:'<strong>Shid nao e por oferta.</strong> E por conta (mesma empresa)'},
+];
+document.getElementById('heuristics').innerHTML = heuristics.map(h=>`
+  <div class="p-step">
+    <div class="p-step-num" style="background:var(--orange-bg);color:var(--orange)">${h.n}</div>
+    <div class="p-step-text">${h.text}</div>
+  </div>
+`).join('');
+
+// ===== EVOLUCAO =====
+(function(){
+const allEvo=[];
+Object.entries(EVO_DATA).forEach(([page,data])=>{data.ads.forEach(a=>allEvo.push({page,id:a[0],dias:a[1],vars:a[2]}))});
+const classify=d=>d>=100?{cls:'veterano',label:'VETERANO',color:'var(--green)'}:d>=30?{cls:'campeao',label:'CAMPEAO',color:'var(--accent)'}:d>=7?{cls:'validando',label:'VALIDANDO',color:'var(--yellow)'}:{cls:'teste-evo',label:'TESTE',color:'var(--orange)'};
+const veteranos=allEvo.filter(a=>a.dias>=100).length;
+const campeoes=allEvo.filter(a=>a.dias>=30&&a.dias<100).length;
+const validando=allEvo.filter(a=>a.dias>=7&&a.dias<30).length;
+const testes=allEvo.filter(a=>a.dias<7).length;
+const maxDias=Math.max(...allEvo.map(a=>a.dias));
+// HIGHLIGHTS
+const sortedByDias=[...allEvo].sort(function(a,b){return b.dias-a.dias});
+const sortedByVars=[...allEvo].sort(function(a,b){return b.vars-a.vars||b.dias-a.dias});
+const topLong=sortedByDias[0];
+const topVars=sortedByVars[0];
+const clsLong=classify(topLong.dias);
+const clsVars=classify(topVars.dias);
+var topVarsCount=allEvo.filter(function(a){return a.vars===topVars.vars}).length;
+var topLongCount=allEvo.filter(function(a){return a.dias===topLong.dias}).length;
+var hlEl=document.getElementById('evo-highlights');
+if(hlEl)hlEl.innerHTML=
+'<div class="evo-highlight evo-highlight-longevity">'+
+'<div class="evo-highlight-tag" style="background:var(--green-bg);color:var(--green)">&#9733; Maior Longevidade</div>'+
+'<div class="evo-highlight-value" style="color:var(--green)">'+topLong.dias+'d</div>'+
+'<div class="evo-highlight-sub">No ar desde o inicio do monitoramento'+(topLongCount>1?' ('+topLongCount+' ads empatados)':'')+'</div>'+
+'<a class="evo-highlight-id" href="https://www.facebook.com/ads/library/?id='+topLong.id+'" target="_blank">ID: '+topLong.id+'</a>'+
+'<div class="evo-highlight-meta"><span>'+topLong.page+'</span><span class="class-'+clsLong.cls+'">'+clsLong.label+'</span><span>'+topLong.vars+' variante'+(topLong.vars>1?'s':'')+'</span></div>'+
+'</div>'+
+'<div class="evo-highlight evo-highlight-variants">'+
+'<div class="evo-highlight-tag" style="background:var(--purple-bg,var(--accent-bg));color:var(--purple,var(--accent))">&#9881; Mais Duplicatas/Variantes</div>'+
+'<div class="evo-highlight-value" style="color:var(--purple,var(--accent))">'+topVars.vars+'v</div>'+
+'<div class="evo-highlight-sub">Maior numero de versoes do mesmo criativo'+(topVarsCount>1?' ('+topVarsCount+' ads com '+topVars.vars+' variantes)':'')+'</div>'+
+'<a class="evo-highlight-id" href="https://www.facebook.com/ads/library/?id='+topVars.id+'" target="_blank">ID: '+topVars.id+'</a>'+
+'<div class="evo-highlight-meta"><span>'+topVars.page+'</span><span class="class-'+clsVars.cls+'">'+clsVars.label+'</span><span>'+topVars.dias+'d ativo</span></div>'+
+'</div>';
+const ek=document.getElementById('evo-kpis');
+if(ek)ek.innerHTML=[
+{label:'Total Unicos',value:90,color:'var(--accent)',bg:'var(--accent-bg)',sub:'5 paginas'},
+{label:'Veteranos (100+d)',value:veteranos,color:'var(--green)',bg:'var(--green-bg)',sub:'Escala comprovada'},
+{label:'Campeoes (30-99d)',value:campeoes,color:'var(--accent)',bg:'var(--accent-bg)',sub:'Validados'},
+{label:'Validando (7-29d)',value:validando,color:'var(--yellow)',bg:'var(--yellow-bg)',sub:'Em avaliacao'},
+{label:'Testes (<7d)',value:testes,color:'var(--orange)',bg:'var(--orange-bg)',sub:'Recem lancados'},
+{label:'Rondas',value:3,color:'var(--cyan)',bg:'var(--cyan-bg)',sub:'22/ago/2026'}
+].map(k=>'<div class="kpi"><div class="kpi-top"><div class="kpi-icon" style="background:'+k.bg+';color:'+k.color+'">&#9679;</div><div class="kpi-trend neutral">'+k.sub+'</div></div><div class="kpi-value" style="color:'+k.color+'">'+k.value+'</div><div class="kpi-label">'+k.label+'</div></div>').join('');
+const dg=document.getElementById('delta-grid');
+if(dg)dg.innerHTML=ROUND_DELTAS.map(function(p){
+const rounds=p.rounds;let rows='';
+for(let i=0;i<rounds.length;i++){
+const prev=i>0?rounds[i-1].c:null;const delta=prev!==null?rounds[i].c-prev:null;
+const cls=delta===null?'delta-same':delta>0?'delta-up':delta===0?'delta-same':'delta-down';
+const sign=delta>0?'+':'';
+rows+='<div class="delta-row"><span class="delta-label">'+rounds[i].r+'</span><span class="delta-val">'+rounds[i].c+' ads</span>'+(delta!==null?'<span class="delta-val '+cls+'">'+sign+delta+'</span>':'<span class="delta-val delta-same">base</span>')+'</div>';
+}
+rows+='<div class="delta-row" style="margin-top:6px;padding-top:6px;border-top:2px solid var(--border)"><span class="delta-label" style="font-weight:600">Unicos extraidos</span><span class="delta-val" style="color:var(--green)">'+rounds[rounds.length-1].u+'</span></div>';
+return '<div class="delta-card"><div class="delta-name">'+p.name+'</div>'+rows+'</div>';
+}).join('');
+const pageOrder=['Rafaela Chagas','For Traders Global','Elida Dias','Natalia Beauty','Elida Digital'];
+const ep=document.getElementById('evo-pages');
+if(ep)ep.innerHTML=pageOrder.map(function(pName){
+const data=EVO_DATA[pName];if(!data)return '';
+const ads=data.ads;
+const sc={veterano:0,campeao:0,validando:0,teste:0};
+ads.forEach(function(a){const c=classify(a[1]);if(c.cls==='teste-evo')sc.teste++;else sc[c.cls]++});
+const sp=[];
+if(sc.veterano)sp.push('<span style="background:var(--green-bg);color:var(--green)">'+sc.veterano+' vet</span>');
+if(sc.campeao)sp.push('<span style="background:var(--accent-bg);color:var(--accent)">'+sc.campeao+' camp</span>');
+if(sc.validando)sp.push('<span style="background:var(--yellow-bg);color:var(--yellow)">'+sc.validando+' val</span>');
+if(sc.teste)sp.push('<span style="background:var(--orange-bg);color:var(--orange)">'+sc.teste+' teste</span>');
+const bars=ads.map(function(a){
+const c=classify(a[1]);const pct=maxDias>0?Math.max(1,Math.round(a[1]/maxDias*100)):1;
+return '<div class="evo-bar-row"><a class="evo-id" href="https://www.facebook.com/ads/library/?id='+a[0]+'" target="_blank" title="'+a[0]+'">'+a[0]+'</a><div class="evo-bar-wrap"><div class="evo-bar-fill" style="width:'+pct+'%;background:'+c.color+'">'+(a[1]>20?a[1]+'d':'')+'</div></div><div class="evo-days" style="color:'+c.color+'">'+a[1]+'d</div><div class="evo-class"><span class="class-'+c.cls+'">'+c.label+'</span></div><div class="evo-vars">'+a[2]+'v</div></div>';
+}).join('');
+return '<div class="evo-page"><div class="evo-page-header"><h4>'+pName+' <span style="font-weight:400;font-size:12px;color:var(--text-3)">('+data.unicos+' unicos / '+data.entradas+' entradas)</span></h4><div class="evo-summary">'+sp.join('')+'</div></div><div class="evo-body">'+bars+'</div></div>';
+}).join('');
+})();
+
+// ===== CONFIG =====
+document.getElementById('config-grid').innerHTML=`
+  <div class="config-card">
+    <h4>&#9881; Rondas</h4>
+    <div class="config-row"><span class="label">Frequencia</span><span class="val">4x/dia</span></div>
+    <div class="config-row"><span class="label">Horarios</span><span class="val">00:00 / 06:00 / 12:00 / 18:00</span></div>
+    <div class="config-row"><span class="label">Status</span><span class="val" style="color:var(--yellow)">PENDENTE AUTOMACAO</span></div>
+    <div class="config-row"><span class="label">Skill</span><span class="val">/spy-ronda</span></div>
+  </div>
+  <div class="config-card">
+    <h4>&#128190; Armazenamento</h4>
+    <div class="config-row"><span class="label">Base Path</span><span class="val">Spy atual/</span></div>
+    <div class="config-row"><span class="label">Videos</span><span class="val">~940 MB (94 videos)</span></div>
+    <div class="config-row"><span class="label">Supabase</span><span class="val" style="color:var(--green)">ATIVO (188 files)</span></div>
+    <div class="config-row"><span class="label">Bucket</span><span class="val">spy-media (publico)</span></div>
+    <div class="config-row"><span class="label">Projeto</span><span class="val">spy-renda-extra / us-east-1</span></div>
+    <div class="config-row"><span class="label">Backup</span><span class="val" style="color:var(--green)">SUPABASE CLOUD</span></div>
+  </div>
+  <div class="config-card">
+    <h4>&#128295; Ferramentas</h4>
+    <div class="config-row"><span class="label">yt-dlp</span><span class="val" style="color:var(--green)">INSTALADO</span></div>
+    <div class="config-row"><span class="label">ffmpeg</span><span class="val" style="color:var(--green)">INSTALADO</span></div>
+    <div class="config-row"><span class="label">CopyCat Ads</span><span class="val" style="color:var(--green)">INSTALADO</span></div>
+    <div class="config-row"><span class="label">Chrome Extension</span><span class="val" style="color:var(--yellow)">PENDENTE</span></div>
+  </div>
+  <div class="config-card">
+    <h4>&#128640; Proximos Passos</h4>
+    <div class="config-row"><span class="label">Parte 3</span><span class="val">Discovery Keywords</span></div>
+    <div class="config-row"><span class="label">Parte 4</span><span class="val">Automacao 3x/dia</span></div>
+    <div class="config-row"><span class="label">Parte 5</span><span class="val">Chrome Extension</span></div>
+    <div class="config-row"><span class="label">Extra</span><span class="val" style="color:var(--green)">Supabase CONCLUIDO</span></div>
+  </div>
+  <div class="config-card">
+    <h4>&#128218; Metodologia (Fontes)</h4>
+    <div class="config-row"><span class="label">W1 Pipeline</span><span class="val">Workshop Call 2.5</span></div>
+    <div class="config-row"><span class="label">W2 Cloaker</span><span class="val">Workshop Call 3</span></div>
+    <div class="config-row"><span class="label">Scale Score</span><span class="val">ads-library-spy-template</span></div>
+    <div class="config-row"><span class="label">Prova de Escala</span><span class="val">_template-spy-entry (Bruna)</span></div>
+    <div class="config-row"><span class="label">Deteccao Controle</span><span class="val">Passo 12 (>30d, variacoes)</span></div>
+    <div class="config-row"><span class="label">10 Dados Fund.</span><span class="val">Passo 3 (briefing oferta)</span></div>
+  </div>
+`;
+</script>
