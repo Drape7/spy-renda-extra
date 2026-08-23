@@ -436,6 +436,7 @@ canvas{width:100%!important;display:block}
       <div class="nav-section">Discovery</div>
       <div class="nav-item" data-section="discovery"><span class="icon">&#127919;</span>Concorrentes<span class="nav-badge">14</span></div>
       <div class="nav-item" data-section="keywords"><span class="icon">&#128270;</span>Keywords<span class="nav-badge">19/89</span></div>
+      <div class="nav-item" data-section="vsls"><span class="icon">&#127909;</span>VSLs<span class="nav-badge" id="vsls-count-badge">0</span></div>
       <div class="nav-section">Sistema</div>
       <div class="nav-item" data-section="config"><span class="icon">&#9881;</span>Configuracoes</div>
     </nav>
@@ -580,6 +581,38 @@ canvas{width:100%!important;display:block}
           <p style="font-size:12px;color:var(--text-3)">89 keywords extraidas do corpus. Buscar na Ad Library para descobrir novos concorrentes.</p>
         </div>
         <div class="kw-grid" id="kw-grid"></div>
+      </div>
+
+      <!-- ===== VSLs ===== -->
+      <div class="section" id="sec-vsls">
+        <div style="margin-bottom:20px">
+          <h3 style="font-size:14px;font-weight:700;margin-bottom:4px">VSLs Capturadas</h3>
+          <p style="font-size:12px;color:var(--text-3);margin-bottom:16px;line-height:1.4">Registre URLs de landing pages com VSLs Vturb dos concorrentes. Baixe o video com o Baixar_Videos_Vturb.exe, depois atualize o status aqui.</p>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:end">
+            <div style="flex:1;min-width:280px">
+              <label style="font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px">URL da Landing Page</label>
+              <input id="vsl-url" type="url" placeholder="https://exemplo.com/pagina-vsl" style="width:100%;padding:8px 12px;background:var(--bg-3);border:1px solid var(--border);border-radius:6px;color:var(--text-1);font-size:13px;font-family:inherit;outline:none" />
+            </div>
+            <div style="min-width:180px">
+              <label style="font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px">Pagina do Concorrente</label>
+              <select id="vsl-page" style="width:100%;padding:8px 12px;background:var(--bg-3);border:1px solid var(--border);border-radius:6px;color:var(--text-1);font-size:13px;font-family:inherit;outline:none">
+                <option value="">Selecionar...</option>
+                <option value="Rafaela Chagas">Rafaela Chagas</option>
+                <option value="For Traders Global">For Traders Global</option>
+                <option value="Elida Empreendedora">Elida Empreendedora</option>
+                <option value="Elida Digital">Elida Digital</option>
+                <option value="Natalia Beauty">Natalia Beauty</option>
+              </select>
+            </div>
+            <div style="min-width:140px">
+              <label style="font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px">Notas (opcional)</label>
+              <input id="vsl-notas" type="text" placeholder="ex: VSL principal" style="width:100%;padding:8px 12px;background:var(--bg-3);border:1px solid var(--border);border-radius:6px;color:var(--text-1);font-size:13px;font-family:inherit;outline:none" />
+            </div>
+            <button id="vsl-save-btn" onclick="salvarVsl()" style="padding:8px 20px;background:var(--accent);color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;height:37px">Salvar</button>
+          </div>
+        </div>
+        <div id="vsl-list" style="display:grid;gap:10px"></div>
+        <div id="vsl-empty" style="text-align:center;padding:40px 20px;color:var(--text-3);font-size:13px;display:none">Nenhuma VSL registrada. Cole a URL de uma landing page acima.</div>
       </div>
 
       <!-- ===== CONFIG ===== -->
@@ -828,6 +861,7 @@ document.querySelectorAll('.nav-item[data-section]').forEach(item=>{
     document.getElementById('sec-'+item.dataset.section).classList.add('active');
     document.getElementById('topbar-title').textContent=item.textContent.trim().replace(/[0-9]+$/,'').replace('LIVE','').trim();
     if(item.dataset.section==='charts')setTimeout(initCharts,50);
+    if(item.dataset.section==='vsls')loadVsls();
     document.getElementById('sidebar').classList.remove('open');
   });
 });
@@ -1622,4 +1656,99 @@ document.getElementById('config-grid').innerHTML=`
     <div class="config-row"><span class="label">10 Dados Fund.</span><span class="val">Passo 3 (briefing oferta)</span></div>
   </div>
 `;
+
+// ===== VSLs (Supabase REST) =====
+const SB_URL='https://kykudpqqrkigbpkkyren.supabase.co/rest/v1';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt5a3VkcHFxcmtpZ2Jwa2t5cmVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODczNzY5NDcsImV4cCI6MjEwMjk1Mjk0N30.5dzF7jaBUNeU-khjDWlI96fE-64I2ncuyhYnWV7qSZ4';
+const sbHeaders={'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=representation'};
+
+const VSL_STATUS={pendente:{label:'Pendente',color:'var(--text-3)',bg:'var(--bg-3)'},baixado:{label:'Baixado',color:'var(--accent)',bg:'var(--accent-bg)'},transcrito:{label:'Transcrito',color:'var(--green)',bg:'var(--green-bg)'},dissecado:{label:'Dissecado',color:'var(--purple)',bg:'var(--purple-bg)'}};
+
+let vslsLoaded=false;
+
+async function loadVsls(){
+  const list=document.getElementById('vsl-list');
+  const empty=document.getElementById('vsl-empty');
+  list.innerHTML='<div style="text-align:center;padding:20px;color:var(--text-3)">Carregando...</div>';
+  try{
+    const r=await fetch(SB_URL+'/spy_vsls?order=created_at.desc',{headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}});
+    if(!r.ok)throw new Error(r.status+' '+r.statusText);
+    const data=await r.json();
+    const badge=document.getElementById('vsls-count-badge');
+    if(badge)badge.textContent=data.length;
+    if(!data.length){list.innerHTML='';empty.style.display='block';return;}
+    empty.style.display='none';
+    list.innerHTML=data.map(v=>{
+      const st=VSL_STATUS[v.status]||VSL_STATUS.pendente;
+      const domain=v.domain||extractDomain(v.url);
+      return '<div style="background:var(--bg-2);border:1px solid var(--border);border-radius:8px;padding:14px 16px">'
+        +'<div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:8px">'
+        +'<div style="flex:1;min-width:200px">'
+        +'<div style="font-size:13px;font-weight:600;margin-bottom:4px">'+escHtml(v.page_name)+'</div>'
+        +'<div style="font-size:12px;color:var(--text-2);word-break:break-all">'+escHtml(v.url)+'</div>'
+        +(domain?'<div style="font-size:11px;color:var(--text-3);margin-top:2px">'+escHtml(domain)+'</div>':'')
+        +(v.notas?'<div style="font-size:11px;color:var(--text-3);margin-top:4px;font-style:italic">'+escHtml(v.notas)+'</div>':'')
+        +'</div>'
+        +'<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'
+        +'<span style="display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;background:'+st.bg+';color:'+st.color+'">'+st.label+'</span>'
+        +'<select onchange="atualizarVslStatus('+v.id+',this.value)" style="padding:4px 8px;background:var(--bg-3);border:1px solid var(--border);border-radius:4px;color:var(--text-2);font-size:11px;font-family:inherit">'
+        +'<option value="">Mudar status</option>'
+        +'<option value="pendente">Pendente</option>'
+        +'<option value="baixado">Baixado</option>'
+        +'<option value="transcrito">Transcrito</option>'
+        +'<option value="dissecado">Dissecado</option>'
+        +'</select>'
+        +'<button onclick="copiarUrl(\''+escHtml(v.url).replace(/'/g,"\\'")+'\')" style="padding:4px 10px;background:var(--bg-3);border:1px solid var(--border);border-radius:4px;color:var(--text-2);font-size:11px;cursor:pointer;font-family:inherit" title="Copiar URL pra colar no Baixar_Videos_Vturb.exe">Copiar URL</button>'
+        +'<button onclick="excluirVsl('+v.id+')" style="padding:4px 10px;background:var(--red-bg);border:1px solid transparent;border-radius:4px;color:var(--red);font-size:11px;cursor:pointer;font-family:inherit">Excluir</button>'
+        +'</div>'
+        +'</div>'
+        +'<div style="font-size:10px;color:var(--text-4);margin-top:6px">'+new Date(v.created_at).toLocaleDateString('pt-BR')+' '+new Date(v.created_at).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})+'</div>'
+        +'</div>';
+    }).join('');
+    vslsLoaded=true;
+  }catch(e){
+    list.innerHTML='<div style="text-align:center;padding:20px;color:var(--red)">Erro ao carregar: '+escHtml(e.message)+'. Verifique se a tabela spy_vsls existe no Supabase.</div>';
+  }
+}
+
+function extractDomain(url){try{return new URL(url).hostname}catch(e){return ''}}
+
+async function salvarVsl(){
+  const url=document.getElementById('vsl-url').value.trim();
+  const page=document.getElementById('vsl-page').value;
+  const notas=document.getElementById('vsl-notas').value.trim();
+  if(!url){alert('Cole a URL da landing page');return;}
+  if(!page){alert('Selecione a pagina do concorrente');return;}
+  const btn=document.getElementById('vsl-save-btn');
+  btn.textContent='Salvando...';btn.disabled=true;
+  try{
+    const body={url:url,page_name:page,domain:extractDomain(url),notas:notas||null,status:'pendente'};
+    const r=await fetch(SB_URL+'/spy_vsls',{method:'POST',headers:sbHeaders,body:JSON.stringify(body)});
+    if(!r.ok){const t=await r.text();throw new Error(r.status+': '+t);}
+    document.getElementById('vsl-url').value='';
+    document.getElementById('vsl-notas').value='';
+    loadVsls();
+  }catch(e){alert('Erro ao salvar: '+e.message);}
+  finally{btn.textContent='Salvar';btn.disabled=false;}
+}
+
+async function atualizarVslStatus(id,status){
+  if(!status)return;
+  try{
+    const r=await fetch(SB_URL+'/spy_vsls?id=eq.'+id,{method:'PATCH',headers:sbHeaders,body:JSON.stringify({status:status,updated_at:new Date().toISOString()})});
+    if(!r.ok)throw new Error(r.status);
+    loadVsls();
+  }catch(e){alert('Erro ao atualizar: '+e.message);}
+}
+
+async function excluirVsl(id){
+  if(!confirm('Excluir esta VSL do registro?'))return;
+  try{
+    const r=await fetch(SB_URL+'/spy_vsls?id=eq.'+id,{method:'DELETE',headers:{apikey:SB_KEY,Authorization:'Bearer '+SB_KEY}});
+    if(!r.ok)throw new Error(r.status);
+    loadVsls();
+  }catch(e){alert('Erro ao excluir: '+e.message);}
+}
+
+function copiarUrl(url){navigator.clipboard.writeText(url).then(()=>{const t=event.target;t.textContent='Copiado!';setTimeout(()=>t.textContent='Copiar URL',1500)}).catch(()=>prompt('Copie manualmente:',url));}
 </script>
