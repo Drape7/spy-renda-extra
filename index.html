@@ -853,7 +853,7 @@ document.getElementById('kpi-grid').innerHTML=kpis.map(k=>`
     <div class="kpi-label">${k.label}</div>
     <div style="font-size:10px;color:var(--text-4);margin-top:4px;line-height:1.3">${k.desc}</div>
     ${k.link?`<a href="${k.link}" target="_blank" style="display:inline-block;margin-top:6px;font-size:10px;color:var(--accent);text-decoration:none;border:1px solid var(--border);border-radius:4px;padding:2px 8px">${k.linkLabel} &#8599;</a>`:''}
-    ${k.navTo?`<a href="#" onclick="event.preventDefault();document.querySelectorAll('.section').forEach(s=>s.style.display='none');document.getElementById('sec-${k.navTo}').style.display='block';document.getElementById('sec-${k.navTo}').scrollIntoView({behavior:'smooth'})" style="display:inline-block;margin-top:6px;font-size:10px;color:var(--accent);text-decoration:none;border:1px solid var(--border);border-radius:4px;padding:2px 8px">${k.linkLabel} &#9654;</a>`:''}
+    ${k.navTo?`<a href="#" onclick="event.preventDefault();document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.getElementById('sec-${k.navTo}').classList.add('active');document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));document.querySelector('.nav-item[data-section=${k.navTo}]').classList.add('active');document.getElementById('sec-${k.navTo}').scrollIntoView({behavior:'smooth'})" style="display:inline-block;margin-top:6px;font-size:10px;color:var(--accent);text-decoration:none;border:1px solid var(--border);border-radius:4px;padding:2px 8px">${k.linkLabel} &#9654;</a>`:''}
   </div>
 `).join('');
 
