@@ -439,7 +439,8 @@ canvas{width:100%!important;display:block}
       <div class="nav-section">Discovery</div>
       <div class="nav-item" data-section="discovery"><span class="icon">&#127919;</span>Concorrentes<span class="nav-badge">14</span></div>
       <div class="nav-item" data-section="keywords"><span class="icon">&#128270;</span>Keywords<span class="nav-badge">19/89</span></div>
-      <div class="nav-item" data-section="vsls"><span class="icon">&#127909;</span>VSLs<span class="nav-badge" id="vsls-count-badge">0</span></div>
+      <div class="nav-item" data-section="vsls"><span class="icon">&#127909;</span>Extrair VSL<span class="nav-badge" id="vsls-count-badge">0</span></div>
+      <div class="nav-item" data-section="vsl-swipe"><span class="icon">&#127916;</span>Swipe de VSLs</div>
       <div class="nav-section">Sistema</div>
       <div class="nav-item" data-section="config"><span class="icon">&#9881;</span>Configuracoes</div>
     </nav>
@@ -630,11 +631,13 @@ canvas{width:100%!important;display:block}
         <div id="vsl-list" style="display:grid;gap:12px"></div>
         <div id="vsl-empty" style="text-align:center;padding:40px 20px;color:var(--text-3);font-size:13px;display:none">Nenhuma VSL registrada. Cole a URL de uma landing page acima.</div>
 
-        <div style="margin-top:32px;border-top:2px solid var(--border);padding-top:24px">
-          <h3 style="font-size:15px;font-weight:700;margin-bottom:4px;color:var(--text-1)">Swipe de VSLs</h3>
-          <p style="font-size:12px;color:var(--text-3);margin-bottom:16px;line-height:1.4">Assista as VSLs dos concorrentes e leia a transcricao lado a lado. Videos via CDN Vturb (streaming direto).</p>
-          <div id="vsl-swipe" style="display:grid;gap:24px"></div>
-        </div>
+      </div>
+
+      <!-- ===== SWIPE DE VSLS ===== -->
+      <div class="section" id="sec-vsl-swipe">
+        <h3 style="font-size:15px;font-weight:700;margin-bottom:4px;color:var(--text-1)">Swipe de VSLs</h3>
+        <p style="font-size:12px;color:var(--text-3);margin-bottom:16px;line-height:1.4">Assista as VSLs dos concorrentes e leia a transcricao lado a lado. Videos via CDN Vturb (streaming direto).</p>
+        <div id="vsl-swipe" style="display:grid;gap:24px"></div>
       </div>
 
       <!-- ===== CONFIG ===== -->
@@ -901,6 +904,7 @@ document.querySelectorAll('.nav-item[data-section]').forEach(item=>{
     document.getElementById('topbar-title').textContent=item.textContent.trim().replace(/[0-9]+$/,'').replace('LIVE','').trim();
     if(item.dataset.section==='charts')setTimeout(initCharts,50);
     if(item.dataset.section==='vsls')loadVsls();
+    if(item.dataset.section==='vsl-swipe')loadVslSwipeTab();
     document.getElementById('sidebar').classList.remove('open');
   });
 });
@@ -1918,13 +1922,30 @@ async function loadVsls(){
         +'</div>';
     }).join('');
     vslsLoaded=true;
-    loadVslSwipe(data);
+    _vslData=data;
+    _swipeLoaded=false;
   }catch(e){
     list.innerHTML='<div style="text-align:center;padding:20px;color:var(--red)">Erro ao carregar: '+escHtml(e.message)+'</div>';
   }
 }
 
+let _vslData=null;
+let _swipeLoaded=false;
 let _swipeVsls=[];
+async function loadVslSwipeTab(){
+  if(_swipeLoaded)return;
+  if(_vslData){loadVslSwipe(_vslData);_swipeLoaded=true;return;}
+  const container=document.getElementById('vsl-swipe');
+  if(container)container.innerHTML='<div style="text-align:center;padding:20px;color:var(--text-3)">Carregando...</div>';
+  try{
+    const r=await fetch(SB_URL+'/spy_vsls?order=page_name.asc,created_at.desc',{headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}});
+    if(!r.ok)throw new Error(r.status);
+    const data=await r.json();
+    _vslData=data;
+    loadVslSwipe(data);
+    _swipeLoaded=true;
+  }catch(e){if(container)container.innerHTML='<div style="text-align:center;padding:20px;color:var(--red)">Erro: '+escHtml(e.message)+'</div>';}
+}
 function copiarLinkVideo(url){
   navigator.clipboard.writeText(url).then(()=>{
     const toast=document.createElement('div');
@@ -2030,5 +2051,5 @@ async function excluirVsl(id){
     loadVsls();
   }catch(e){alert('Erro ao excluir: '+e.message);}
 }
-document.addEventListener('DOMContentLoaded',function(){var v=document.createElement('div');v.style.cssText='position:fixed;bottom:4px;right:8px;font-size:9px;color:var(--text-4);opacity:.5;pointer-events:none;z-index:1';v.textContent='v24';document.body.appendChild(v)});
+document.addEventListener('DOMContentLoaded',function(){var v=document.createElement('div');v.style.cssText='position:fixed;bottom:4px;right:8px;font-size:9px;color:var(--text-4);opacity:.5;pointer-events:none;z-index:1';v.textContent='v25';document.body.appendChild(v)});
 </script>
