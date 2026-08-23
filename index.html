@@ -1499,6 +1499,7 @@ if(ek)ek.innerHTML=[
 {label:'Testes (<7d)',value:testes,color:'var(--orange)',bg:'var(--orange-bg)',sub:'Recem lancados'},
 {label:'Rondas',value:3,color:'var(--cyan)',bg:'var(--cyan-bg)',sub:'22/ago/2026'}
 ].map(k=>'<div class="kpi"><div class="kpi-top"><div class="kpi-icon" style="background:'+k.bg+';color:'+k.color+'">&#9679;</div><div class="kpi-trend neutral">'+k.sub+'</div></div><div class="kpi-value" style="color:'+k.color+'">'+k.value+'</div><div class="kpi-label">'+k.label+'</div></div>').join('');
+const deltaPageIds={'Elida Digital':'879705961901136','Elida Empreendedora':'110024568187997','Rafaela Chagas':'108726887198665','Natalia Beauty':'347189425772727','For Traders':'712240488633970'};
 const dg=document.getElementById('delta-grid');
 if(dg)dg.innerHTML=ROUND_DELTAS.map(function(p){
 const rounds=p.rounds;let rows='';
@@ -1509,7 +1510,9 @@ const sign=delta>0?'+':'';
 rows+='<div class="delta-row"><span class="delta-label">'+rounds[i].r+'</span><span class="delta-val">'+rounds[i].c+' ads</span>'+(delta!==null?'<span class="delta-val '+cls+'">'+sign+delta+'</span>':'<span class="delta-val delta-same">base</span>')+'</div>';
 }
 rows+='<div class="delta-row" style="margin-top:6px;padding-top:6px;border-top:2px solid var(--border)"><span class="delta-label" style="font-weight:600">Unicos extraidos</span><span class="delta-val" style="color:var(--green)">'+rounds[rounds.length-1].u+'</span></div>';
-return '<div class="delta-card"><div class="delta-name">'+p.name+'</div>'+rows+'</div>';
+var dpid=deltaPageIds[p.name];
+var nameHtml=dpid?'<a href="https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=BR&view_all_page_id='+dpid+'&search_type=page" target="_blank" style="color:inherit;text-decoration:none" title="Abrir biblioteca de anuncios">'+p.name+' &#128279;</a>':p.name;
+return '<div class="delta-card"><div class="delta-name">'+nameHtml+'</div>'+rows+'</div>';
 }).join('');
 const pageOrder=['Rafaela Chagas','For Traders Global','Elida Dias','Natalia Beauty','Elida Digital'];
 const ep=document.getElementById('evo-pages');
