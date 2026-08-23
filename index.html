@@ -875,7 +875,7 @@ document.getElementById('insights-banner').innerHTML=`
 const sorted=[...PAGES].sort((a,b)=>b.score-a.score);
 document.getElementById('ranking-table').innerHTML=`
   <div class="ranking-header"><h3>Ranking por Scale Score</h3><span style="font-size:11px;color:var(--text-3);font-family:'JetBrains Mono',monospace">Formula: (ads x 2) + (variacoes x 1.5)</span></div>
-  <table><thead><tr><th style="width:50px">#</th><th>Pagina</th><th>Ads</th><th>Dias</th><th>Videos</th><th>Status</th><th>Sinal</th><th>Scale Score</th><th style="min-width:140px">Barra</th><th>Biblioteca</th></tr></thead>
+  <div style="overflow-x:auto"><table><thead><tr><th style="width:50px">#</th><th>Pagina</th><th>Ads</th><th>Dias</th><th>Videos</th><th>Status</th><th>Sinal</th><th>Scale Score</th><th style="min-width:120px">Barra</th><th style="min-width:100px">Biblioteca</th></tr></thead>
   <tbody>${sorted.map((p,i)=>{
     const pct=maxScore>0?Math.round(p.score/maxScore*100):0;
     const sinal=p.dias>=30?{t:'CONTROLE',c:'controle'}:p.dias>=7?{t:'VALIDANDO',c:'teste'}:p.dias>0?{t:'NOVO',c:'novo'}:{t:'INATIVO',c:'pausado'};
@@ -891,7 +891,7 @@ document.getElementById('ranking-table').innerHTML=`
       <td><div class="score-bar"><div class="score-fill" style="width:${pct}%;background:${p.color}"></div></div></td>
       <td><a href="https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=BR&view_all_page_id=${p.pageId}&search_type=page" target="_blank" style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;background:var(--accent-bg);color:var(--accent);border-radius:6px;font-size:11px;font-weight:600;text-decoration:none;white-space:nowrap;border:1px solid var(--accent)" title="Abrir biblioteca de anuncios">&#128269; Ad Library</a></td>
     </tr>`;
-  }).join('')}</tbody></table>
+  }).join('')}</tbody></table></div>
 `;
 
 // ===== HEATMAP =====
