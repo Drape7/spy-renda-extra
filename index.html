@@ -390,6 +390,8 @@ canvas{width:100%!important;display:block}
 .evo-highlight-sub{font-size:12px;color:var(--text-3);margin-bottom:12px}
 .evo-highlight-id{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--accent);text-decoration:none;display:block;margin-bottom:8px}
 .evo-highlight-id:hover{text-decoration:underline}
+.evo-highlight-media,.evo-ph-media{display:inline-block;font-size:10px;padding:2px 8px;background:var(--purple-bg,var(--accent-bg));color:var(--purple,var(--accent));border-radius:4px;text-decoration:none;margin-left:6px;font-weight:600}
+.evo-highlight-media:hover,.evo-ph-media:hover{opacity:.8;text-decoration:none}
 .evo-highlight-meta{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--text-3)}
 .evo-highlight-meta span{padding:3px 8px;background:var(--bg-3);border-radius:5px}
 .evo-page-highlights{margin-bottom:28px}
@@ -707,6 +709,7 @@ const EXISTING_MEDIA=new Set([
 ]);
 function mediaUrl(page,adId,ext){const s=PAGE_SLUGS[page];if(!s)return null;const key=s+'/'+adId+'.'+ext;if(!EXISTING_MEDIA.has(key))return null;return SUPABASE_BASE+'/'+s+'/'+adId+'.'+ext}
 function safeAdUrl(page,adId){var s=PAGE_SLUGS[page];var has=s&&(EXISTING_MEDIA.has(s+'/'+adId+'.jpg')||EXISTING_MEDIA.has(s+'/'+adId+'.mp4'));if(has)return 'https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=BR&id='+adId;var pg=PAGES.find(function(p){return p.name===page});return 'https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=BR&view_all_page_id='+(pg?pg.pageId:'')}
+function bestMediaUrl(page,adId){var s=PAGE_SLUGS[page];if(!s)return null;if(EXISTING_MEDIA.has(s+'/'+adId+'.mp4'))return SUPABASE_BASE+'/'+s+'/'+adId+'.mp4';if(EXISTING_MEDIA.has(s+'/'+adId+'.jpg'))return SUPABASE_BASE+'/'+s+'/'+adId+'.jpg';return null}
 
 const RAFAELA_COPY=`Muitas pessoas buscam uma forma de gerar renda online, mas o desafio é encontrar algo que funcione de verdade — sem precisar aparecer, sem ter seguidores, sem investir alto.
 
@@ -1571,14 +1574,14 @@ if(hlEl)hlEl.innerHTML=
 '<div class="evo-highlight-tag" style="background:var(--green-bg);color:var(--green)">&#9733; Maior Longevidade</div>'+
 '<div class="evo-highlight-value" style="color:var(--green)">'+topLong.dias+'d</div>'+
 '<div class="evo-highlight-sub">No ar desde o inicio do monitoramento'+(topLongCount>1?' ('+topLongCount+' ads empatados)':'')+'</div>'+
-'<a class="evo-highlight-id" href="'+safeAdUrl(topLong.page,topLong.id)+'" target="_blank">ID: '+topLong.id+'</a>'+
+'<a class="evo-highlight-id" href="'+safeAdUrl(topLong.page,topLong.id)+'" target="_blank">ID: '+topLong.id+'</a>'+(bestMediaUrl(topLong.page,topLong.id)?'<a class="evo-highlight-media" href="'+bestMediaUrl(topLong.page,topLong.id)+'" target="_blank">&#9654; Ver Criativo</a>':'')+
 '<div class="evo-highlight-meta"><span>'+topLong.page+'</span><span class="class-'+clsLong.cls+'">'+clsLong.label+'</span><span>'+topLong.vars+' variante'+(topLong.vars>1?'s':'')+'</span></div>'+
 '</div>'+
 '<div class="evo-highlight evo-highlight-variants">'+
 '<div class="evo-highlight-tag" style="background:var(--purple-bg,var(--accent-bg));color:var(--purple,var(--accent))">&#9881; Mais Duplicatas/Variantes</div>'+
 '<div class="evo-highlight-value" style="color:var(--purple,var(--accent))">'+topVars.vars+'v</div>'+
 '<div class="evo-highlight-sub">Maior numero de versoes do mesmo criativo'+(topVarsCount>1?' ('+topVarsCount+' ads com '+topVars.vars+' variantes)':'')+'</div>'+
-'<a class="evo-highlight-id" href="'+safeAdUrl(topVars.page,topVars.id)+'" target="_blank">ID: '+topVars.id+'</a>'+
+'<a class="evo-highlight-id" href="'+safeAdUrl(topVars.page,topVars.id)+'" target="_blank">ID: '+topVars.id+'</a>'+(bestMediaUrl(topVars.page,topVars.id)?'<a class="evo-highlight-media" href="'+bestMediaUrl(topVars.page,topVars.id)+'" target="_blank">&#9654; Ver Criativo</a>':'')+
 '<div class="evo-highlight-meta"><span>'+topVars.page+'</span><span class="class-'+clsVars.cls+'">'+clsVars.label+'</span><span>'+topVars.dias+'d ativo</span></div>'+
 '</div>';
 // PER-PAGE HIGHLIGHTS
@@ -1597,8 +1600,8 @@ var clL=classify(topL.dias);
 var clV=classify(topV.dias);
 return '<div class="evo-ph-card '+phBorderCls[pName]+'">'+
 '<div class="evo-ph-name"><div class="ph-color" style="background:'+phColors[pName]+'"></div>'+pName+' <span style="font-weight:400;font-size:11px;color:var(--text-3)">('+ads.length+' ads)</span></div>'+
-'<div class="evo-ph-row"><div><div class="evo-ph-label" style="color:var(--green)">Maior Longevidade</div><div class="evo-ph-val" style="color:var(--green)">'+topL.dias+'d</div><a class="evo-ph-id" href="'+safeAdUrl(pName,topL.id)+'" target="_blank">'+topL.id+'</a></div><div style="text-align:right"><span class="evo-ph-class class-'+clL.cls+'">'+clL.label+'</span><div style="font-size:10px;color:var(--text-3);margin-top:4px">'+topL.vars+'v</div></div></div>'+
-'<div class="evo-ph-row"><div><div class="evo-ph-label" style="color:var(--purple,var(--accent))">Mais Variantes</div><div class="evo-ph-val" style="color:var(--purple,var(--accent))">'+topV.vars+'v</div><a class="evo-ph-id" href="'+safeAdUrl(pName,topV.id)+'" target="_blank">'+topV.id+'</a></div><div style="text-align:right"><span class="evo-ph-class class-'+clV.cls+'">'+clV.label+'</span><div style="font-size:10px;color:var(--text-3);margin-top:4px">'+topV.dias+'d</div></div></div>'+
+'<div class="evo-ph-row"><div><div class="evo-ph-label" style="color:var(--green)">Maior Longevidade</div><div class="evo-ph-val" style="color:var(--green)">'+topL.dias+'d</div><a class="evo-ph-id" href="'+safeAdUrl(pName,topL.id)+'" target="_blank">'+topL.id+'</a>'+(bestMediaUrl(pName,topL.id)?'<a class="evo-ph-media" href="'+bestMediaUrl(pName,topL.id)+'" target="_blank">&#9654; Ver Criativo</a>':'')+'</div><div style="text-align:right"><span class="evo-ph-class class-'+clL.cls+'">'+clL.label+'</span><div style="font-size:10px;color:var(--text-3);margin-top:4px">'+topL.vars+'v</div></div></div>'+
+'<div class="evo-ph-row"><div><div class="evo-ph-label" style="color:var(--purple,var(--accent))">Mais Variantes</div><div class="evo-ph-val" style="color:var(--purple,var(--accent))">'+topV.vars+'v</div><a class="evo-ph-id" href="'+safeAdUrl(pName,topV.id)+'" target="_blank">'+topV.id+'</a>'+(bestMediaUrl(pName,topV.id)?'<a class="evo-ph-media" href="'+bestMediaUrl(pName,topV.id)+'" target="_blank">&#9654; Ver Criativo</a>':'')+'</div><div style="text-align:right"><span class="evo-ph-class class-'+clV.cls+'">'+clV.label+'</span><div style="font-size:10px;color:var(--text-3);margin-top:4px">'+topV.dias+'d</div></div></div>'+
 '</div>';
 }).join('')+'</div>';
 }
