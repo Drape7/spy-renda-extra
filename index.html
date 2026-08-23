@@ -391,6 +391,24 @@ canvas{width:100%!important;display:block}
 .evo-highlight-id:hover{text-decoration:underline}
 .evo-highlight-meta{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--text-3)}
 .evo-highlight-meta span{padding:3px 8px;background:var(--bg-3);border-radius:5px}
+.evo-page-highlights{margin-bottom:28px}
+.evo-page-highlights h3{font-size:14px;font-weight:700;margin-bottom:12px}
+.evo-ph-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.evo-ph-card{background:var(--bg-2);border:1px solid var(--border);border-radius:12px;padding:16px;position:relative;overflow:hidden}
+.evo-ph-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.evo-ph-card-green::before{background:var(--green)}
+.evo-ph-card-orange::before{background:var(--orange)}
+.evo-ph-card-accent::before{background:var(--accent)}
+.evo-ph-card-yellow::before{background:var(--yellow)}
+.evo-ph-name{font-size:13px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.evo-ph-name .ph-color{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.evo-ph-row{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)}
+.evo-ph-row:last-child{border-bottom:none}
+.evo-ph-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-3);margin-bottom:2px}
+.evo-ph-val{font-size:18px;font-weight:900;font-family:'JetBrains Mono',monospace;line-height:1}
+.evo-ph-id{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--accent);text-decoration:none;display:block;margin-top:4px}
+.evo-ph-id:hover{text-decoration:underline}
+.evo-ph-class{font-size:10px;padding:2px 6px;border-radius:4px}
 </style>
 
 <div class="app">
@@ -472,6 +490,7 @@ canvas{width:100%!important;display:block}
         </div>
         <div class="kpi-grid" id="evo-kpis" style="grid-template-columns:repeat(6,1fr)"></div>
         <div class="evo-highlight-grid" id="evo-highlights"></div>
+        <div class="evo-page-highlights" id="evo-page-highlights"></div>
         <div class="evo-legend">
           <span style="font-weight:600;color:var(--text-3)">Classificacao:</span>
           <div class="evo-legend-item"><div class="evo-legend-dot" style="background:var(--green)"></div>Veterano (100+d)</div>
@@ -800,7 +819,7 @@ document.getElementById('ranking-table').innerHTML=`
     const sinal=p.dias>=30?{t:'CONTROLE',c:'controle'}:p.dias>=7?{t:'VALIDANDO',c:'teste'}:p.dias>0?{t:'NOVO',c:'novo'}:{t:'INATIVO',c:'pausado'};
     return`<tr>
       <td><div class="rank-num rank-${i+1}">${i+1}</div></td>
-      <td><div class="page-info"><span class="page-name">${p.name}</span><span class="page-domain">${p.domain}</span></div></td>
+      <td><div class="page-info"><a href="https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=BR&view_all_page_id=${p.pageId}&search_type=page" target="_blank" class="page-name" style="text-decoration:none;color:inherit" title="Ver na Ad Library">${p.name}</a><span class="page-domain">${p.domain}</span></div></td>
       <td style="font-weight:700">${p.ads}</td>
       <td class="mono">${p.dias}d</td>
       <td>${p.videos}</td>
@@ -940,7 +959,7 @@ function renderRows(ads){
     </td>`:'<td style="font-size:10px;color:var(--text-3)">-</td>';
     return `<tr>
     <td style="font-weight:600">${a.page}</td>
-    <td class="mono" style="font-size:11px">${a.id}</td>
+    <td class="mono" style="font-size:11px"><a href="https://www.facebook.com/ads/library/?id=${a.id}" target="_blank" style="color:var(--accent);text-decoration:none" title="Abrir na Ad Library">${a.id}</a></td>
     <td>${a.date}</td>
     <td style="font-weight:700">${a.dias}d</td>
     <td><span class="type-chip type-${a.type.toLowerCase()}">${a.type}</span></td>
@@ -1381,6 +1400,27 @@ if(hlEl)hlEl.innerHTML=
 '<a class="evo-highlight-id" href="https://www.facebook.com/ads/library/?id='+topVars.id+'" target="_blank">ID: '+topVars.id+'</a>'+
 '<div class="evo-highlight-meta"><span>'+topVars.page+'</span><span class="class-'+clsVars.cls+'">'+clsVars.label+'</span><span>'+topVars.dias+'d ativo</span></div>'+
 '</div>';
+// PER-PAGE HIGHLIGHTS
+var phEl=document.getElementById('evo-page-highlights');
+if(phEl){
+var pageGroups={};
+allEvo.forEach(function(a){if(!pageGroups[a.page])pageGroups[a.page]=[];pageGroups[a.page].push(a)});
+var phOrder=['Elida Digital','Elida Dias','Rafaela Chagas','Natalia Beauty','For Traders Global'];
+var phColors={'Elida Digital':'var(--orange)','Elida Dias':'var(--orange)','Rafaela Chagas':'var(--green)','Natalia Beauty':'var(--yellow)','For Traders Global':'var(--green)'};
+var phBorderCls={'Elida Digital':'evo-ph-card-orange','Elida Dias':'evo-ph-card-orange','Rafaela Chagas':'evo-ph-card-green','Natalia Beauty':'evo-ph-card-yellow','For Traders Global':'evo-ph-card-green'};
+phEl.innerHTML='<h3>Destaques por Anunciante</h3><div class="evo-ph-grid">'+phOrder.map(function(pName){
+var ads=pageGroups[pName];if(!ads||!ads.length)return '';
+var topL=ads.reduce(function(best,a){return a.dias>best.dias?a:best},ads[0]);
+var topV=ads.reduce(function(best,a){return a.vars>best.vars?a:(a.vars===best.vars&&a.dias>best.dias?a:best)},ads[0]);
+var clL=classify(topL.dias);
+var clV=classify(topV.dias);
+return '<div class="evo-ph-card '+phBorderCls[pName]+'">'+
+'<div class="evo-ph-name"><div class="ph-color" style="background:'+phColors[pName]+'"></div>'+pName+' <span style="font-weight:400;font-size:11px;color:var(--text-3)">('+ads.length+' ads)</span></div>'+
+'<div class="evo-ph-row"><div><div class="evo-ph-label" style="color:var(--green)">Maior Longevidade</div><div class="evo-ph-val" style="color:var(--green)">'+topL.dias+'d</div><a class="evo-ph-id" href="https://www.facebook.com/ads/library/?id='+topL.id+'" target="_blank">'+topL.id+'</a></div><div style="text-align:right"><span class="evo-ph-class class-'+clL.cls+'">'+clL.label+'</span><div style="font-size:10px;color:var(--text-3);margin-top:4px">'+topL.vars+'v</div></div></div>'+
+'<div class="evo-ph-row"><div><div class="evo-ph-label" style="color:var(--purple,var(--accent))">Mais Variantes</div><div class="evo-ph-val" style="color:var(--purple,var(--accent))">'+topV.vars+'v</div><a class="evo-ph-id" href="https://www.facebook.com/ads/library/?id='+topV.id+'" target="_blank">'+topV.id+'</a></div><div style="text-align:right"><span class="evo-ph-class class-'+clV.cls+'">'+clV.label+'</span><div style="font-size:10px;color:var(--text-3);margin-top:4px">'+topV.dias+'d</div></div></div>'+
+'</div>';
+}).join('')+'</div>';
+}
 const ek=document.getElementById('evo-kpis');
 if(ek)ek.innerHTML=[
 {label:'Total Unicos',value:90,color:'var(--accent)',bg:'var(--accent-bg)',sub:'5 paginas'},
