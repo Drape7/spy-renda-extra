@@ -1,3 +1,4 @@
+<meta charset="utf-8">
 <title>Spy Dashboard</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
@@ -587,7 +588,7 @@ canvas{width:100%!important;display:block}
       <div class="section" id="sec-vsls">
         <div style="margin-bottom:20px">
           <h3 style="font-size:14px;font-weight:700;margin-bottom:4px">VSLs Capturadas</h3>
-          <p style="font-size:12px;color:var(--text-3);margin-bottom:16px;line-height:1.4">Registre URLs de landing pages com VSLs Vturb dos concorrentes. Baixe o video com o Baixar_Videos_Vturb.exe, depois atualize o status aqui.</p>
+          <p style="font-size:12px;color:var(--text-3);margin-bottom:16px;line-height:1.4">Cole a URL de uma landing page com video Vturb e clique Extrair. O sistema identifica o video e baixa automaticamente.</p>
           <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:end">
             <div style="flex:1;min-width:280px">
               <label style="font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px">URL da Landing Page</label>
@@ -604,11 +605,24 @@ canvas{width:100%!important;display:block}
                 <option value="Natalia Beauty">Natalia Beauty</option>
               </select>
             </div>
-            <div style="min-width:140px">
-              <label style="font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px">Notas (opcional)</label>
-              <input id="vsl-notas" type="text" placeholder="ex: VSL principal" style="width:100%;padding:8px 12px;background:var(--bg-3);border:1px solid var(--border);border-radius:6px;color:var(--text-1);font-size:13px;font-family:inherit;outline:none" />
+            <button id="vsl-extract-btn" onclick="iniciarExtracao()" style="padding:8px 20px;background:var(--accent);color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;height:37px">Extrair Video</button>
+          </div>
+          <div id="vsl-extract-result" style="display:none;margin-top:16px;background:var(--bg-2);border:1px solid var(--border);border-radius:8px;padding:16px">
+            <div style="display:flex;gap:16px;align-items:start;flex-wrap:wrap">
+              <img id="vsl-thumb" style="width:140px;border-radius:6px;background:var(--bg-3)" />
+              <div style="flex:1;min-width:200px">
+                <div id="vsl-info" style="font-size:13px;color:var(--text-2);line-height:1.6"></div>
+                <div style="display:flex;gap:8px;margin-top:10px;align-items:center;flex-wrap:wrap">
+                  <select id="vsl-quality" style="padding:6px 10px;background:var(--bg-3);border:1px solid var(--border);border-radius:4px;color:var(--text-1);font-size:12px;font-family:inherit"></select>
+                  <button id="vsl-download-btn" onclick="iniciarDownload()" style="padding:6px 16px;background:var(--green);color:#fff;border:none;border-radius:4px;font-size:12px;font-weight:600;cursor:pointer">Baixar Video</button>
+                  <button onclick="document.getElementById('vsl-extract-result').style.display='none'" style="padding:6px 12px;background:var(--bg-3);border:1px solid var(--border);border-radius:4px;color:var(--text-3);font-size:12px;cursor:pointer">Cancelar</button>
+                </div>
+              </div>
             </div>
-            <button id="vsl-save-btn" onclick="salvarVsl()" style="padding:8px 20px;background:var(--accent);color:#fff;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;height:37px">Salvar</button>
+          </div>
+          <div id="vsl-download-progress" style="display:none;margin-top:12px">
+            <div style="background:var(--bg-3);border-radius:6px;height:8px;overflow:hidden"><div id="vsl-progress-bar" style="height:100%;background:var(--accent);width:0%;transition:width .2s"></div></div>
+            <div id="vsl-download-text" style="font-size:11px;color:var(--text-3);margin-top:4px;text-align:center"></div>
           </div>
         </div>
         <div id="vsl-list" style="display:grid;gap:10px"></div>
@@ -1657,14 +1671,127 @@ document.getElementById('config-grid').innerHTML=`
   </div>
 `;
 
-// ===== VSLs (Supabase REST) =====
+// ===== VSLs (Supabase REST + Vturb Download) =====
 const SB_URL='https://kykudpqqrkigbpkkyren.supabase.co/rest/v1';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt5a3VkcHFxcmtpZ2Jwa2t5cmVuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODczNzY5NDcsImV4cCI6MjEwMjk1Mjk0N30.5dzF7jaBUNeU-khjDWlI96fE-64I6ncuyhYnWV7qSZ4';
 const sbHeaders={'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=representation'};
-
 const VSL_STATUS={pendente:{label:'Pendente',color:'var(--text-3)',bg:'var(--bg-3)'},baixado:{label:'Baixado',color:'var(--accent)',bg:'var(--accent-bg)'},transcrito:{label:'Transcrito',color:'var(--green)',bg:'var(--green-bg)'},dissecado:{label:'Dissecado',color:'var(--purple)',bg:'var(--purple-bg)'}};
+const CDN_BASE='https://cdn.converteai.net';
+const CORS_PROXIES=[u=>'https://api.allorigins.win/raw?url='+encodeURIComponent(u),u=>'https://corsproxy.io/?url='+encodeURIComponent(u)];
 
 let vslsLoaded=false;
+let currentVturb=null;
+
+async function corsGet(url){
+  for(const proxy of CORS_PROXIES){
+    try{const r=await fetch(proxy(url));if(r.ok)return await r.text();}catch(e){}
+  }
+  throw new Error('Proxies CORS indisponiveis. Tente novamente.');
+}
+
+async function extrairVturb(lpUrl){
+  const html=await corsGet(lpUrl);
+  const m=html.match(/scripts\.converteai\.net\/([a-f0-9-]{36})\/(ab-test|players)\/([a-f0-9]{24})\/player\.js/);
+  if(!m)throw new Error('Video Vturb nao encontrado nesta pagina');
+  const accountId=m[1],configType=m[2],configId=m[3];
+  const playerJs=await corsGet('https://scripts.converteai.net/'+accountId+'/'+configType+'/'+configId+'/player.js');
+  const vm=playerJs.match(/,id:"([a-f0-9]{24})",aspectRatio/);
+  if(!vm)throw new Error('ID do video nao encontrado no player');
+  const videoId=vm[1];
+  const qualities=[];
+  for(const q of['360p','480p','720p','1080p']){
+    try{const r=await fetch(CDN_BASE+'/'+accountId+'/'+videoId+'/video/'+q+'/segment_0.ts',{method:'HEAD'});if(r.ok)qualities.push(q);}catch(e){}
+  }
+  if(!qualities.length)throw new Error('Nenhuma qualidade de video acessivel');
+  const best=qualities[qualities.length-1];
+  let lo=0,hi=2000;
+  while(lo<hi){const mid=Math.floor((lo+hi)/2);try{const r=await fetch(CDN_BASE+'/'+accountId+'/'+videoId+'/video/'+best+'/segment_'+mid+'.ts',{method:'HEAD'});if(r.ok)lo=mid+1;else hi=mid;}catch(e){hi=mid;}}
+  const thumb=CDN_BASE+'/'+accountId+'/'+videoId+'/poster.jpg';
+  return{accountId,videoId,qualities,totalSegments:lo,thumbnail:thumb,bestQuality:best};
+}
+
+async function iniciarExtracao(){
+  const url=document.getElementById('vsl-url').value.trim();
+  const page=document.getElementById('vsl-page').value;
+  if(!url){alert('Cole a URL da landing page');return;}
+  if(!page){alert('Selecione a pagina do concorrente');return;}
+  const btn=document.getElementById('vsl-extract-btn');
+  btn.textContent='Extraindo...';btn.disabled=true;
+  document.getElementById('vsl-extract-result').style.display='none';
+  document.getElementById('vsl-download-progress').style.display='none';
+  try{
+    currentVturb=await extrairVturb(url);
+    currentVturb.lpUrl=url;
+    currentVturb.pageName=page;
+    document.getElementById('vsl-thumb').src=currentVturb.thumbnail;
+    const durEst=Math.round(currentVturb.totalSegments*10/60);
+    document.getElementById('vsl-info').innerHTML='<div style="font-weight:600;color:var(--text-1)">Video Vturb encontrado</div>'
+      +'<div>Segmentos: <strong>'+currentVturb.totalSegments+'</strong></div>'
+      +'<div>Duracao estimada: <strong>~'+durEst+' min</strong></div>'
+      +'<div>Qualidades: <strong>'+currentVturb.qualities.join(', ')+'</strong></div>';
+    const sel=document.getElementById('vsl-quality');
+    sel.innerHTML=currentVturb.qualities.map(q=>'<option value="'+q+'"'+(q===currentVturb.bestQuality?' selected':'')+'>'+q+'</option>').join('');
+    document.getElementById('vsl-extract-result').style.display='block';
+  }catch(e){alert('Erro na extracao: '+e.message);}
+  finally{btn.textContent='Extrair Video';btn.disabled=false;}
+}
+
+async function iniciarDownload(){
+  if(!currentVturb)return;
+  const quality=document.getElementById('vsl-quality').value;
+  const btn=document.getElementById('vsl-download-btn');
+  btn.textContent='Baixando...';btn.disabled=true;
+  const progDiv=document.getElementById('vsl-download-progress');
+  const progBar=document.getElementById('vsl-progress-bar');
+  const progText=document.getElementById('vsl-download-text');
+  progDiv.style.display='block';
+  const{accountId,videoId,totalSegments}=currentVturb;
+  const chunks=[];
+  const batchSize=6;
+  let downloaded=0;
+  try{
+    for(let i=0;i<totalSegments;i+=batchSize){
+      const batch=[];
+      for(let j=i;j<Math.min(i+batchSize,totalSegments);j++){
+        batch.push(fetch(CDN_BASE+'/'+accountId+'/'+videoId+'/video/'+quality+'/segment_'+j+'.ts').then(r=>{if(!r.ok)throw new Error('Seg '+j+' falhou');return r.arrayBuffer();}));
+      }
+      const results=await Promise.all(batch);
+      chunks.push(...results);
+      downloaded=Math.min(i+batchSize,totalSegments);
+      const pct=Math.round(downloaded/totalSegments*100);
+      progBar.style.width=pct+'%';
+      const sizeMB=Math.round(chunks.reduce((s,c)=>s+c.byteLength,0)/1048576);
+      progText.textContent='Segmento '+downloaded+'/'+totalSegments+' ('+pct+'%) - '+sizeMB+' MB';
+    }
+    progText.textContent='Montando arquivo...';
+    const blob=new Blob(chunks,{type:'video/mp2t'});
+    const domain=extractDomain(currentVturb.lpUrl).replace(/\./g,'-');
+    const fname=currentVturb.pageName.toLowerCase().replace(/\s+/g,'-')+'_'+domain+'_'+new Date().toISOString().slice(0,10)+'.ts';
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download=fname;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(a.href);
+    progText.textContent='Download concluido! '+Math.round(blob.size/1048576)+' MB - '+fname;
+    progBar.style.background='var(--green)';
+    await salvarVslRecord(currentVturb.lpUrl,currentVturb.pageName,'baixado',fname);
+    loadVsls();
+  }catch(e){
+    progText.textContent='Erro no download: '+e.message;
+    progBar.style.background='var(--red)';
+  }finally{btn.textContent='Baixar Video';btn.disabled=false;}
+}
+
+function extractDomain(url){try{return new URL(url).hostname}catch(e){return ''}}
+
+async function salvarVslRecord(url,pageName,status,filename){
+  try{
+    const body={url:url,page_name:pageName,domain:extractDomain(url),status:status||'pendente',video_filename:filename||null};
+    await fetch(SB_URL+'/spy_vsls',{method:'POST',headers:sbHeaders,body:JSON.stringify(body)});
+  }catch(e){}
+}
 
 async function loadVsls(){
   const list=document.getElementById('vsl-list');
@@ -1687,49 +1814,28 @@ async function loadVsls(){
         +'<div style="font-size:13px;font-weight:600;margin-bottom:4px">'+escHtml(v.page_name)+'</div>'
         +'<div style="font-size:12px;color:var(--text-2);word-break:break-all">'+escHtml(v.url)+'</div>'
         +(domain?'<div style="font-size:11px;color:var(--text-3);margin-top:2px">'+escHtml(domain)+'</div>':'')
-        +(v.notas?'<div style="font-size:11px;color:var(--text-3);margin-top:4px;font-style:italic">'+escHtml(v.notas)+'</div>':'')
+        +(v.video_filename?'<div style="font-size:11px;color:var(--accent);margin-top:2px">'+escHtml(v.video_filename)+'</div>':'')
         +'</div>'
         +'<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'
         +'<span style="display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;background:'+st.bg+';color:'+st.color+'">'+st.label+'</span>'
         +'<select onchange="atualizarVslStatus('+v.id+',this.value)" style="padding:4px 8px;background:var(--bg-3);border:1px solid var(--border);border-radius:4px;color:var(--text-2);font-size:11px;font-family:inherit">'
-        +'<option value="">Mudar status</option>'
-        +'<option value="pendente">Pendente</option>'
-        +'<option value="baixado">Baixado</option>'
-        +'<option value="transcrito">Transcrito</option>'
-        +'<option value="dissecado">Dissecado</option>'
-        +'</select>'
-        +'<button onclick="copiarUrl(\''+escHtml(v.url).replace(/'/g,"\\'")+'\')" style="padding:4px 10px;background:var(--bg-3);border:1px solid var(--border);border-radius:4px;color:var(--text-2);font-size:11px;cursor:pointer;font-family:inherit" title="Copiar URL pra colar no Baixar_Videos_Vturb.exe">Copiar URL</button>'
+        +'<option value="">Mudar status</option><option value="pendente">Pendente</option><option value="baixado">Baixado</option><option value="transcrito">Transcrito</option><option value="dissecado">Dissecado</option></select>'
+        +'<button onclick="redownloadVsl(\''+escHtml(v.url).replace(/'/g,"\\'")+'\',\''+escHtml(v.page_name).replace(/'/g,"\\'")+'\')" style="padding:4px 10px;background:var(--accent-bg);border:1px solid var(--accent);border-radius:4px;color:var(--accent);font-size:11px;cursor:pointer;font-family:inherit">Baixar</button>'
         +'<button onclick="excluirVsl('+v.id+')" style="padding:4px 10px;background:var(--red-bg);border:1px solid transparent;border-radius:4px;color:var(--red);font-size:11px;cursor:pointer;font-family:inherit">Excluir</button>'
-        +'</div>'
-        +'</div>'
+        +'</div></div>'
         +'<div style="font-size:10px;color:var(--text-4);margin-top:6px">'+new Date(v.created_at).toLocaleDateString('pt-BR')+' '+new Date(v.created_at).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})+'</div>'
         +'</div>';
     }).join('');
     vslsLoaded=true;
   }catch(e){
-    list.innerHTML='<div style="text-align:center;padding:20px;color:var(--red)">Erro ao carregar: '+escHtml(e.message)+'. Verifique se a tabela spy_vsls existe no Supabase.</div>';
+    list.innerHTML='<div style="text-align:center;padding:20px;color:var(--red)">Erro ao carregar: '+escHtml(e.message)+'</div>';
   }
 }
 
-function extractDomain(url){try{return new URL(url).hostname}catch(e){return ''}}
-
-async function salvarVsl(){
-  const url=document.getElementById('vsl-url').value.trim();
-  const page=document.getElementById('vsl-page').value;
-  const notas=document.getElementById('vsl-notas').value.trim();
-  if(!url){alert('Cole a URL da landing page');return;}
-  if(!page){alert('Selecione a pagina do concorrente');return;}
-  const btn=document.getElementById('vsl-save-btn');
-  btn.textContent='Salvando...';btn.disabled=true;
-  try{
-    const body={url:url,page_name:page,domain:extractDomain(url),notas:notas||null,status:'pendente'};
-    const r=await fetch(SB_URL+'/spy_vsls',{method:'POST',headers:sbHeaders,body:JSON.stringify(body)});
-    if(!r.ok){const t=await r.text();throw new Error(r.status+': '+t);}
-    document.getElementById('vsl-url').value='';
-    document.getElementById('vsl-notas').value='';
-    loadVsls();
-  }catch(e){alert('Erro ao salvar: '+e.message);}
-  finally{btn.textContent='Salvar';btn.disabled=false;}
+function redownloadVsl(url,pageName){
+  document.getElementById('vsl-url').value=url;
+  document.getElementById('vsl-page').value=pageName;
+  iniciarExtracao();
 }
 
 async function atualizarVslStatus(id,status){
@@ -1749,6 +1855,4 @@ async function excluirVsl(id){
     loadVsls();
   }catch(e){alert('Erro ao excluir: '+e.message);}
 }
-
-function copiarUrl(url){navigator.clipboard.writeText(url).then(()=>{const t=event.target;t.textContent='Copiado!';setTimeout(()=>t.textContent='Copiar URL',1500)}).catch(()=>prompt('Copie manualmente:',url));}
 </script>
