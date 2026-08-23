@@ -430,7 +430,7 @@ canvas{width:100%!important;display:block}
       <div class="nav-section">Analise</div>
       <div class="nav-item" data-section="charts"><span class="icon">&#9670;</span>Graficos</div>
       <div class="nav-item" data-section="timeline"><span class="icon">&#8986;</span>Timeline</div>
-      <div class="nav-item" data-section="reports"><span class="icon">&#128196;</span>Relatorios<span class="nav-badge" style="background:var(--cyan-bg);color:var(--cyan)">4</span></div>
+      <div class="nav-item" data-section="reports"><span class="icon">&#128196;</span>Relatorios<span class="nav-badge" style="background:var(--cyan-bg);color:var(--cyan)">6</span></div>
       <div class="nav-item" data-section="activity"><span class="icon">&#9889;</span>Atividade</div>
       <div class="nav-item" data-section="intel"><span class="icon">&#128373;</span>Intel Competitiva</div>
       <div class="nav-section">Discovery</div>
@@ -703,11 +703,11 @@ const EVO_DATA={
 ['817454878029508',30,3],['2000692073907891',30,3],['4580321805582607',30,2],['2142172746641854',26,1]]}
 };
 const ROUND_DELTAS=[
-{name:'Elida Digital',rounds:[{r:'Noite',c:0,u:0},{r:'06h',c:8,u:8},{r:'12h',c:8,u:8},{r:'12h-r4',c:7,u:8}]},
-{name:'Elida Empreendedora',rounds:[{r:'Noite',c:62,u:0},{r:'06h',c:85,u:0},{r:'12h',c:85,u:21},{r:'12h-r4',c:68,u:21}]},
-{name:'Rafaela Chagas',rounds:[{r:'Noite',c:26,u:0},{r:'06h',c:56,u:0},{r:'12h',c:56,u:26},{r:'12h-r4',c:56,u:26}]},
-{name:'Natalia Beauty',rounds:[{r:'Noite',c:10,u:0},{r:'06h',c:10,u:0},{r:'12h',c:10,u:7},{r:'12h-r4',c:12,u:7}]},
-{name:'For Traders',rounds:[{r:'Noite',c:84,u:0},{r:'06h',c:150,u:0},{r:'12h',c:150,u:28},{r:'12h-r4',c:150,u:28}]}
+{name:'Elida Digital',rounds:[{r:'Noite',c:0,u:0},{r:'06h',c:8,u:8},{r:'12h',c:8,u:8},{r:'12h-r4',c:7,u:8},{r:'18h',c:7,u:8},{r:'0h',c:5,u:8}]},
+{name:'Elida Empreendedora',rounds:[{r:'Noite',c:62,u:0},{r:'06h',c:85,u:0},{r:'12h',c:85,u:21},{r:'12h-r4',c:68,u:21},{r:'18h',c:65,u:21},{r:'0h',c:79,u:21}]},
+{name:'Rafaela Chagas',rounds:[{r:'Noite',c:26,u:0},{r:'06h',c:56,u:0},{r:'12h',c:56,u:26},{r:'12h-r4',c:56,u:26},{r:'18h',c:56,u:26},{r:'0h',c:56,u:26}]},
+{name:'Natalia Beauty',rounds:[{r:'Noite',c:10,u:0},{r:'06h',c:10,u:0},{r:'12h',c:10,u:7},{r:'12h-r4',c:12,u:7},{r:'18h',c:9,u:9},{r:'0h',c:9,u:9}]},
+{name:'For Traders',rounds:[{r:'Noite',c:84,u:0},{r:'06h',c:150,u:0},{r:'12h',c:150,u:28},{r:'12h-r4',c:150,u:28},{r:'18h',c:150,u:28},{r:'0h',c:150,u:28}]}
 ];
 
 function escHtml(s){if(!s)return '';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
@@ -974,7 +974,7 @@ function renderAdsTable(ads){
         <th data-s="dias">Dias Ativo</th><th data-s="type">Tipo</th><th>Dominio</th><th>Media</th><th>Link</th><th>Detalhes</th>
       </tr></thead><tbody id="ads-body"></tbody></table>
     </div>
-    <div class="table-footer"><span>Mostrando <span class="count" id="showing-count">${ads.length}</span> de ${allAds.length} ads</span><span>Ultima atualizacao: 22/ago/2026</span></div>
+    <div class="table-footer"><span>Mostrando <span class="count" id="showing-count">${ads.length}</span> de ${allAds.length} ads</span><span>Ultima atualizacao: 23/ago/2026</span></div>
   `;
   renderRows(ads);
   card.querySelectorAll('.filter-btn').forEach(btn=>{
@@ -1151,6 +1151,14 @@ window.addEventListener('resize',()=>setTimeout(initCharts,100));
 
 // ===== REPORTS DATA + RENDERING =====
 const ROUND_REPORTS=[
+{id:'r6',name:'Ronda 6 (0h)',date:'23/ago/2026',time:'01:00',tipo:'Manual',pages:5,ads:299,delta:12,novos:0,removidos:2,
+ highlights:'Pausa noturna Elida Digital (7->5, -2). INVERSAO Elida Empreendedora (65->79, +14). Estrategia dual horarios invertidos confirmada. Demais estaveis.',
+ filename:'2026-08-23-00h-ronda.md',
+ content:`# Ronda 6 (0h) - 23/08/2026\n\n**Horario:** ~01:00 BRT (23/ago)\n**Paginas visitadas:** 5/5\n**Ads totais:** 299\n**Delta vs r5 (18h 22/ago):** +12 (287 -> 299)\n**Ads novos identificados:** 0 confirmados\n**Ads removidos estimados:** 2 (Elida Digital, pausa noturna)\n\n---\n\n## Resumo por pagina\n\n### 1. Elida Dias - Digital (879705961901136)\n- **Ads ativos:** 5\n- **Delta:** -2 (7 -> 5)\n- **Dominio:** elidadias.blog\n- **IDs ativos:** 1597982658629188, 1088710530383841, 4026957884263156, 2926854784322391, 1036768035635998\n- **Obs:** Pausa noturna confirmada pela 2a noite consecutiva.\n\n### 2. Elida Dias - Empreendedora Digital (110024568187997)\n- **Ads ativos:** ~79\n- **Delta:** +14 (65 -> 79)\n- **Dominio:** inlead.digital\n- **Obs:** INVERSAO da tendencia de queda (85 -> 68 -> 65 -> agora 79). Reativacao noturna significativa. Exato oposto do padrao da Digital.\n\n### 3. Rafaela Chagas (108726887198665)\n- **Ads ativos:** 56\n- **Delta:** 0 (estavel)\n- **Dominio:** rafaelachagas.com.br\n- **Obs:** Estavel ha 5 rondas consecutivas.\n\n### 4. Natalia Beauty (347189425772727)\n- **Ads ativos:** 9\n- **Delta:** 0 (estavel)\n- **Dominio:** nataliabeauty.com.br\n\n### 5. For Traders Global (712240488633970)\n- **Ads ativos:** ~150 (country=ALL)\n- **Delta:** 0 (estavel)\n- **Dominio:** fortraders.com\n\n---\n\n## Tendencias\n\n1. **Estrategia dual Elida:** Digital = diurna (pausa noturna). Empreendedora = ativacao noturna (+14).\n2. **Estabilidade:** Rafaela, Natalia, ForTraders inalterados.\n\n## Evolucao completa\n\n| Pagina | Noite r1 | 06h r2 | 12h r3 | 12h-r4 | 18h r5 | 0h r6 |\n|--------|----------|--------|--------|--------|--------|-------|\n| Elida Digital | 0 | 8 | 8 | 7 | 7 | 5 |\n| Elida Empreendedora | 62 | 85 | 85 | 68 | 65 | 79 |\n| Rafaela Chagas | 26 | 56 | 56 | 56 | 56 | 56 |\n| Natalia Beauty | 10 | 10 | 10 | 12 | 9 | 9 |\n| For Traders | 84 | 150 | 150 | 150 | 150 | 150 |\n| **TOTAL** | **182** | **309** | **309** | **293** | **287** | **299** |\n`},
+{id:'r5',name:'Ronda 5 (18h)',date:'22/ago/2026',time:'18:00',tipo:'Manual',pages:5,ads:287,delta:-6,novos:2,removidos:8,
+ highlights:'Queda continua Elida Empreendedora: 68->65 (-3, acumulado -24% desde pico). Natalia -3 (2 novos + 5 removidos, alta rotatividade). Rafaela e ForTraders estaveis.',
+ filename:'2026-08-22-18h-ronda.md',
+ content:`# Ronda 5 (18h) - 22/08/2026\n\n**Horario:** ~00:30 BRT\n**Paginas visitadas:** 5/5\n**Ads totais:** 287\n**Delta vs r4 (12h):** -6 (293 -> 287)\n**Ads novos identificados:** 2 (Natalia Beauty)\n**Ads removidos estimados:** 8\n\n---\n\n## Resumo por pagina\n\n### 1. Elida Dias - Digital\n- **Ads ativos:** 7 (estavel)\n\n### 2. Elida Dias - Empreendedora Digital\n- **Ads ativos:** 65 (-3)\n- Continuidade da queda: 85 -> 68 -> 65. Acumulado -24% desde pico.\n\n### 3. Rafaela Chagas\n- **Ads ativos:** 56 (estavel)\n\n### 4. Natalia Beauty\n- **Ads ativos:** 9 (-3, 2 novos + ~5 removidos)\n- Novos: 1058734576740661, 1578975967285695\n\n### 5. For Traders Global\n- **Ads ativos:** ~150 (estavel)\n\n---\n\n## Evolucao do dia\n\n| Pagina | Noite | 06h | 12h | 12h-r4 | 18h |\n|--------|-------|-----|-----|--------|-----|\n| Elida Digital | 0 | 8 | 8 | 7 | 7 |\n| Elida Empreendedora | 62 | 85 | 85 | 68 | 65 |\n| Rafaela Chagas | 26 | 56 | 56 | 56 | 56 |\n| Natalia Beauty | 10 | 10 | 10 | 12 | 9 |\n| For Traders | 84 | 150 | 150 | 150 | 150 |\n| **TOTAL** | **182** | **309** | **309** | **293** | **287** |\n`},
 {id:'r4',name:'Ronda 4 (12h)',date:'22/ago/2026',time:'12:00',tipo:'Manual',pages:5,ads:293,delta:-16,novos:2,removidos:18,
  highlights:'Elida Empreendedora caiu 20% (85 para 68, -17 ads). Natalia +2 (novo dominio protocoloaura). Rafaela e ForTraders estaveis.',
  filename:'2026-08-22-12h-ronda.md',
@@ -1497,7 +1505,7 @@ if(ek)ek.innerHTML=[
 {label:'Campeoes (30-99d)',value:campeoes,color:'var(--accent)',bg:'var(--accent-bg)',sub:'Validados'},
 {label:'Validando (7-29d)',value:validando,color:'var(--yellow)',bg:'var(--yellow-bg)',sub:'Em avaliacao'},
 {label:'Testes (<7d)',value:testes,color:'var(--orange)',bg:'var(--orange-bg)',sub:'Recem lancados'},
-{label:'Rondas',value:3,color:'var(--cyan)',bg:'var(--cyan-bg)',sub:'22/ago/2026'}
+{label:'Rondas',value:6,color:'var(--cyan)',bg:'var(--cyan-bg)',sub:'23/ago/2026'}
 ].map(k=>'<div class="kpi"><div class="kpi-top"><div class="kpi-icon" style="background:'+k.bg+';color:'+k.color+'">&#9679;</div><div class="kpi-trend neutral">'+k.sub+'</div></div><div class="kpi-value" style="color:'+k.color+'">'+k.value+'</div><div class="kpi-label">'+k.label+'</div></div>').join('');
 const deltaPageIds={'Elida Digital':'879705961901136','Elida Empreendedora':'110024568187997','Rafaela Chagas':'108726887198665','Natalia Beauty':'347189425772727','For Traders':'712240488633970'};
 const dg=document.getElementById('delta-grid');
