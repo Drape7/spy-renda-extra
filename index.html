@@ -706,6 +706,7 @@ const EXISTING_MEDIA=new Set([
 'rafaela-chagas/1017470541264695.jpg','rafaela-chagas/1017470541264695.mp4','rafaela-chagas/1049820007699255.jpg','rafaela-chagas/1049820007699255.mp4','rafaela-chagas/1127101239329686.jpg','rafaela-chagas/1127101239329686.mp4','rafaela-chagas/1262329632343808.jpg','rafaela-chagas/1262329632343808.mp4','rafaela-chagas/1341961058035669.jpg','rafaela-chagas/1341961058035669.mp4','rafaela-chagas/1353146593043540.jpg','rafaela-chagas/1353146593043540.mp4','rafaela-chagas/1370999108304431.jpg','rafaela-chagas/1370999108304431.mp4','rafaela-chagas/1420441219634463.jpg','rafaela-chagas/1420441219634463.mp4','rafaela-chagas/1572626367931793.jpg','rafaela-chagas/1572626367931793.mp4','rafaela-chagas/1575751994144593.jpg','rafaela-chagas/1575751994144593.mp4','rafaela-chagas/1672401640476547.jpg','rafaela-chagas/1672401640476547.mp4','rafaela-chagas/1761777035261193.jpg','rafaela-chagas/1761777035261193.mp4','rafaela-chagas/1771588657420517.jpg','rafaela-chagas/1771588657420517.mp4','rafaela-chagas/1922072918468789.jpg','rafaela-chagas/1922072918468789.mp4','rafaela-chagas/2079731512578337.jpg','rafaela-chagas/2079731512578337.mp4','rafaela-chagas/2115079225723173.jpg','rafaela-chagas/2115079225723173.mp4','rafaela-chagas/2122806101665159.jpg','rafaela-chagas/2122806101665159.mp4','rafaela-chagas/2166725930750674.jpg','rafaela-chagas/2166725930750674.mp4','rafaela-chagas/27276214055404828.jpg','rafaela-chagas/27276214055404828.mp4','rafaela-chagas/3072452909573755.jpg','rafaela-chagas/3072452909573755.mp4','rafaela-chagas/3749889461811448.jpg','rafaela-chagas/3749889461811448.mp4','rafaela-chagas/4193833704188607.jpg','rafaela-chagas/4193833704188607.mp4','rafaela-chagas/723211677274469.jpg','rafaela-chagas/723211677274469.mp4','rafaela-chagas/846796631699751.jpg','rafaela-chagas/846796631699751.mp4','rafaela-chagas/854289290543531.jpg','rafaela-chagas/854289290543531.mp4','rafaela-chagas/927888070253355.jpg','rafaela-chagas/927888070253355.mp4'
 ]);
 function mediaUrl(page,adId,ext){const s=PAGE_SLUGS[page];if(!s)return null;const key=s+'/'+adId+'.'+ext;if(!EXISTING_MEDIA.has(key))return null;return SUPABASE_BASE+'/'+s+'/'+adId+'.'+ext}
+function safeAdUrl(page,adId){var s=PAGE_SLUGS[page];var has=s&&(EXISTING_MEDIA.has(s+'/'+adId+'.jpg')||EXISTING_MEDIA.has(s+'/'+adId+'.mp4'));if(has)return 'https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=BR&id='+adId;var pg=PAGES.find(function(p){return p.name===page});return 'https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=BR&view_all_page_id='+(pg?pg.pageId:'')}
 
 const RAFAELA_COPY=`Muitas pessoas buscam uma forma de gerar renda online, mas o desafio é encontrar algo que funcione de verdade — sem precisar aparecer, sem ter seguidores, sem investir alto.
 
@@ -813,7 +814,8 @@ function renderFullPanel(a,cc){
   h+='</div>';
   h+='<div style="flex:1;min-width:200px">';
   h+='<div class="cc-section" style="padding:0;border:0;margin:0">';
-  h+='<div><span class="cc-label">AD ID</span><a class="cc-url" href="https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=BR&id='+adId+'" target="_blank">'+adId+'</a></div>';
+  var panelRem=!thumbUrl&&!vidUrl;
+  h+='<div><span class="cc-label">AD ID</span><a class="cc-url" href="'+(panelRem?adLibPage:'https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=BR&id='+adId)+'" target="_blank">'+adId+(panelRem?' (removido)':'')+'</a></div>';
   h+='<div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:4px">';
   h+='<div><span class="cc-label">Data Inicio</span><div class="cc-val">'+escHtml(dateStr)+'</div></div>';
   h+='<div><span class="cc-label">Dias Rodando</span><div class="cc-val" style="font-weight:700;color:'+diasColor+'">'+diasVal+'d</div></div>';
@@ -1569,14 +1571,14 @@ if(hlEl)hlEl.innerHTML=
 '<div class="evo-highlight-tag" style="background:var(--green-bg);color:var(--green)">&#9733; Maior Longevidade</div>'+
 '<div class="evo-highlight-value" style="color:var(--green)">'+topLong.dias+'d</div>'+
 '<div class="evo-highlight-sub">No ar desde o inicio do monitoramento'+(topLongCount>1?' ('+topLongCount+' ads empatados)':'')+'</div>'+
-'<a class="evo-highlight-id" href="https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=BR&id='+topLong.id+'" target="_blank">ID: '+topLong.id+'</a>'+
+'<a class="evo-highlight-id" href="'+safeAdUrl(topLong.page,topLong.id)+'" target="_blank">ID: '+topLong.id+'</a>'+
 '<div class="evo-highlight-meta"><span>'+topLong.page+'</span><span class="class-'+clsLong.cls+'">'+clsLong.label+'</span><span>'+topLong.vars+' variante'+(topLong.vars>1?'s':'')+'</span></div>'+
 '</div>'+
 '<div class="evo-highlight evo-highlight-variants">'+
 '<div class="evo-highlight-tag" style="background:var(--purple-bg,var(--accent-bg));color:var(--purple,var(--accent))">&#9881; Mais Duplicatas/Variantes</div>'+
 '<div class="evo-highlight-value" style="color:var(--purple,var(--accent))">'+topVars.vars+'v</div>'+
 '<div class="evo-highlight-sub">Maior numero de versoes do mesmo criativo'+(topVarsCount>1?' ('+topVarsCount+' ads com '+topVars.vars+' variantes)':'')+'</div>'+
-'<a class="evo-highlight-id" href="https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=BR&id='+topVars.id+'" target="_blank">ID: '+topVars.id+'</a>'+
+'<a class="evo-highlight-id" href="'+safeAdUrl(topVars.page,topVars.id)+'" target="_blank">ID: '+topVars.id+'</a>'+
 '<div class="evo-highlight-meta"><span>'+topVars.page+'</span><span class="class-'+clsVars.cls+'">'+clsVars.label+'</span><span>'+topVars.dias+'d ativo</span></div>'+
 '</div>';
 // PER-PAGE HIGHLIGHTS
@@ -1595,8 +1597,8 @@ var clL=classify(topL.dias);
 var clV=classify(topV.dias);
 return '<div class="evo-ph-card '+phBorderCls[pName]+'">'+
 '<div class="evo-ph-name"><div class="ph-color" style="background:'+phColors[pName]+'"></div>'+pName+' <span style="font-weight:400;font-size:11px;color:var(--text-3)">('+ads.length+' ads)</span></div>'+
-'<div class="evo-ph-row"><div><div class="evo-ph-label" style="color:var(--green)">Maior Longevidade</div><div class="evo-ph-val" style="color:var(--green)">'+topL.dias+'d</div><a class="evo-ph-id" href="https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=BR&id='+topL.id+'" target="_blank">'+topL.id+'</a></div><div style="text-align:right"><span class="evo-ph-class class-'+clL.cls+'">'+clL.label+'</span><div style="font-size:10px;color:var(--text-3);margin-top:4px">'+topL.vars+'v</div></div></div>'+
-'<div class="evo-ph-row"><div><div class="evo-ph-label" style="color:var(--purple,var(--accent))">Mais Variantes</div><div class="evo-ph-val" style="color:var(--purple,var(--accent))">'+topV.vars+'v</div><a class="evo-ph-id" href="https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=BR&id='+topV.id+'" target="_blank">'+topV.id+'</a></div><div style="text-align:right"><span class="evo-ph-class class-'+clV.cls+'">'+clV.label+'</span><div style="font-size:10px;color:var(--text-3);margin-top:4px">'+topV.dias+'d</div></div></div>'+
+'<div class="evo-ph-row"><div><div class="evo-ph-label" style="color:var(--green)">Maior Longevidade</div><div class="evo-ph-val" style="color:var(--green)">'+topL.dias+'d</div><a class="evo-ph-id" href="'+safeAdUrl(pName,topL.id)+'" target="_blank">'+topL.id+'</a></div><div style="text-align:right"><span class="evo-ph-class class-'+clL.cls+'">'+clL.label+'</span><div style="font-size:10px;color:var(--text-3);margin-top:4px">'+topL.vars+'v</div></div></div>'+
+'<div class="evo-ph-row"><div><div class="evo-ph-label" style="color:var(--purple,var(--accent))">Mais Variantes</div><div class="evo-ph-val" style="color:var(--purple,var(--accent))">'+topV.vars+'v</div><a class="evo-ph-id" href="'+safeAdUrl(pName,topV.id)+'" target="_blank">'+topV.id+'</a></div><div style="text-align:right"><span class="evo-ph-class class-'+clV.cls+'">'+clV.label+'</span><div style="font-size:10px;color:var(--text-3);margin-top:4px">'+topV.dias+'d</div></div></div>'+
 '</div>';
 }).join('')+'</div>';
 }
@@ -1638,7 +1640,7 @@ if(sc.validando)sp.push('<span style="background:var(--yellow-bg);color:var(--ye
 if(sc.teste)sp.push('<span style="background:var(--orange-bg);color:var(--orange)">'+sc.teste+' teste</span>');
 const bars=ads.map(function(a){
 const c=classify(a[1]);const pct=maxDias>0?Math.max(1,Math.round(a[1]/maxDias*100)):1;
-return '<div class="evo-bar-row"><a class="evo-id" href="https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=BR&id='+a[0]+'" target="_blank" title="'+a[0]+'">'+a[0]+'</a><div class="evo-bar-wrap"><div class="evo-bar-fill" style="width:'+pct+'%;background:'+c.color+'">'+(a[1]>20?a[1]+'d':'')+'</div></div><div class="evo-days" style="color:'+c.color+'">'+a[1]+'d</div><div class="evo-class"><span class="class-'+c.cls+'">'+c.label+'</span></div><div class="evo-vars">'+a[2]+'v</div></div>';
+return '<div class="evo-bar-row"><a class="evo-id" href="'+safeAdUrl(pName,a[0])+'" target="_blank" title="'+a[0]+'">'+a[0]+'</a><div class="evo-bar-wrap"><div class="evo-bar-fill" style="width:'+pct+'%;background:'+c.color+'">'+(a[1]>20?a[1]+'d':'')+'</div></div><div class="evo-days" style="color:'+c.color+'">'+a[1]+'d</div><div class="evo-class"><span class="class-'+c.cls+'">'+c.label+'</span></div><div class="evo-vars">'+a[2]+'v</div></div>';
 }).join('');
 return '<div class="evo-page"><div class="evo-page-header"><h4>'+pName+' <span style="font-weight:400;font-size:12px;color:var(--text-3)">('+data.unicos+' unicos / '+data.entradas+' entradas)</span></h4><div class="evo-summary">'+sp.join('')+'</div></div><div class="evo-body">'+bars+'</div></div>';
 }).join('');
