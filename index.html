@@ -1704,10 +1704,30 @@ async function extrairVturb(lpUrl){
   }
   if(!qualities.length)throw new Error('Nenhuma qualidade de video acessivel');
   const best=qualities[qualities.length-1];
-  let lo=0,hi=2000;
-  while(lo<hi){const mid=Math.floor((lo+hi)/2);try{const r=await fetch(CDN_BASE+'/'+accountId+'/'+videoId+'/video/'+best+'/segment_'+mid+'.ts',{method:'HEAD'});if(r.ok)lo=mid+1;else hi=mid;}catch(e){hi=mid;}}
+  let totalSegments=0,totalDuration=0,segDur=4;
+  for(const m3u8Name of['output.m3u8','playlist.m3u8','video.m3u8']){
+    try{
+      const r=await fetch(CDN_BASE+'/'+accountId+'/'+videoId+'/video/'+best+'/'+m3u8Name);
+      if(r.ok){
+        const txt=await r.text();
+        const extinfs=txt.match(/#EXTINF:([\d.]+)/g);
+        if(extinfs&&extinfs.length>0){
+          totalSegments=extinfs.length;
+          totalDuration=extinfs.reduce((s,e)=>s+parseFloat(e.replace('#EXTINF:','')),0);
+          segDur=totalDuration/totalSegments;
+          break;
+        }
+      }
+    }catch(e){}
+  }
+  if(!totalSegments){
+    let lo=0,hi=2000;
+    while(lo<hi){const mid=Math.floor((lo+hi)/2);try{const r=await fetch(CDN_BASE+'/'+accountId+'/'+videoId+'/video/'+best+'/segment_'+mid+'.ts',{method:'HEAD'});if(r.ok)lo=mid+1;else hi=mid;}catch(e){hi=mid;}}
+    totalSegments=lo;
+    totalDuration=totalSegments*segDur;
+  }
   const thumb=CDN_BASE+'/'+accountId+'/'+videoId+'/poster.jpg';
-  return{accountId,videoId,qualities,totalSegments:lo,thumbnail:thumb,bestQuality:best};
+  return{accountId,videoId,qualities,totalSegments,totalDuration:Math.round(totalDuration),segDur,thumbnail:thumb,bestQuality:best};
 }
 
 async function iniciarExtracao(){
@@ -1724,10 +1744,10 @@ async function iniciarExtracao(){
     currentVturb.lpUrl=url;
     currentVturb.pageName=page;
     document.getElementById('vsl-thumb').src=currentVturb.thumbnail;
-    const durEst=Math.round(currentVturb.totalSegments*10/60);
+    const durMin=Math.round(currentVturb.totalDuration/60);
     document.getElementById('vsl-info').innerHTML='<div style="font-weight:600;color:var(--text-1)">Video Vturb encontrado</div>'
       +'<div>Segmentos: <strong>'+currentVturb.totalSegments+'</strong></div>'
-      +'<div>Duracao estimada: <strong>~'+durEst+' min</strong></div>'
+      +'<div>Duracao: <strong>~'+durMin+' min</strong></div>'
       +'<div>Qualidades: <strong>'+currentVturb.qualities.join(', ')+'</strong></div>';
     const sel=document.getElementById('vsl-quality');
     sel.innerHTML=currentVturb.qualities.map(q=>'<option value="'+q+'"'+(q===currentVturb.bestQuality?' selected':'')+'>'+q+'</option>').join('');
@@ -1736,6 +1756,13 @@ async function iniciarExtracao(){
   finally{btn.textContent='Extrair Video';btn.disabled=false;}
 }
 
+async function fetchSegRetry(url,retries){
+  for(let t=0;t<(retries||3);t++){
+    try{const r=await fetch(url);if(r.ok)return await r.arrayBuffer();} catch(e){}
+    if(t<(retries||3)-1)await new Promise(r=>setTimeout(r,500*(t+1)));
+  }
+  throw new Error('Falha ao baixar segmento apos retries');
+}
 async function iniciarDownload(){
   if(!currentVturb)return;
   const quality=document.getElementById('vsl-quality').value;
@@ -1749,19 +1776,21 @@ async function iniciarDownload(){
   const chunks=[];
   const batchSize=6;
   let downloaded=0;
+  let failedSegs=0;
   try{
     for(let i=0;i<totalSegments;i+=batchSize){
       const batch=[];
       for(let j=i;j<Math.min(i+batchSize,totalSegments);j++){
-        batch.push(fetch(CDN_BASE+'/'+accountId+'/'+videoId+'/video/'+quality+'/segment_'+j+'.ts').then(r=>{if(!r.ok)throw new Error('Seg '+j+' falhou');return r.arrayBuffer();}));
+        const url=CDN_BASE+'/'+accountId+'/'+videoId+'/video/'+quality+'/segment_'+j+'.ts';
+        batch.push(fetchSegRetry(url,3).catch(()=>{failedSegs++;return new ArrayBuffer(0);}));
       }
       const results=await Promise.all(batch);
-      chunks.push(...results);
+      chunks.push(...results.filter(r=>r.byteLength>0));
       downloaded=Math.min(i+batchSize,totalSegments);
       const pct=Math.round(downloaded/totalSegments*100);
       progBar.style.width=pct+'%';
       const sizeMB=Math.round(chunks.reduce((s,c)=>s+c.byteLength,0)/1048576);
-      progText.textContent='Segmento '+downloaded+'/'+totalSegments+' ('+pct+'%) - '+sizeMB+' MB';
+      progText.textContent='Segmento '+downloaded+'/'+totalSegments+' ('+pct+'%) - '+sizeMB+' MB'+(failedSegs?' ['+failedSegs+' falhas]':'');
     }
     progText.textContent='Montando arquivo...';
     const blob=new Blob(chunks,{type:'video/mp2t'});
@@ -1774,8 +1803,9 @@ async function iniciarDownload(){
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(a.href);
-    progText.textContent='Download concluido! '+Math.round(blob.size/1048576)+' MB - '+fname;
-    progBar.style.background='var(--green)';
+    const durMin=Math.round(currentVturb.totalDuration/60);
+    progText.textContent='Download concluido! '+Math.round(blob.size/1048576)+' MB - ~'+durMin+'min - '+fname+(failedSegs?' ('+failedSegs+' segmentos falharam)':'');
+    progBar.style.background=failedSegs?'var(--yellow)':'var(--green)';
     await salvarVslRecord(currentVturb.lpUrl,currentVturb.pageName,'baixado',fname);
     loadVsls();
   }catch(e){
