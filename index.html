@@ -711,34 +711,7 @@ const ROUND_DELTAS=[
 ];
 
 function escHtml(s){if(!s)return '';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
-function renderCCPanel(cc){
-  var plats=cc.plat.split(', ').map(function(p){return '<span class="cc-chip">'+escHtml(p)+'</span>'}).join('');
-  return '<div class="cc-panel">'
-  +'<div class="cc-section">'
-  +'<div><span class="cc-label">Texto Principal</span><div class="cc-copy-text">'+escHtml(cc.texto)+'</div></div>'
-  +'<div><span class="cc-label">Titulo</span><div class="cc-val" style="font-weight:600">'+escHtml(cc.titulo)+'</div></div>'
-  +(cc.desc?'<div><span class="cc-label">Descricao</span><div class="cc-val">'+escHtml(cc.desc)+'</div></div>':'')
-  +'<div><span class="cc-label">URL Destino</span><a class="cc-url" href="'+cc.url+'" target="_blank">'+escHtml(cc.url)+'</a></div>'
-  +'</div>'
-  +'<div class="cc-section">'
-  +'<div class="cc-adv">'
-  +'<div><span class="cc-label">Tipo</span><div class="cc-val">'+escHtml(cc.tipo)+'</div></div>'
-  +'<div><span class="cc-label">Criativos Iguais</span><div class="cc-val" style="font-weight:700;color:var(--yellow)">'+cc.criativos+'</div></div>'
-  +'<div><span class="cc-label">CTA</span><div class="cc-val">'+escHtml(cc.cta)+'</div></div>'
-  +'<div><span class="cc-label">Data Inicio</span><div class="cc-val">'+cc.inicio+'</div></div>'
-  +'</div>'
-  +'<div style="margin-top:4px"><span class="cc-label">Posicionamentos</span><div style="margin-top:4px">'+plats+'</div></div>'
-  +'<div class="cc-adv-header">'
-  +'<span class="cc-label" style="font-size:11px;color:var(--accent-2)">Anunciante</span>'
-  +'<div class="cc-adv" style="margin-top:6px">'
-  +'<div><span class="cc-label" style="font-size:9px">Pagina</span><div class="cc-val">'+escHtml(cc.adv.nome)+'</div></div>'
-  +'<div><span class="cc-label" style="font-size:9px">Categoria</span><div class="cc-val">'+escHtml(cc.adv.cat)+'</div></div>'
-  +'<div><span class="cc-label" style="font-size:9px">Criacao</span><div class="cc-val">'+cc.adv.criacao+' ('+cc.adv.ativDias+'d)</div></div>'
-  +'<div><span class="cc-label" style="font-size:9px">Curtidas</span><div class="cc-val">'+cc.adv.likes.toLocaleString()+'</div></div>'
-  +'<div><span class="cc-label" style="font-size:9px">IG Seguidores</span><div class="cc-val">'+cc.adv.ig.toLocaleString()+' (@'+escHtml(cc.adv.igUser)+')</div></div>'
-  +'<div><span class="cc-label" style="font-size:9px">Verificacao</span><div class="cc-val">'+(cc.adv.verif?'Verificada':'Nao verificada')+'</div></div>'
-  +'</div></div></div></div>';
-}
+function renderCCPanel(cc){return renderFullPanel(null,cc)}
 function toggleCC(adId){
   var row=document.getElementById('cc-'+adId);
   var btn=document.querySelector('[data-ccid="'+adId+'"]');
@@ -746,71 +719,94 @@ function toggleCC(adId){
   if(row.style.display==='none'){row.style.display='table-row';if(btn){btn.textContent='- Info';btn.classList.add('active')}}
   else{row.style.display='none';if(btn){btn.textContent='+ Info';btn.classList.remove('active')}}
 }
-function renderBasicPanel(a){
-  var pg=PAGES.find(function(p){return p.name===a.page});
-  var evo=EVO_DATA[a.page];
-  var plats=pg&&pg.plat?pg.plat.split(', ').map(function(p){return '<span class="cc-chip">'+escHtml(p)+'</span>'}).join(''):'';
-  var fullName=pg?pg.fullName:a.page;
+function renderBasicPanel(a){return renderFullPanel(a,null)}
+function renderFullPanel(a,cc){
+  var adId=a?a.id:(cc?Object.keys(COPYCAT_DATA).find(function(k){return COPYCAT_DATA[k]===cc}):'');
+  var pageName=a?a.page:'';
+  if(!pageName&&cc&&cc.adv){for(var pi=0;pi<PAGES.length;pi++){if(PAGES[pi].fullName===cc.adv.nome){pageName=PAGES[pi].name;break}}}
+  var pg=PAGES.find(function(p){return p.name===pageName});
+  var evo=EVO_DATA[pageName];
+  var platsStr=cc?cc.plat:(pg?pg.plat:'');
+  var plats=platsStr?platsStr.split(', ').map(function(p){return '<span class="cc-chip">'+escHtml(p.trim())+'</span>'}).join(''):'';
+  var fullName=pg?pg.fullName:(cc&&cc.adv?cc.adv.nome:pageName);
   var statusLabel=pg?pg.label:'';
   var statusClass=pg?pg.status:'';
-  var thumbUrl=mediaUrl(a.page,a.id,'jpg');
-  var vidUrl=mediaUrl(a.page,a.id,'mp4');
+  var thumbUrl=mediaUrl(pageName,adId,'jpg');
+  var vidUrl=mediaUrl(pageName,adId,'mp4');
   var variantes=0;
-  if(evo&&evo.ads){for(var i=0;i<evo.ads.length;i++){if(evo.ads[i][0]===a.id){variantes=evo.ads[i][2];break}}}
-  var adLibPage='https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=BR&view_all_page_id='+(pg?pg.pageId:a.pageId);
+  if(evo&&evo.ads){for(var i=0;i<evo.ads.length;i++){if(evo.ads[i][0]===adId){variantes=evo.ads[i][2];break}}}
+  var adLibPage='https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=BR&view_all_page_id='+(pg?pg.pageId:(a?a.pageId:''));
   var scoreColor=pg&&pg.score>=150?'var(--green)':pg&&pg.score>=80?'var(--yellow)':'var(--text-3)';
-  var diasColor=a.dias>=100?'var(--green)':a.dias>=30?'var(--yellow)':a.dias>=7?'var(--accent)':'var(--text-3)';
+  var diasVal=a?a.dias:(cc?cc.dias:0);
+  var diasColor=diasVal>=100?'var(--green)':diasVal>=30?'var(--yellow)':diasVal>=7?'var(--accent)':'var(--text-3)';
+  var dateStr=a?a.date:(cc?cc.inicio:'');
+  var typeStr=a?a.type:(cc?cc.tipo:'');
+  var domainStr=a?a.domain:(pg?pg.domain:'');
 
-  return '<div class="cc-panel">'
-  +'<div style="display:flex;gap:16px;flex-wrap:wrap">'
+  var h='<div class="cc-panel">';
 
-  +'<div style="flex-shrink:0">'
-  +(thumbUrl?'<div class="media-thumb" style="position:relative;cursor:pointer;width:120px;height:120px;border-radius:8px;overflow:hidden" onclick="openVideoModal(\''+(vidUrl||'')+'\',\''+thumbUrl+'\',\''+a.id+'\')">'
+  h+='<div style="display:flex;gap:16px;flex-wrap:wrap">';
+  h+='<div style="flex-shrink:0">';
+  if(thumbUrl){h+='<div class="media-thumb" style="position:relative;cursor:pointer;width:120px;height:120px;border-radius:8px;overflow:hidden" onclick="openVideoModal(\''+(vidUrl||'')+'\',\''+thumbUrl+'\',\''+adId+'\')">'
   +'<img src="'+thumbUrl+'" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.style.display=\'none\'">'
   +(vidUrl?'<div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:32px;height:32px;background:rgba(0,0,0,.7);border-radius:50%;display:flex;align-items:center;justify-content:center"><div style="width:0;height:0;border-left:12px solid #fff;border-top:7px solid transparent;border-bottom:7px solid transparent;margin-left:3px"></div></div>':'')
-  +'</div>':'<div style="width:120px;height:120px;border-radius:8px;background:var(--card-2);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--text-4)">Sem thumbnail</div>')
-  +'</div>'
+  +'</div>';}
+  else{h+='<div style="width:120px;height:120px;border-radius:8px;background:var(--card-2);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--text-4)">Sem thumbnail</div>';}
+  h+='</div>';
+  h+='<div style="flex:1;min-width:200px">';
+  h+='<div class="cc-section" style="padding:0;border:0;margin:0">';
+  h+='<div><span class="cc-label">AD ID</span><a class="cc-url" href="https://www.facebook.com/ads/library/?id='+adId+'" target="_blank">'+adId+'</a></div>';
+  h+='<div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:4px">';
+  h+='<div><span class="cc-label">Data Inicio</span><div class="cc-val">'+escHtml(dateStr)+'</div></div>';
+  h+='<div><span class="cc-label">Dias Rodando</span><div class="cc-val" style="font-weight:700;color:'+diasColor+'">'+diasVal+'d</div></div>';
+  h+='<div><span class="cc-label">Tipo</span><div class="cc-val">'+escHtml(typeStr)+'</div></div>';
+  if(cc&&cc.criativos>1){h+='<div><span class="cc-label">Criativos Iguais</span><div class="cc-val" style="font-weight:700;color:var(--yellow)">'+cc.criativos+'</div></div>';}
+  if(variantes>1){h+='<div><span class="cc-label">Variantes</span><div class="cc-val" style="font-weight:700;color:var(--purple)">'+variantes+'</div></div>';}
+  h+='</div>';
+  if(domainStr){h+='<div style="margin-top:4px"><span class="cc-label">Dominio</span><a class="cc-url" href="https://'+domainStr+'" target="_blank">'+escHtml(domainStr)+'</a></div>';}
+  if(cc&&cc.cta){h+='<div style="margin-top:4px"><span class="cc-label">CTA</span><div class="cc-val">'+escHtml(cc.cta)+'</div></div>';}
+  h+='</div></div></div>';
 
-  +'<div style="flex:1;min-width:200px">'
-  +'<div class="cc-section" style="padding:0;border:0;margin:0">'
-  +'<div><span class="cc-label">AD ID</span><a class="cc-url" href="https://www.facebook.com/ads/library/?id='+a.id+'" target="_blank">'+a.id+'</a></div>'
-  +'<div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:4px">'
-  +'<div><span class="cc-label">Data Inicio</span><div class="cc-val">'+escHtml(a.date)+'</div></div>'
-  +'<div><span class="cc-label">Dias Rodando</span><div class="cc-val" style="font-weight:700;color:'+diasColor+'">'+a.dias+'d</div></div>'
-  +'<div><span class="cc-label">Tipo</span><div class="cc-val">'+escHtml(a.type)+'</div></div>'
-  +(variantes>1?'<div><span class="cc-label">Variantes</span><div class="cc-val" style="font-weight:700;color:var(--purple)">'+variantes+'</div></div>':'')
-  +'</div>'
-  +'<div style="margin-top:4px"><span class="cc-label">Dominio</span><a class="cc-url" href="https://'+a.domain+'" target="_blank">'+escHtml(a.domain)+'</a></div>'
-  +'</div>'
-  +'</div>'
-  +'</div>'
+  if(cc){
+    h+='<div class="cc-section">';
+    h+='<div><span class="cc-label">Texto Principal</span><div class="cc-copy-text">'+escHtml(cc.texto)+'</div></div>';
+    h+='<div><span class="cc-label">Titulo</span><div class="cc-val" style="font-weight:600">'+escHtml(cc.titulo)+'</div></div>';
+    if(cc.desc){h+='<div><span class="cc-label">Descricao</span><div class="cc-val">'+escHtml(cc.desc)+'</div></div>';}
+    h+='<div><span class="cc-label">URL Destino</span><a class="cc-url" href="'+cc.url+'" target="_blank">'+escHtml(cc.url)+'</a></div>';
+    h+='</div>';
+  }
 
-  +'<div class="cc-section">'
-  +'<div class="cc-adv-header">'
-  +'<span class="cc-label" style="font-size:11px;color:var(--accent-2)">Anunciante</span>'
-  +'<div class="cc-adv" style="margin-top:6px">'
-  +'<div><span class="cc-label" style="font-size:9px">Pagina</span><div class="cc-val"><a class="cc-url" href="'+adLibPage+'" target="_blank">'+escHtml(fullName)+'</a></div></div>'
-  +(statusLabel?'<div><span class="cc-label" style="font-size:9px">Status</span><div class="cc-val"><span class="status-chip status-'+statusClass+'">'+statusLabel+'</span></div></div>':'')
-  +'<div><span class="cc-label" style="font-size:9px">Score de Escala</span><div class="cc-val" style="font-weight:700;color:'+scoreColor+'">'+(pg?pg.score:'-')+'</div></div>'
-  +'<div><span class="cc-label" style="font-size:9px">Total Ads Ativos</span><div class="cc-val">'+(pg?pg.ads:'-')+'</div></div>'
-  +(evo?'<div><span class="cc-label" style="font-size:9px">Criativos Unicos</span><div class="cc-val" style="font-weight:600">'+evo.unicos+'</div></div>':'')
-  +(evo?'<div><span class="cc-label" style="font-size:9px">Total Entradas</span><div class="cc-val">'+evo.entradas+'</div></div>':'')
-  +'<div><span class="cc-label" style="font-size:9px">Ad Mais Antigo</span><div class="cc-val">'+(pg?escHtml(pg.oldest)+' ('+pg.dias+'d)':'-')+'</div></div>'
-  +'<div><span class="cc-label" style="font-size:9px">Videos Coletados</span><div class="cc-val">'+(pg?pg.videos:'-')+'</div></div>'
-  +'<div><span class="cc-label" style="font-size:9px">Prints Salvos</span><div class="cc-val">'+(pg?pg.prints:'-')+'</div></div>'
-  +'</div></div>'
-  +(plats?'<div style="margin-top:6px"><span class="cc-label" style="font-size:9px">Posicionamentos</span><div style="margin-top:4px">'+plats+'</div></div>':'')
-  +'</div>'
+  h+='<div class="cc-section">';
+  if(plats){h+='<div style="margin-bottom:8px"><span class="cc-label">Posicionamentos</span><div style="margin-top:4px">'+plats+'</div></div>';}
+  h+='<div class="cc-adv-header">';
+  h+='<span class="cc-label" style="font-size:11px;color:var(--accent-2)">Anunciante</span>';
+  h+='<div class="cc-adv" style="margin-top:6px">';
+  h+='<div><span class="cc-label" style="font-size:9px">Pagina</span><div class="cc-val"><a class="cc-url" href="'+adLibPage+'" target="_blank">'+escHtml(fullName)+'</a></div></div>';
+  if(cc&&cc.adv&&cc.adv.cat){h+='<div><span class="cc-label" style="font-size:9px">Categoria</span><div class="cc-val">'+escHtml(cc.adv.cat)+'</div></div>';}
+  if(statusLabel){h+='<div><span class="cc-label" style="font-size:9px">Status</span><div class="cc-val"><span class="status-chip status-'+statusClass+'">'+statusLabel+'</span></div></div>';}
+  h+='<div><span class="cc-label" style="font-size:9px">Score de Escala</span><div class="cc-val" style="font-weight:700;color:'+scoreColor+'">'+(pg?pg.score:'-')+'</div></div>';
+  h+='<div><span class="cc-label" style="font-size:9px">Total Ads Ativos</span><div class="cc-val">'+(pg?pg.ads:'-')+'</div></div>';
+  if(evo){h+='<div><span class="cc-label" style="font-size:9px">Criativos Unicos</span><div class="cc-val" style="font-weight:600">'+evo.unicos+'</div></div>';}
+  if(evo){h+='<div><span class="cc-label" style="font-size:9px">Total Entradas</span><div class="cc-val">'+evo.entradas+'</div></div>';}
+  if(cc&&cc.adv){
+    h+='<div><span class="cc-label" style="font-size:9px">Criacao</span><div class="cc-val">'+cc.adv.criacao+' ('+cc.adv.ativDias+'d)</div></div>';
+    h+='<div><span class="cc-label" style="font-size:9px">Curtidas</span><div class="cc-val">'+cc.adv.likes.toLocaleString()+'</div></div>';
+    h+='<div><span class="cc-label" style="font-size:9px">IG Seguidores</span><div class="cc-val">'+cc.adv.ig.toLocaleString()+' (@'+escHtml(cc.adv.igUser)+')</div></div>';
+    h+='<div><span class="cc-label" style="font-size:9px">Verificacao</span><div class="cc-val">'+(cc.adv.verif?'Verificada':'Nao verificada')+'</div></div>';
+  }
+  h+='<div><span class="cc-label" style="font-size:9px">Ad Mais Antigo</span><div class="cc-val">'+(pg?escHtml(pg.oldest)+' ('+pg.dias+'d)':'-')+'</div></div>';
+  h+='<div><span class="cc-label" style="font-size:9px">Videos Coletados</span><div class="cc-val">'+(pg?pg.videos:'-')+'</div></div>';
+  h+='<div><span class="cc-label" style="font-size:9px">Prints Salvos</span><div class="cc-val">'+(pg?pg.prints:'-')+'</div></div>';
+  h+='</div></div></div>';
 
-  +(pg&&pg.obs?'<div class="cc-section"><span class="cc-label" style="font-size:11px;color:var(--accent-2)">Analise Estrategica</span><div class="cc-val" style="margin-top:4px;font-size:11px;line-height:1.5;color:var(--text-2)">'+escHtml(pg.obs)+'</div></div>':'')
+  if(pg&&pg.obs){h+='<div class="cc-section"><span class="cc-label" style="font-size:11px;color:var(--accent-2)">Analise Estrategica</span><div class="cc-val" style="margin-top:4px;font-size:11px;line-height:1.5;color:var(--text-2)">'+escHtml(pg.obs)+'</div></div>';}
 
-  +'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">'
-  +'<a href="https://www.facebook.com/ads/library/?id='+a.id+'" target="_blank" style="display:inline-block;padding:6px 14px;background:var(--accent);color:#fff;border-radius:6px;font-size:12px;font-weight:600;text-decoration:none">Abrir na Ad Library</a>'
-  +'<a href="'+adLibPage+'" target="_blank" style="display:inline-block;padding:6px 14px;background:var(--card-2);color:var(--text-1);border-radius:6px;font-size:12px;font-weight:600;text-decoration:none;border:1px solid var(--border)">Ver Todos da Pagina</a>'
-  +(vidUrl?'<a href="'+vidUrl+'" target="_blank" style="display:inline-block;padding:6px 14px;background:var(--purple);color:#fff;border-radius:6px;font-size:12px;font-weight:600;text-decoration:none">Ver Video</a>':'')
-  +'</div>'
-
-  +'</div>';
+  h+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">';
+  h+='<a href="https://www.facebook.com/ads/library/?id='+adId+'" target="_blank" style="display:inline-block;padding:6px 14px;background:var(--accent);color:#fff;border-radius:6px;font-size:12px;font-weight:600;text-decoration:none">Abrir na Ad Library</a>';
+  h+='<a href="'+adLibPage+'" target="_blank" style="display:inline-block;padding:6px 14px;background:var(--card-2);color:var(--text-1);border-radius:6px;font-size:12px;font-weight:600;text-decoration:none;border:1px solid var(--border)">Ver Todos da Pagina</a>';
+  if(vidUrl){h+='<a href="'+vidUrl+'" target="_blank" style="display:inline-block;padding:6px 14px;background:var(--purple);color:#fff;border-radius:6px;font-size:12px;font-weight:600;text-decoration:none">Ver Video</a>';}
+  h+='</div></div>';
+  return h;
 }
 
 const totalAds=PAGES.reduce((s,p)=>s+p.ads,0);
@@ -1033,7 +1029,7 @@ function renderRows(ads){
     ${mediaCell}
     <td><a href="https://www.facebook.com/ads/library/?id=${a.id}" target="_blank" style="color:var(--accent);text-decoration:none;font-size:11px;font-weight:600">Abrir</a></td>
     <td><button class="cc-btn" data-ccid="${a.id}" onclick="toggleCC('${a.id}')">+ Info</button></td>
-  </tr><tr id="cc-${a.id}" class="copycat-detail-row" style="display:none"><td colspan="9" style="padding:0">${cc?renderCCPanel(cc):renderBasicPanel(a)}</td></tr>`;
+  </tr><tr id="cc-${a.id}" class="copycat-detail-row" style="display:none"><td colspan="9" style="padding:0">${renderFullPanel(a,cc||null)}</td></tr>`;
   }).join('');
   const cnt=document.getElementById('showing-count');
   if(cnt)cnt.textContent=ads.length;
