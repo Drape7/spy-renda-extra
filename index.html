@@ -627,7 +627,7 @@ canvas{width:100%!important;display:block}
             <div id="vsl-download-text" style="font-size:11px;color:var(--text-3);margin-top:4px;text-align:center"></div>
           </div>
         </div>
-        <div id="vsl-list" style="display:grid;gap:10px"></div>
+        <div id="vsl-list" style="display:grid;gap:12px"></div>
         <div id="vsl-empty" style="text-align:center;padding:40px 20px;color:var(--text-3);font-size:13px;display:none">Nenhuma VSL registrada. Cole a URL de uma landing page acima.</div>
       </div>
 
@@ -1844,37 +1844,70 @@ async function salvarVslRecord(url,pageName,status,filename){
   }catch(e){}
 }
 
+function fmtDur(s){if(!s)return'?';const m=Math.floor(s/60),ss=Math.floor(s%60);return m+':'+String(ss).padStart(2,'0')}
+
+function toggleTranscricao(id){
+  const el=document.getElementById('trans-'+id);
+  if(!el)return;
+  el.style.display=el.style.display==='none'?'block':'none';
+}
+
 async function loadVsls(){
   const list=document.getElementById('vsl-list');
   const empty=document.getElementById('vsl-empty');
   list.innerHTML='<div style="text-align:center;padding:20px;color:var(--text-3)">Carregando...</div>';
   try{
-    const r=await fetch(SB_URL+'/spy_vsls?order=created_at.desc',{headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}});
+    const r=await fetch(SB_URL+'/spy_vsls?order=page_name.asc,created_at.desc',{headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY}});
     if(!r.ok)throw new Error(r.status+' '+r.statusText);
     const data=await r.json();
     const badge=document.getElementById('vsls-count-badge');
     if(badge)badge.textContent=data.length;
     if(!data.length){list.innerHTML='';empty.style.display='block';return;}
     empty.style.display='none';
-    list.innerHTML=data.map(v=>{
-      const st=VSL_STATUS[v.status]||VSL_STATUS.pendente;
-      const domain=v.domain||extractDomain(v.url);
-      return '<div style="background:var(--bg-2);border:1px solid var(--border);border-radius:8px;padding:14px 16px">'
-        +'<div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:8px">'
-        +'<div style="flex:1;min-width:200px">'
-        +'<div style="font-size:13px;font-weight:600;margin-bottom:4px">'+escHtml(v.page_name)+'</div>'
-        +'<div style="font-size:12px;color:var(--text-2);word-break:break-all">'+escHtml(v.url)+'</div>'
-        +(domain?'<div style="font-size:11px;color:var(--text-3);margin-top:2px">'+escHtml(domain)+'</div>':'')
-        +(v.video_filename?'<div style="font-size:11px;color:var(--accent);margin-top:2px">'+escHtml(v.video_filename)+'</div>':'')
-        +'</div>'
-        +'<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'
-        +'<span style="display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;background:'+st.bg+';color:'+st.color+'">'+st.label+'</span>'
-        +'<select onchange="atualizarVslStatus('+v.id+',this.value)" style="padding:4px 8px;background:var(--bg-3);border:1px solid var(--border);border-radius:4px;color:var(--text-2);font-size:11px;font-family:inherit">'
-        +'<option value="">Mudar status</option><option value="pendente">Pendente</option><option value="baixado">Baixado</option><option value="transcrito">Transcrito</option><option value="dissecado">Dissecado</option></select>'
-        +'<button onclick="redownloadVsl(\''+escHtml(v.url).replace(/'/g,"\\'")+'\',\''+escHtml(v.page_name).replace(/'/g,"\\'")+'\')" style="padding:4px 10px;background:var(--accent-bg);border:1px solid var(--accent);border-radius:4px;color:var(--accent);font-size:11px;cursor:pointer;font-family:inherit">Baixar</button>'
-        +'<button onclick="excluirVsl('+v.id+')" style="padding:4px 10px;background:var(--red-bg);border:1px solid transparent;border-radius:4px;color:var(--red);font-size:11px;cursor:pointer;font-family:inherit">Excluir</button>'
+    const groups={};
+    data.forEach(v=>{const k=v.page_name||'Sem projeto';if(!groups[k])groups[k]=[];groups[k].push(v);});
+    const statusPriority={dissecado:3,transcrito:2,baixado:1,pendente:0};
+    list.innerHTML=Object.keys(groups).sort().map(name=>{
+      const vsls=groups[name];
+      const bestStatus=vsls.reduce((best,v)=>{const p=statusPriority[v.status]||0;return p>(statusPriority[best]||0)?v.status:best;},'pendente');
+      const gSt=VSL_STATUS[bestStatus]||VSL_STATUS.pendente;
+      const totalDur=vsls.reduce((s,v)=>s+(v.duracao_seg||0),0);
+      return '<div style="background:var(--bg-2);border:1px solid var(--border);border-radius:10px;overflow:hidden">'
+        +'<div style="padding:14px 16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;border-bottom:1px solid var(--border)">'
+        +'<div style="display:flex;align-items:center;gap:10px">'
+        +'<div style="width:32px;height:32px;border-radius:8px;background:'+gSt.bg+';display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:'+gSt.color+'">'+vsls.length+'</div>'
+        +'<div>'
+        +'<div style="font-size:14px;font-weight:700;color:var(--text-1)">'+escHtml(name)+'</div>'
+        +'<div style="font-size:11px;color:var(--text-3)">'+vsls.length+' VSL'+(vsls.length>1?'s':'')+' &middot; '+fmtDur(totalDur)+' total</div>'
         +'</div></div>'
-        +'<div style="font-size:10px;color:var(--text-4);margin-top:6px">'+new Date(v.created_at).toLocaleDateString('pt-BR')+' '+new Date(v.created_at).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})+'</div>'
+        +'<span style="padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;background:'+gSt.bg+';color:'+gSt.color+'">'+gSt.label+'</span>'
+        +'</div>'
+        +vsls.map(v=>{
+          const st=VSL_STATUS[v.status]||VSL_STATUS.pendente;
+          const domain=v.domain||extractDomain(v.url);
+          const hasTranscricao=v.transcricao&&v.transcricao.length>10;
+          return '<div style="padding:12px 16px;border-bottom:1px solid var(--border)">'
+            +'<div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:8px">'
+            +'<div style="flex:1;min-width:200px">'
+            +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">'
+            +'<span style="font-size:12px;font-weight:600;color:var(--text-1)">'+escHtml(v.video_filename||'VSL')+'</span>'
+            +'<span style="padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;background:'+st.bg+';color:'+st.color+'">'+st.label+'</span>'
+            +'</div>'
+            +'<div style="font-size:11px;color:var(--text-3)">'
+            +escHtml(domain)
+            +(v.duracao_seg?' &middot; '+fmtDur(v.duracao_seg):'')
+            +' &middot; '+new Date(v.created_at).toLocaleDateString('pt-BR')
+            +'</div>'
+            +'</div>'
+            +'<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">'
+            +(hasTranscricao?'<button onclick="toggleTranscricao('+v.id+')" style="padding:3px 10px;background:var(--green-bg);border:1px solid var(--green);border-radius:4px;color:var(--green);font-size:10px;font-weight:600;cursor:pointer;font-family:inherit">Transcricao</button>':'')
+            +'<select onchange="atualizarVslStatus('+v.id+',this.value)" style="padding:3px 6px;background:var(--bg-3);border:1px solid var(--border);border-radius:4px;color:var(--text-2);font-size:10px;font-family:inherit">'
+            +'<option value="">Status</option><option value="pendente">Pendente</option><option value="baixado">Baixado</option><option value="transcrito">Transcrito</option><option value="dissecado">Dissecado</option></select>'
+            +'<button onclick="excluirVsl('+v.id+')" style="padding:3px 8px;background:var(--red-bg);border:none;border-radius:4px;color:var(--red);font-size:10px;cursor:pointer;font-family:inherit">X</button>'
+            +'</div></div>'
+            +(hasTranscricao?'<div id="trans-'+v.id+'" style="display:none;margin-top:10px;padding:12px;background:var(--bg-3);border-radius:6px;max-height:400px;overflow-y:auto"><pre style="font-size:11px;color:var(--text-2);white-space:pre-wrap;word-break:break-word;margin:0;line-height:1.6;font-family:inherit">'+escHtml(v.transcricao)+'</pre></div>':'')
+            +'</div>';
+        }).join('')
         +'</div>';
     }).join('');
     vslsLoaded=true;
