@@ -746,6 +746,29 @@ function toggleCC(adId){
   if(row.style.display==='none'){row.style.display='table-row';if(btn){btn.textContent='- Info';btn.classList.add('active')}}
   else{row.style.display='none';if(btn){btn.textContent='+ Info';btn.classList.remove('active')}}
 }
+function renderBasicPanel(a){
+  var pg=PAGES.find(function(p){return p.name===a.page});
+  var plats=pg&&pg.plat?pg.plat.split(', ').map(function(p){return '<span class="cc-chip">'+escHtml(p)+'</span>'}).join(''):'';
+  var fullName=pg?pg.fullName:a.page;
+  var statusLabel=pg?pg.label:'';
+  var statusClass=pg?pg.status:'';
+  return '<div class="cc-panel">'
+  +'<div class="cc-section">'
+  +'<div><span class="cc-label">Pagina</span><div class="cc-val" style="font-weight:600">'+escHtml(fullName)+'</div></div>'
+  +'<div><span class="cc-label">AD ID</span><a class="cc-url" href="https://www.facebook.com/ads/library/?id='+a.id+'" target="_blank">'+a.id+'</a></div>'
+  +'<div><span class="cc-label">Data Inicio</span><div class="cc-val">'+escHtml(a.date)+'</div></div>'
+  +'<div><span class="cc-label">Dias Rodando</span><div class="cc-val" style="font-weight:700;color:var(--yellow)">'+a.dias+'d</div></div>'
+  +'</div>'
+  +'<div class="cc-section">'
+  +'<div class="cc-adv">'
+  +'<div><span class="cc-label">Tipo</span><div class="cc-val">'+escHtml(a.type)+'</div></div>'
+  +'<div><span class="cc-label">Dominio</span><a class="cc-url" href="https://'+a.domain+'" target="_blank">'+escHtml(a.domain)+'</a></div>'
+  +(statusLabel?'<div><span class="cc-label">Status</span><div class="cc-val"><span class="status-chip status-'+statusClass+'">'+statusLabel+'</span></div></div>':'')
+  +'</div>'
+  +(plats?'<div style="margin-top:4px"><span class="cc-label">Posicionamentos</span><div style="margin-top:4px">'+plats+'</div></div>':'')
+  +'<div style="margin-top:8px"><a href="https://www.facebook.com/ads/library/?id='+a.id+'" target="_blank" style="display:inline-block;padding:6px 14px;background:var(--accent);color:#fff;border-radius:6px;font-size:12px;font-weight:600;text-decoration:none">Abrir na Ad Library</a></div>'
+  +'</div></div>';
+}
 
 const totalAds=PAGES.reduce((s,p)=>s+p.ads,0);
 const totalVids=PAGES.reduce((s,p)=>s+p.videos,0);
@@ -966,8 +989,8 @@ function renderRows(ads){
     <td class="mono" style="font-size:11px">${a.domain}</td>
     ${mediaCell}
     <td><a href="https://www.facebook.com/ads/library/?id=${a.id}" target="_blank" style="color:var(--accent);text-decoration:none;font-size:11px;font-weight:600">Abrir</a></td>
-    ${cc?`<td><button class="cc-btn" data-ccid="${a.id}" onclick="toggleCC('${a.id}')">+ Info</button></td>`:'<td style="font-size:10px;color:var(--text-4)">-</td>'}
-  </tr>${cc?`<tr id="cc-${a.id}" class="copycat-detail-row" style="display:none"><td colspan="9" style="padding:0">${renderCCPanel(cc)}</td></tr>`:''}`;
+    <td><button class="cc-btn" data-ccid="${a.id}" onclick="toggleCC('${a.id}')">+ Info</button></td>
+  </tr><tr id="cc-${a.id}" class="copycat-detail-row" style="display:none"><td colspan="9" style="padding:0">${cc?renderCCPanel(cc):renderBasicPanel(a)}</td></tr>`;
   }).join('');
   const cnt=document.getElementById('showing-count');
   if(cnt)cnt.textContent=ads.length;
