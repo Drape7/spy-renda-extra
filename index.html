@@ -813,7 +813,7 @@ function renderFullPanel(a,cc){
   h+='</div>';
   h+='<div style="flex:1;min-width:200px">';
   h+='<div class="cc-section" style="padding:0;border:0;margin:0">';
-  h+='<div><span class="cc-label">AD ID</span><a class="cc-url" href="https://www.facebook.com/ads/library/?id='+adId+'" target="_blank">'+adId+'</a></div>';
+  h+='<div><span class="cc-label">AD ID</span><a class="cc-url" href="https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=BR&id='+adId+'" target="_blank">'+adId+'</a></div>';
   h+='<div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:4px">';
   h+='<div><span class="cc-label">Data Inicio</span><div class="cc-val">'+escHtml(dateStr)+'</div></div>';
   h+='<div><span class="cc-label">Dias Rodando</span><div class="cc-val" style="font-weight:700;color:'+diasColor+'">'+diasVal+'d</div></div>';
@@ -860,7 +860,7 @@ function renderFullPanel(a,cc){
   if(pg&&pg.obs){h+='<div class="cc-section"><span class="cc-label" style="font-size:11px;color:var(--accent-2)">Analise Estrategica</span><div class="cc-val" style="margin-top:4px;font-size:11px;line-height:1.5;color:var(--text-2)">'+escHtml(pg.obs)+'</div></div>';}
 
   h+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">';
-  h+='<a href="https://www.facebook.com/ads/library/?id='+adId+'" target="_blank" style="display:inline-block;padding:6px 14px;background:var(--accent);color:#fff;border-radius:6px;font-size:12px;font-weight:600;text-decoration:none">Abrir na Ad Library</a>';
+  h+='<a href="https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=BR&id='+adId+'" target="_blank" style="display:inline-block;padding:6px 14px;background:var(--accent);color:#fff;border-radius:6px;font-size:12px;font-weight:600;text-decoration:none">Abrir na Ad Library</a>';
   h+='<a href="'+adLibPage+'" target="_blank" style="display:inline-block;padding:6px 14px;background:var(--card-2);color:var(--text-1);border-radius:6px;font-size:12px;font-weight:600;text-decoration:none;border:1px solid var(--border)">Ver Todos da Pagina</a>';
   if(vidUrl){h+='<a href="'+vidUrl+'" target="_blank" style="display:inline-block;padding:6px 14px;background:var(--purple);color:#fff;border-radius:6px;font-size:12px;font-weight:600;text-decoration:none">Ver Video</a>';}
   h+='</div></div>';
@@ -1092,13 +1092,13 @@ function renderRows(ads){
     </td>`:'<td style="font-size:10px;color:var(--text-3)">-</td>';
     return `<tr>
     <td style="font-weight:600">${a.page}</td>
-    <td class="mono" style="font-size:11px"><a href="https://www.facebook.com/ads/library/?id=${a.id}" target="_blank" style="color:var(--accent);text-decoration:none" title="Abrir na Ad Library">${a.id}</a></td>
+    <td class="mono" style="font-size:11px"><a href="https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=BR&id=${a.id}" target="_blank" style="color:var(--accent);text-decoration:none" title="Abrir na Ad Library">${a.id}</a></td>
     <td>${a.date}</td>
     <td style="font-weight:700">${a.dias}d</td>
     <td><span class="type-chip type-${a.type.toLowerCase()}">${a.type}</span></td>
     <td class="mono" style="font-size:11px">${a.domain}</td>
     ${mediaCell}
-    <td><a href="https://www.facebook.com/ads/library/?id=${a.id}" target="_blank" style="color:var(--accent);text-decoration:none;font-size:11px;font-weight:600">Abrir</a></td>
+    <td><a href="https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=BR&id=${a.id}" target="_blank" style="color:var(--accent);text-decoration:none;font-size:11px;font-weight:600">Abrir</a></td>
     <td><button class="cc-btn" data-ccid="${a.id}" onclick="toggleCC('${a.id}')">+ Info</button></td>
   </tr><tr id="cc-${a.id}" class="copycat-detail-row" style="display:none"><td colspan="9" style="padding:0">${renderFullPanel(a,cc||null)}</td></tr>`;
   }).join('');
@@ -1136,7 +1136,7 @@ function openVideoModal(vidUrl,thumbUrl,adId){
   if(vidUrl)btns+=`<a href="${vidUrl}" target="_blank" style="${btnStyle}background:var(--accent);color:#fff">&#9654; Video</a>`;
   btns+=`<a href="${thumbUrl}" target="_blank" style="${btnStyle}background:var(--cyan);color:#fff">&#128247; Print</a>`;
   if(vidUrl)btns+=`<button onclick="toggleModalView()" style="${btnStyle}background:var(--bg-2);color:var(--text-1);border:1px solid var(--border);cursor:pointer" id="modal-toggle-btn">Ver Print</button>`;
-  btns+=`<a href="https://www.facebook.com/ads/library/?id=${adId}" target="_blank" style="${btnStyle}background:var(--bg-2);color:var(--text-1);border:1px solid var(--border)">Ad Library</a>`;
+  btns+=`<a href="https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=BR&id=${adId}" target="_blank" style="${btnStyle}background:var(--bg-2);color:var(--text-1);border:1px solid var(--border)">Ad Library</a>`;
   acts.innerHTML=btns;
   acts._vidUrl=vidUrl;acts._thumbUrl=thumbUrl;
   m.style.display='flex';
@@ -1560,14 +1560,14 @@ if(hlEl)hlEl.innerHTML=
 '<div class="evo-highlight-tag" style="background:var(--green-bg);color:var(--green)">&#9733; Maior Longevidade</div>'+
 '<div class="evo-highlight-value" style="color:var(--green)">'+topLong.dias+'d</div>'+
 '<div class="evo-highlight-sub">No ar desde o inicio do monitoramento'+(topLongCount>1?' ('+topLongCount+' ads empatados)':'')+'</div>'+
-'<a class="evo-highlight-id" href="https://www.facebook.com/ads/library/?id='+topLong.id+'" target="_blank">ID: '+topLong.id+'</a>'+
+'<a class="evo-highlight-id" href="https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=BR&id='+topLong.id+'" target="_blank">ID: '+topLong.id+'</a>'+
 '<div class="evo-highlight-meta"><span>'+topLong.page+'</span><span class="class-'+clsLong.cls+'">'+clsLong.label+'</span><span>'+topLong.vars+' variante'+(topLong.vars>1?'s':'')+'</span></div>'+
 '</div>'+
 '<div class="evo-highlight evo-highlight-variants">'+
 '<div class="evo-highlight-tag" style="background:var(--purple-bg,var(--accent-bg));color:var(--purple,var(--accent))">&#9881; Mais Duplicatas/Variantes</div>'+
 '<div class="evo-highlight-value" style="color:var(--purple,var(--accent))">'+topVars.vars+'v</div>'+
 '<div class="evo-highlight-sub">Maior numero de versoes do mesmo criativo'+(topVarsCount>1?' ('+topVarsCount+' ads com '+topVars.vars+' variantes)':'')+'</div>'+
-'<a class="evo-highlight-id" href="https://www.facebook.com/ads/library/?id='+topVars.id+'" target="_blank">ID: '+topVars.id+'</a>'+
+'<a class="evo-highlight-id" href="https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=BR&id='+topVars.id+'" target="_blank">ID: '+topVars.id+'</a>'+
 '<div class="evo-highlight-meta"><span>'+topVars.page+'</span><span class="class-'+clsVars.cls+'">'+clsVars.label+'</span><span>'+topVars.dias+'d ativo</span></div>'+
 '</div>';
 // PER-PAGE HIGHLIGHTS
@@ -1586,8 +1586,8 @@ var clL=classify(topL.dias);
 var clV=classify(topV.dias);
 return '<div class="evo-ph-card '+phBorderCls[pName]+'">'+
 '<div class="evo-ph-name"><div class="ph-color" style="background:'+phColors[pName]+'"></div>'+pName+' <span style="font-weight:400;font-size:11px;color:var(--text-3)">('+ads.length+' ads)</span></div>'+
-'<div class="evo-ph-row"><div><div class="evo-ph-label" style="color:var(--green)">Maior Longevidade</div><div class="evo-ph-val" style="color:var(--green)">'+topL.dias+'d</div><a class="evo-ph-id" href="https://www.facebook.com/ads/library/?id='+topL.id+'" target="_blank">'+topL.id+'</a></div><div style="text-align:right"><span class="evo-ph-class class-'+clL.cls+'">'+clL.label+'</span><div style="font-size:10px;color:var(--text-3);margin-top:4px">'+topL.vars+'v</div></div></div>'+
-'<div class="evo-ph-row"><div><div class="evo-ph-label" style="color:var(--purple,var(--accent))">Mais Variantes</div><div class="evo-ph-val" style="color:var(--purple,var(--accent))">'+topV.vars+'v</div><a class="evo-ph-id" href="https://www.facebook.com/ads/library/?id='+topV.id+'" target="_blank">'+topV.id+'</a></div><div style="text-align:right"><span class="evo-ph-class class-'+clV.cls+'">'+clV.label+'</span><div style="font-size:10px;color:var(--text-3);margin-top:4px">'+topV.dias+'d</div></div></div>'+
+'<div class="evo-ph-row"><div><div class="evo-ph-label" style="color:var(--green)">Maior Longevidade</div><div class="evo-ph-val" style="color:var(--green)">'+topL.dias+'d</div><a class="evo-ph-id" href="https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=BR&id='+topL.id+'" target="_blank">'+topL.id+'</a></div><div style="text-align:right"><span class="evo-ph-class class-'+clL.cls+'">'+clL.label+'</span><div style="font-size:10px;color:var(--text-3);margin-top:4px">'+topL.vars+'v</div></div></div>'+
+'<div class="evo-ph-row"><div><div class="evo-ph-label" style="color:var(--purple,var(--accent))">Mais Variantes</div><div class="evo-ph-val" style="color:var(--purple,var(--accent))">'+topV.vars+'v</div><a class="evo-ph-id" href="https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=BR&id='+topV.id+'" target="_blank">'+topV.id+'</a></div><div style="text-align:right"><span class="evo-ph-class class-'+clV.cls+'">'+clV.label+'</span><div style="font-size:10px;color:var(--text-3);margin-top:4px">'+topV.dias+'d</div></div></div>'+
 '</div>';
 }).join('')+'</div>';
 }
@@ -1629,7 +1629,7 @@ if(sc.validando)sp.push('<span style="background:var(--yellow-bg);color:var(--ye
 if(sc.teste)sp.push('<span style="background:var(--orange-bg);color:var(--orange)">'+sc.teste+' teste</span>');
 const bars=ads.map(function(a){
 const c=classify(a[1]);const pct=maxDias>0?Math.max(1,Math.round(a[1]/maxDias*100)):1;
-return '<div class="evo-bar-row"><a class="evo-id" href="https://www.facebook.com/ads/library/?id='+a[0]+'" target="_blank" title="'+a[0]+'">'+a[0]+'</a><div class="evo-bar-wrap"><div class="evo-bar-fill" style="width:'+pct+'%;background:'+c.color+'">'+(a[1]>20?a[1]+'d':'')+'</div></div><div class="evo-days" style="color:'+c.color+'">'+a[1]+'d</div><div class="evo-class"><span class="class-'+c.cls+'">'+c.label+'</span></div><div class="evo-vars">'+a[2]+'v</div></div>';
+return '<div class="evo-bar-row"><a class="evo-id" href="https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=BR&id='+a[0]+'" target="_blank" title="'+a[0]+'">'+a[0]+'</a><div class="evo-bar-wrap"><div class="evo-bar-fill" style="width:'+pct+'%;background:'+c.color+'">'+(a[1]>20?a[1]+'d':'')+'</div></div><div class="evo-days" style="color:'+c.color+'">'+a[1]+'d</div><div class="evo-class"><span class="class-'+c.cls+'">'+c.label+'</span></div><div class="evo-vars">'+a[2]+'v</div></div>';
 }).join('');
 return '<div class="evo-page"><div class="evo-page-header"><h4>'+pName+' <span style="font-weight:400;font-size:12px;color:var(--text-3)">('+data.unicos+' unicos / '+data.entradas+' entradas)</span></h4><div class="evo-summary">'+sp.join('')+'</div></div><div class="evo-body">'+bars+'</div></div>';
 }).join('');
@@ -1892,4 +1892,5 @@ async function excluirVsl(id){
     loadVsls();
   }catch(e){alert('Erro ao excluir: '+e.message);}
 }
+document.addEventListener('DOMContentLoaded',function(){var v=document.createElement('div');v.style.cssText='position:fixed;bottom:4px;right:8px;font-size:9px;color:var(--text-4);opacity:.5;pointer-events:none;z-index:1';v.textContent='v22';document.body.appendChild(v)});
 </script>
