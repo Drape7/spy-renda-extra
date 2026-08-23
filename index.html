@@ -523,10 +523,10 @@ canvas{width:100%!important;display:block}
       <div class="section" id="sec-reports">
         <div style="margin-bottom:20px">
           <h3 style="font-size:14px;font-weight:700;margin-bottom:4px">Relatorios de Ronda</h3>
-          <p style="font-size:12px;color:var(--text-3)">Historico completo de todas as rondas. Baixe o relatorio em .md para acompanhamento offline.</p>
+          <p style="font-size:12px;color:var(--text-3)">Historico completo de todas as verificacoes de anuncios. Cada "ronda" e uma coleta automatica dos ads ativos nas paginas monitoradas. Clique em "Copiar .md" para baixar o relatorio ou "Ver Completo" para ler aqui.</p>
         </div>
         <div class="rpt-tracking" id="rpt-tracking"></div>
-        <div class="rpt-grid" id="rpt-grid"></div>
+        <div id="rpt-history"></div>
       </div>
 
       <!-- ===== ACTIVITY ===== -->
@@ -835,8 +835,8 @@ document.getElementById('burger').addEventListener('click',()=>{
 const kpis=[
   {label:'Paginas Ativas',value:activePages,unit:'/5',icon:'var(--accent)',iconBg:'var(--accent-bg)',trend:'neutral',trendVal:'-',desc:'Anunciantes que estamos monitorando na Biblioteca de Anuncios do Meta'},
   {label:'Ads Ativos',value:totalAds,unit:'',icon:'var(--green)',iconBg:'var(--green-bg)',trend:'up',trendVal:'6a ronda (+12)',desc:'Total de anuncios rodando agora nas paginas monitoradas'},
-  {label:'Videos Coletados',value:totalVids,unit:'',icon:'var(--purple)',iconBg:'var(--purple-bg)',trend:'up',trendVal:'+94',desc:'Videos dos anuncios salvos como referencia criativa',link:'https://kykudpqqrkigbpkkyren.supabase.co/storage/v1/object/public/spy-media/',linkLabel:'Abrir Pasta de Videos'},
-  {label:'Prints Salvos',value:totalPrints,unit:'',icon:'var(--cyan)',iconBg:'var(--cyan-bg)',trend:'up',trendVal:'+94',desc:'Capturas de tela (thumbnails) dos anuncios salvos',link:'https://kykudpqqrkigbpkkyren.supabase.co/storage/v1/object/public/spy-media/',linkLabel:'Abrir Pasta de Prints'},
+  {label:'Videos Coletados',value:totalVids,unit:'',icon:'var(--purple)',iconBg:'var(--purple-bg)',trend:'up',trendVal:'+94',desc:'Videos dos anuncios salvos como referencia criativa',link:'https://supabase.com/dashboard/project/kykudpqqrkigbpkkyren/storage/buckets/spy-media',linkLabel:'Abrir Pasta de Videos'},
+  {label:'Prints Salvos',value:totalPrints,unit:'',icon:'var(--cyan)',iconBg:'var(--cyan-bg)',trend:'up',trendVal:'+94',desc:'Capturas de tela (thumbnails) dos anuncios salvos',link:'https://supabase.com/dashboard/project/kykudpqqrkigbpkkyren/storage/buckets/spy-media',linkLabel:'Abrir Pasta de Prints'},
   {label:'Armazenamento',value:'940',unit:'MB',icon:'var(--orange)',iconBg:'var(--orange-bg)',trend:'up',trendVal:'Supabase ATIVO',desc:'Espaco usado no servidor de arquivos (Supabase Storage)'},
   {label:'Rondas',value:'6',unit:'',icon:'var(--yellow)',iconBg:'var(--yellow-bg)',trend:'up',trendVal:'23/ago',desc:'Verificacoes de anuncios realizadas (4x ao dia: 0h, 6h, 12h, 18h)'}
 ];
@@ -1196,23 +1196,50 @@ const trackingData=ROUND_DELTAS.map(function(p){
     return '<div class="rpt-tracking-cell"><div class="rpt-page">'+t.name+'</div><div class="rpt-count" style="color:var(--text-1)">'+t.count+'</div><div class="rpt-delta" style="color:'+clr+'">'+sign+t.delta+'</div></div>';
   }).join('')+'</div>';
 
-  var grid=document.getElementById('rpt-grid');
-  grid.innerHTML=ROUND_REPORTS.map(function(r){
-    var badgeClr=r.delta>0?'background:var(--green-bg);color:var(--green)':r.delta<0?'background:var(--red-bg);color:var(--red)':'background:var(--bg-4);color:var(--text-3)';
-    var deltaSign=r.delta>0?'+':'';
-    var deltaStr=r.delta===0?'=0':deltaSign+r.delta;
-    return '<div class="rpt-card"><div class="rpt-card-head"><h4>'+r.name+'</h4><span class="rpt-badge" style="'+badgeClr+'">'+r.tipo+'</span></div>'
-    +'<div class="rpt-card-body">'
-    +'<div class="rpt-card-metrics">'
-    +'<div class="rpt-metric"><div class="rpt-metric-val" style="color:var(--accent)">'+r.pages+'</div><div class="rpt-metric-label">Paginas</div></div>'
-    +'<div class="rpt-metric"><div class="rpt-metric-val" style="color:var(--green)">'+r.ads+'</div><div class="rpt-metric-label">Ads Total</div></div>'
-    +'<div class="rpt-metric"><div class="rpt-metric-val" style="color:'+(r.delta<0?'var(--red)':r.delta>0?'var(--green)':'var(--text-3)')+'">'+deltaStr+'</div><div class="rpt-metric-label">Delta</div></div>'
+  var days={};
+  ROUND_REPORTS.forEach(function(r){
+    if(!days[r.date])days[r.date]=[];
+    days[r.date].push(r);
+  });
+  var dayKeys=Object.keys(days);
+
+  var hist=document.getElementById('rpt-history');
+  hist.innerHTML=dayKeys.map(function(day,di){
+    var rounds=days[day];
+    var totalAds=rounds[0].ads;
+    var firstAds=rounds[rounds.length-1].ads;
+    var dayDelta=totalAds-firstAds;
+    var daySign=dayDelta>0?'+':'';
+    var dayClr=dayDelta>0?'var(--green)':dayDelta<0?'var(--red)':'var(--text-3)';
+    var isToday=di===0;
+
+    return '<div style="margin-bottom:20px">'
+    +'<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg-3);border-radius:8px;cursor:pointer;user-select:none" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display===\'none\'?\'block\':\'none\';this.querySelector(\'.day-arrow\').textContent=this.nextElementSibling.style.display===\'none\'?\'\\u25B6\':\'\\u25BC\'">'
+    +'<span class="day-arrow" style="font-size:10px;color:var(--text-3)">'+(isToday?'\u25BC':'\u25B6')+'</span>'
+    +'<span style="font-size:13px;font-weight:700;color:var(--text-1)">'+day+'</span>'
+    +(isToday?'<span style="font-size:9px;padding:2px 8px;border-radius:10px;background:var(--accent-bg);color:var(--accent);font-weight:600">HOJE</span>':'')
+    +'<span style="font-size:11px;color:var(--text-3)">'+rounds.length+' ronda'+(rounds.length>1?'s':'')+'</span>'
+    +'<span style="font-size:11px;color:'+dayClr+';margin-left:auto">'+daySign+dayDelta+' ads no dia</span>'
     +'</div>'
-    +'<div class="rpt-card-summary">'+r.highlights+'</div>'
-    +'<div class="rpt-card-actions">'
-    +'<button class="rpt-btn rpt-btn-primary" data-rpt-id="'+r.id+'">Copiar .md</button>'
-    +'<button class="rpt-btn rpt-btn-secondary" data-rpt-expand="'+r.id+'">Ver Completo</button>'
-    +'</div></div></div>';
+    +'<div class="rpt-grid" style="'+(isToday?'':'display:none;')+'margin-top:8px">'
+    +rounds.map(function(r){
+      var badgeClr=r.delta>0?'background:var(--green-bg);color:var(--green)':r.delta<0?'background:var(--red-bg);color:var(--red)':'background:var(--bg-4);color:var(--text-3)';
+      var deltaSign=r.delta>0?'+':'';
+      var deltaStr=r.delta===0?'=0':deltaSign+r.delta;
+      return '<div class="rpt-card"><div class="rpt-card-head"><h4>'+r.name+'</h4><span class="rpt-badge" style="'+badgeClr+'">'+r.tipo+'</span></div>'
+      +'<div class="rpt-card-body">'
+      +'<div class="rpt-card-metrics">'
+      +'<div class="rpt-metric"><div class="rpt-metric-val" style="color:var(--accent)">'+r.pages+'</div><div class="rpt-metric-label">Paginas</div></div>'
+      +'<div class="rpt-metric"><div class="rpt-metric-val" style="color:var(--green)">'+r.ads+'</div><div class="rpt-metric-label">Ads Total</div></div>'
+      +'<div class="rpt-metric"><div class="rpt-metric-val" style="color:'+(r.delta<0?'var(--red)':r.delta>0?'var(--green)':'var(--text-3)')+'">'+deltaStr+'</div><div class="rpt-metric-label">Delta</div></div>'
+      +'</div>'
+      +'<div class="rpt-card-summary">'+r.highlights+'</div>'
+      +'<div class="rpt-card-actions">'
+      +'<button class="rpt-btn rpt-btn-primary" data-rpt-id="'+r.id+'">Copiar .md</button>'
+      +'<button class="rpt-btn rpt-btn-secondary" data-rpt-expand="'+r.id+'">Ver Completo</button>'
+      +'</div></div></div>';
+    }).join('')
+    +'</div></div>';
   }).join('');
 })();
 
