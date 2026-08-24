@@ -412,6 +412,58 @@ canvas{width:100%!important;display:block}
 .evo-ph-id{font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--accent);text-decoration:none;display:block;margin-top:4px}
 .evo-ph-id:hover{text-decoration:underline}
 .evo-ph-class{font-size:10px;padding:2px 6px;border-radius:4px}
+
+/* TIME FILTERS */
+.time-filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;padding:8px 0}
+.time-btn{padding:5px 14px;background:var(--bg-3);border:1px solid var(--border);border-radius:16px;color:var(--text-2);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+.time-btn:hover{border-color:var(--accent);color:var(--accent)}
+.time-btn.active{background:var(--accent-bg);border-color:var(--accent);color:var(--accent)}
+
+/* AD ACTIONS */
+.ad-actions{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
+.ad-act{padding:3px 8px;background:var(--bg-3);border:1px solid var(--border);border-radius:4px;font-size:10px;font-weight:600;cursor:pointer;font-family:inherit;color:var(--text-2);transition:all .15s;text-decoration:none;display:inline-flex;align-items:center;gap:3px;white-space:nowrap}
+.ad-act:hover{border-color:var(--accent);color:var(--accent)}
+.ad-act-copy{color:var(--cyan);border-color:rgba(6,182,212,.3)}
+.ad-act-copy:hover{border-color:var(--cyan);background:var(--cyan-bg)}
+.ad-act-share{color:var(--green);border-color:rgba(34,197,94,.3)}
+.ad-act-share:hover{border-color:var(--green);background:var(--green-bg)}
+.ad-act-dl{color:var(--purple);border-color:rgba(168,85,247,.3)}
+.ad-act-dl:hover{border-color:var(--purple);background:var(--purple-bg)}
+.ad-act-ai{color:var(--orange);border-color:rgba(249,115,22,.3)}
+.ad-act-ai:hover{border-color:var(--orange);background:var(--orange-bg)}
+.ad-dropdown{position:relative;display:inline-block}
+.ad-dropdown-menu{display:none;position:absolute;right:0;top:100%;min-width:200px;background:var(--bg-2);border:1px solid var(--border);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.4);z-index:200;padding:4px;margin-top:2px}
+.ad-dropdown-menu.open{display:block}
+.ad-dropdown-item{display:block;width:100%;padding:7px 10px;background:none;border:none;border-radius:5px;color:var(--text-2);font-size:11px;font-weight:500;cursor:pointer;text-align:left;font-family:inherit;transition:background .1s}
+.ad-dropdown-item:hover{background:var(--bg-hover);color:var(--text-1)}
+.ad-dropdown-sep{height:1px;background:var(--border);margin:3px 6px}
+
+/* NICHE KEYWORDS */
+.niche-group{background:var(--bg-2);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:12px}
+.niche-header{padding:12px 16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:background .15s}
+.niche-header:hover{background:var(--bg-hover)}
+.niche-header h4{font-size:13px;font-weight:700}
+.niche-lang{display:flex;gap:6px}
+.niche-lang-btn{padding:3px 10px;border-radius:12px;font-size:10px;font-weight:600;cursor:pointer;font-family:inherit;border:1px solid var(--border);background:var(--bg-3);color:var(--text-3);transition:all .15s}
+.niche-lang-btn.active{background:var(--accent-bg);border-color:var(--accent);color:var(--accent)}
+.niche-body{display:none;padding:10px 16px 14px;border-top:1px solid var(--border)}
+.niche-body.open{display:block}
+.niche-chips{display:flex;flex-wrap:wrap;gap:6px}
+.niche-chip{padding:4px 12px;background:var(--bg-3);border:1px solid var(--border);border-radius:16px;color:var(--text-2);font-size:11px;cursor:pointer;font-family:inherit;transition:all .15s}
+.niche-chip:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-bg)}
+
+/* AI PANEL */
+.ai-panel{background:var(--bg-2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-top:12px}
+.ai-panel h4{font-size:12px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.ai-btns{display:flex;flex-wrap:wrap;gap:6px}
+.ai-btn{padding:6px 14px;background:var(--orange-bg);border:1px solid rgba(249,115,22,.3);border-radius:8px;color:var(--orange);font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+.ai-btn:hover{border-color:var(--orange);background:rgba(249,115,22,.18)}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;right:20px;padding:12px 20px;border-radius:8px;font-size:12px;font-weight:600;z-index:9999;max-width:400px;animation:toastin .3s ease}
+@keyframes toastin{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.toast-ok{background:var(--green);color:#fff}
+.toast-info{background:var(--accent);color:#fff}
 </style>
 
 <div class="app">
@@ -439,6 +491,7 @@ canvas{width:100%!important;display:block}
       <div class="nav-section">Discovery</div>
       <div class="nav-item" data-section="discovery"><span class="icon">&#127919;</span>Concorrentes<span class="nav-badge">14</span></div>
       <div class="nav-item" data-section="keywords"><span class="icon">&#128270;</span>Keywords<span class="nav-badge">19/89</span></div>
+      <div class="nav-item" data-section="niche-keywords"><span class="icon">&#127793;</span>Niche Keywords<span class="nav-badge" style="background:var(--orange-bg);color:var(--orange)">14</span></div>
       <div class="nav-item" data-section="auto-discovery"><span class="icon">&#128269;</span>Auto-Discovery<span class="nav-badge" id="autodiscovery-count-badge" style="background:var(--green-bg);color:var(--green)">0</span></div>
       <div class="nav-item" data-section="vsls"><span class="icon">&#127909;</span>Extrair VSL<span class="nav-badge" id="vsls-count-badge">0</span></div>
       <div class="nav-item" data-section="vsl-swipe"><span class="icon">&#127916;</span>Swipe de VSLs</div>
@@ -586,6 +639,25 @@ canvas{width:100%!important;display:block}
           <p style="font-size:12px;color:var(--text-3)">89 keywords extraidas do corpus. Buscar na Ad Library para descobrir novos concorrentes.</p>
         </div>
         <div class="kw-grid" id="kw-grid"></div>
+      </div>
+
+      <!-- ===== NICHE KEYWORDS (Copycat) ===== -->
+      <div class="section" id="sec-niche-keywords">
+        <div style="margin-bottom:20px">
+          <h3 style="font-size:15px;font-weight:700;margin-bottom:4px">Niche Keywords (14 nichos x 3 idiomas)</h3>
+          <p style="font-size:12px;color:var(--text-3);line-height:1.5;margin-bottom:12px">Keywords organizadas por nicho e idioma, extraidas de ads escalados. Clique em qualquer keyword pra buscar direto na Ad Library do Meta. Use pra descobrir novos concorrentes e angulos.</p>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin-bottom:16px">
+            <div style="flex:1;min-width:260px">
+              <label style="font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px">Buscar keyword na Ad Library</label>
+              <div style="display:flex;gap:6px">
+                <input id="niche-kw-search" type="text" placeholder="Digite ou clique numa keyword..." style="flex:1;padding:8px 12px;background:var(--bg-3);border:1px solid var(--border);border-radius:8px;color:var(--text-1);font-size:13px;font-family:inherit">
+                <button onclick="buscarNicheKw()" style="padding:8px 18px;background:var(--accent);border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap">Buscar Ad Library</button>
+              </div>
+            </div>
+            <button onclick="gerarKeywordsIA()" class="ai-btn" style="padding:8px 18px;border-radius:8px;font-size:13px">Gerar Keywords com IA</button>
+          </div>
+        </div>
+        <div id="niche-kw-container"></div>
       </div>
 
       <!-- ===== AUTO-DISCOVERY ===== -->
@@ -983,7 +1055,17 @@ function renderFullPanel(a,cc){
     h+='<a href="'+adLibPage+'" target="_blank" style="display:inline-block;padding:6px 14px;background:var(--card-2);color:var(--text-1);border-radius:6px;font-size:12px;font-weight:600;text-decoration:none;border:1px solid var(--border)">Ver Todos da Pagina</a>';
   }
   if(vidUrl){h+='<a href="'+vidUrl+'" target="_blank" style="display:inline-block;padding:6px 14px;background:var(--purple);color:#fff;border-radius:6px;font-size:12px;font-weight:600;text-decoration:none">Ver Video</a>';}
+  h+='</div>';
+  h+='<div class="ai-panel"><h4>Analise com IA</h4><div class="ai-btns">';
+  h+='<button class="ai-btn" onclick="gerarIA(\'segmentacao\',\''+adId+'\')">Segmentacao</button>';
+  h+='<button class="ai-btn" onclick="gerarIA(\'analise_copy\',\''+adId+'\')">Analise Copy</button>';
+  h+='<button class="ai-btn" onclick="gerarIA(\'teste_ab\',\''+adId+'\')">Teste A/B</button>';
+  h+='<button class="ai-btn" onclick="gerarIA(\'oferta\',\''+adId+'\')">Oferta</button>';
+  h+='<button class="ai-btn" onclick="gerarIA(\'avatar\',\''+adId+'\')">Avatar</button>';
+  h+='<button class="ai-btn" onclick="gerarIA(\'angulos\',\''+adId+'\')">Angulos Criativos</button>';
+  h+='<button class="ai-btn" onclick="gerarIA(\'quiz\',\''+adId+'\')">Quiz Funnel</button>';
   h+='</div></div>';
+  h+='</div>';
   return h;
 }
 
@@ -1170,10 +1252,22 @@ function renderAdsTable(ads){
         ${PAGES.filter(p=>p.adIds&&p.adIds.length>0).map(p=>`<button class="filter-btn" data-f="${p.name}">${p.name.split(' ')[0]}</button>`).join('')}
       </div>
     </div>
+    <div class="time-filters">
+      <span style="font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;padding:5px 0">Tempo:</span>
+      <button class="time-btn active" data-days="0">Todos</button>
+      <button class="time-btn" data-days="3">3 dias</button>
+      <button class="time-btn" data-days="5">5 dias</button>
+      <button class="time-btn" data-days="7">1 sem</button>
+      <button class="time-btn" data-days="14">2 sem</button>
+      <button class="time-btn" data-days="21">3 sem</button>
+      <button class="time-btn" data-days="28">4 sem</button>
+      <button class="time-btn" data-days="60">60d</button>
+      <button class="time-btn" data-days="100">100d+</button>
+    </div>
     <div class="table-wrap">
       <table><thead><tr>
         <th data-s="page">Pagina</th><th data-s="id">Ad ID</th><th data-s="date">Data Inicio</th>
-        <th data-s="dias">Dias Ativo</th><th data-s="type">Tipo</th><th>Dominio</th><th>Media</th><th>Link</th><th>Detalhes</th>
+        <th data-s="dias">Dias Ativo</th><th data-s="vars">Vars</th><th data-s="type">Tipo</th><th>Dominio</th><th>Media</th><th>Acoes</th><th>Detalhes</th>
       </tr></thead><tbody id="ads-body"></tbody></table>
     </div>
     <div class="table-footer"><span>Mostrando <span class="count" id="showing-count">${ads.length}</span> de ${allAds.length} ads</span><span>Ultima atualizacao: 23/ago/2026</span></div>
@@ -1201,9 +1295,21 @@ function renderAdsTable(ads){
         let va=a[col],vb=b[col];
         if(col==='date'){va=a.dateObj;vb=b.dateObj}
         if(col==='dias'){va=a.dias;vb=b.dias}
+        if(col==='vars'){va=a.vars;vb=b.vars}
         return va<vb?-dir:va>vb?dir:0;
       });
       renderRows(s);
+    });
+  });
+  card.querySelectorAll('.time-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      card.querySelectorAll('.time-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      const days=parseInt(btn.dataset.days);
+      if(!days){renderRows(allAds);return}
+      if(days===100){renderRows(allAds.filter(a=>a.dias>=100).sort((a,b)=>b.dias-a.dias));return}
+      const cutoff=new Date();cutoff.setDate(cutoff.getDate()-days);
+      renderRows(allAds.filter(a=>a.dateObj>=cutoff).sort((a,b)=>b.dateObj-a.dateObj));
     });
   });
 }
@@ -1230,17 +1336,41 @@ function renderRows(ads){
         </div>
       </div>
     </td>`:isBlocked?'<td><span style="font-size:10px;font-weight:600;color:#e67e22;background:rgba(230,126,34,.12);padding:2px 8px;border-radius:4px">Bloqueado</span></td>':'<td><span style="font-size:10px;font-weight:600;color:var(--text-3);background:var(--card-2);padding:2px 8px;border-radius:4px">Nao coletado</span></td>';
+    const siteUrl=a.domain&&a.domain!=='-'?'https://'+a.domain:'';
+    const igUser=cc&&cc.adv&&cc.adv.igUser?cc.adv.igUser:'';
+    const searchAdsUrl='https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=BR&view_all_page_id='+a.pageId+'&search_type=page';
     return `<tr>
     <td style="font-weight:600">${a.page}</td>
     <td class="mono" style="font-size:11px"><a href="${adLibUrl}" target="_blank" style="color:var(--accent);text-decoration:none" title="Abrir anuncio na Ad Library">${a.id}</a></td>
     <td>${a.date}</td>
     <td style="font-weight:700">${a.dias}d</td>
+    <td style="font-weight:600;color:${a.vars>1?'var(--purple)':'var(--text-3)'}">${a.vars>1?a.vars+'v':'-'}</td>
     <td><span class="type-chip type-${a.type.toLowerCase()}">${a.type}</span></td>
     <td class="mono" style="font-size:11px">${a.domain}</td>
     ${mediaCell}
-    <td><a href="${adLibUrl}" target="_blank" style="color:var(--accent);text-decoration:none;font-size:11px;font-weight:600">Abrir</a></td>
+    <td>
+      <div class="ad-actions">
+        <div class="ad-dropdown">
+          <button class="ad-act ad-act-copy" onclick="toggleAdMenu(event,'menu-${a.id}')">Copiar &#9660;</button>
+          <div class="ad-dropdown-menu" id="menu-${a.id}">
+            ${cc?`<button class="ad-dropdown-item" onclick="copiarTexto('${a.id}','texto')">Texto do Ad</button>
+            <button class="ad-dropdown-item" onclick="copiarTexto('${a.id}','titulo')">Titulo</button>
+            <button class="ad-dropdown-item" onclick="copiarTexto('${a.id}','desc')">Descricao</button>
+            <button class="ad-dropdown-item" onclick="copiarTexto('${a.id}','cta')">CTA</button>
+            <div class="ad-dropdown-sep"></div>`:''}
+            <button class="ad-dropdown-item" onclick="copiarTexto('${a.id}','adlib')">Link Ad Library</button>
+            <button class="ad-dropdown-item" onclick="copiarTexto('${a.id}','all')">Copiar Tudo</button>
+          </div>
+        </div>
+        <a class="ad-act" href="${adLibUrl}" target="_blank">Ad Library</a>
+        ${siteUrl?`<a class="ad-act" href="${siteUrl}" target="_blank">Site</a>`:''}
+        ${igUser?`<a class="ad-act" href="https://instagram.com/${igUser}" target="_blank">IG</a>`:''}
+        <a class="ad-act" href="${searchAdsUrl}" target="_blank">Todos Ads</a>
+        <button class="ad-act ad-act-share" onclick="compartilharAd('${a.id}','${escHtml(a.page)}',${a.dias})">Enviar</button>
+      </div>
+    </td>
     <td><button class="cc-btn" data-ccid="${a.id}" onclick="toggleCC('${a.id}')">+ Info</button></td>
-  </tr><tr id="cc-${a.id}" class="copycat-detail-row" style="display:none"><td colspan="9" style="padding:0">${renderFullPanel(a,cc||null)}</td></tr>`;
+  </tr><tr id="cc-${a.id}" class="copycat-detail-row" style="display:none"><td colspan="10" style="padding:0">${renderFullPanel(a,cc||null)}</td></tr>`;
   }).join('');
   const cnt=document.getElementById('showing-count');
   if(cnt)cnt.textContent=ads.length;
@@ -2392,5 +2522,230 @@ function initAutoDiscovery(){
 }
 loadDiscoveryData();
 
-document.addEventListener('DOMContentLoaded',function(){var v=document.createElement('div');v.style.cssText='position:fixed;bottom:4px;right:8px;font-size:9px;color:var(--text-4);opacity:.5;pointer-events:none;z-index:1';v.textContent='v26';document.body.appendChild(v)});
+// ===== NICHE KEYWORDS DATABASE (Copycat Ads extraction) =====
+const NICHE_KEYWORDS={
+  'Emagrecimento':{
+    pt:['emagrecer rapido','perder barriga','dieta para emagrecer','remedio para emagrecer','como perder peso','secar barriga','eliminar gordura','barriga chapada','dieta low carb','jejum intermitente','shake emagrecedor','capsula emagrecedora','metabolismo acelerado','queimar gordura','perder medidas'],
+    en:['weight loss','lose belly fat','fat burner','keto diet','slim down fast','metabolism booster','appetite suppressant','burn fat','get lean','weight loss supplement','diet pills','flat stomach','lose weight fast','body transformation','fat loss'],
+    es:['bajar de peso','perder grasa','dieta para adelgazar','quemar grasa abdominal','pastillas para adelgazar','metabolismo rapido','adelgazar rapido','eliminar grasa','dieta keto','suplemento para bajar de peso','barriga plana','perder peso rapido','grasa abdominal','quema grasa','reducir medidas']
+  },
+  'Renda Extra':{
+    pt:['renda extra','ganhar dinheiro online','trabalhar em casa','renda pelo celular','ganhar dinheiro na internet','sem aparecer ganhar','dinheiro extra','trabalho remoto','freelancer','renda passiva','negocio online','empreender do zero','vender na internet','marketing digital','afiliado digital'],
+    en:['make money online','side hustle','work from home','passive income','earn money online','online business','freelancing','digital marketing','affiliate marketing','extra income','remote work','money making','online income','financial freedom','quit your job'],
+    es:['ganar dinero online','trabajo desde casa','ingresos extra','negocio online','ganar dinero por internet','renta pasiva','emprender online','marketing digital','afiliados','trabajar desde el celular','ingresos pasivos','dinero extra','libertad financiera','negocio digital','vender por internet']
+  },
+  'Saude Masculina':{
+    pt:['disfuncao eretil','como durar mais','libido masculina','testosterona','vigor masculino','ereacao fraca','ejaculacao precoce','potencia sexual','saude do homem','suplemento masculino','impotencia','desempenho sexual','forca masculina','energia masculina','vitalidade'],
+    en:['erectile dysfunction','male enhancement','testosterone booster','last longer','male vitality','low libido','sexual performance','mens health supplement','stamina','vigor','potency','male energy','bedroom performance','ED treatment','sex drive'],
+    es:['disfuncion erectil','potencia sexual','testosterona','vigor masculino','libido masculina','rendimiento sexual','salud del hombre','suplemento masculino','energia masculina','eyaculacion precoz','ereccion debil','durar mas','vitalidad masculina','fuerza masculina','impotencia']
+  },
+  'Diabetes':{
+    pt:['controlar diabetes','glicose alta','diabetes tipo 2','baixar acucar no sangue','remedio natural diabetes','neuropatia diabetica','pre diabetes','insulina natural','glicemia alta','dieta para diabetico','hemoglobina glicada','pes formigando','retinopatia','acucar no sangue','resistencia insulina'],
+    en:['blood sugar control','diabetes type 2','lower blood sugar','diabetic neuropathy','insulin resistance','prediabetes','glucose control','natural diabetes remedy','A1C levels','diabetic supplement','blood sugar support','manage diabetes','diabetes reversal','sugar control','nerve damage'],
+    es:['controlar diabetes','bajar azucar en sangre','diabetes tipo 2','glucosa alta','neuropatia diabetica','prediabetes','resistencia insulina','remedio natural diabetes','hemoglobina glucosilada','dieta para diabeticos','azucar en la sangre','insulina natural','control glucosa','suplemento diabetico','hormigueo pies']
+  },
+  'Dor nas Articulacoes':{
+    pt:['dor no joelho','artrose','dor nas costas','inflamacao articular','condroitina','colageno articular','dor cronica','artrite','hernia de disco','dor na coluna','tendinite','bursite','cartilagem','mobilidade articular','dor lombar'],
+    en:['joint pain relief','knee pain','arthritis treatment','back pain','joint supplement','glucosamine','collagen for joints','chronic pain','inflammation','cartilage repair','mobility','stiffness','joint health','ligament support','sciatica'],
+    es:['dolor de rodilla','artrosis','dolor articular','dolor de espalda','colageno articular','condroitina','artritis','hernia de disco','inflamacion articular','dolor cronico','movilidad articular','cartilago','tendinitis','bursitis','dolor lumbar']
+  },
+  'Beleza e Skincare':{
+    pt:['anti rugas','rejuvenescimento facial','acido hialuronico','colageno','manchas na pele','pele jovem','creme facial','botox natural','lifting facial','vitamina C pele','melasma','olheiras','poros dilatados','firmeza da pele','envelhecimento'],
+    en:['anti aging cream','wrinkle remover','hyaluronic acid','collagen supplement','dark spots','skin rejuvenation','face cream','natural botox','skin tightening','vitamin C serum','melasma','dark circles','pore minimizer','youthful skin','anti wrinkle'],
+    es:['anti arrugas','rejuvenecimiento facial','acido hialuronico','colageno','manchas en la piel','crema facial','botox natural','piel joven','lifting facial','vitamina C piel','melasma','ojeras','poros dilatados','firmeza piel','envejecimiento']
+  },
+  'Queda de Cabelo':{
+    pt:['queda de cabelo','calvicie','crescer cabelo','alopecia','cabelo ralo','minoxidil','finasterida','implante capilar','cabelo forte','biotina','crescimento capilar','entradas','couro cabeludo','fio grosso','cabelo masculino'],
+    en:['hair loss','hair growth','baldness','thinning hair','regrow hair','minoxidil','hair transplant','biotin','alopecia','receding hairline','thicker hair','scalp treatment','hair regrowth','hair supplement','stop hair loss'],
+    es:['caida de cabello','calvicie','crecimiento capilar','alopecia','cabello delgado','minoxidil','implante capilar','biotina','pelo fuerte','cuero cabelludo','entradas','cabello grueso','perdida de pelo','tratamiento capilar','pelo masculino']
+  },
+  'Financas e Investimentos':{
+    pt:['investir dinheiro','renda fixa','acoes','tesouro direto','investimento seguro','carteira de investimentos','dividendos','fundos imobiliarios','mercado financeiro','educacao financeira','poupanca','CDB','criptomoedas','bitcoin','independencia financeira'],
+    en:['investing','stocks','cryptocurrency','passive investing','dividend stocks','index funds','real estate investing','portfolio','financial freedom','bitcoin','retirement planning','stock market','wealth building','compound interest','ETF'],
+    es:['invertir dinero','acciones','criptomonedas','renta fija','fondos de inversion','dividendos','mercado financiero','educacion financiera','bitcoin','independencia financiera','bolsa de valores','inversion segura','cartera de inversiones','ahorro','bienes raices']
+  },
+  'E-commerce':{
+    pt:['loja online','dropshipping','vender online','ecommerce','shopify','loja virtual','sem estoque','maquina de vendas','marketplace','produto vencedor','fornecedor','importar produtos','trafego pago','loja pronta','vender no mercado livre'],
+    en:['dropshipping','ecommerce','online store','shopify store','sell online','winning product','supplier','product research','facebook ads ecommerce','print on demand','amazon FBA','private label','wholesale','profit margin','scaling ads'],
+    es:['tienda online','dropshipping','vender por internet','ecommerce','shopify','tienda virtual','sin inventario','maquina de ventas','marketplace','producto ganador','proveedor','importar productos','trafico pago','tienda lista','vender en linea']
+  },
+  'Relacionamentos':{
+    pt:['reconquistar ex','como conquistar','relacionamento','autoestima','dependencia emocional','ciumes','separacao','casamento','namoro','amor proprio','comunicacao no casal','linguagem do amor','terapia de casal','confianca','paixao'],
+    en:['get your ex back','relationship advice','dating tips','self esteem','marriage counseling','love language','breakup recovery','attraction','confidence','communication skills','toxic relationship','emotional intelligence','couples therapy','romantic','commitment'],
+    es:['reconquistar ex','como conquistar','relacion de pareja','autoestima','dependencia emocional','celos','separacion','matrimonio','noviazgo','amor propio','comunicacion en pareja','lenguaje del amor','terapia de pareja','confianza','pasion']
+  },
+  'Pets':{
+    pt:['adestrar cachorro','racao natural','cachorro ansioso','comportamento canino','saude do pet','gato','veterinario','pulgas','carrapato','alimentacao natural pet','latido excessivo','passeio com cachorro','filhote','treinar cachorro','pet shop'],
+    en:['dog training','natural dog food','anxious dog','dog behavior','pet health','cat care','vet','flea treatment','tick prevention','raw diet dog','barking','puppy training','dog supplement','pet wellness','grooming'],
+    es:['adiestrar perro','comida natural perro','perro ansioso','comportamiento canino','salud mascota','gato','veterinario','pulgas','garrapata','alimentacion natural mascota','ladrido excesivo','cachorro','entrenar perro','tienda mascotas','cuidado mascota']
+  },
+  'Ansiedade e Sono':{
+    pt:['ansiedade','insonia','dormir melhor','calmante natural','estresse','melatonina','sono profundo','relaxamento','nervosismo','panico','transtorno de ansiedade','meditacao','remedios naturais','terapia','burnout'],
+    en:['anxiety relief','sleep better','insomnia','natural calm','stress relief','melatonin','deep sleep','relaxation','panic attack','anxiety supplement','meditation','sleep aid','burnout','mental health','nervous system'],
+    es:['ansiedad','insomnio','dormir mejor','calmante natural','estres','melatonina','sueno profundo','relajacion','nerviosismo','panico','trastorno de ansiedad','meditacion','remedios naturales','terapia','burnout']
+  },
+  'Memoria e Foco':{
+    pt:['memoria fraca','foco e concentracao','esquecimento','noootropico','cerebro','lucidez mental','alzheimer','demencia','vitamina para memoria','raciocinio','neblina mental','funcao cognitiva','energia mental','suplemento cerebral','mente afiada'],
+    en:['brain supplement','memory loss','focus and concentration','nootropic','cognitive function','brain fog','mental clarity','alzheimer prevention','brain health','smart drug','memory booster','attention','mental energy','brain power','mental sharpness'],
+    es:['memoria debil','foco y concentracion','olvidos','noootropico','cerebro','lucidez mental','alzheimer','demencia','vitamina para memoria','razonamiento','niebla mental','funcion cognitiva','energia mental','suplemento cerebral','mente aguda']
+  },
+  'Visao':{
+    pt:['vista cansada','presbiopia','oculos','visao embaçada','catarata','glaucoma','degeneracao macular','luteina','zeaxantina','olho seco','miopia','astigmatismo','saude ocular','vitamina para visao','vista turva'],
+    en:['eye health','blurry vision','presbyopia','cataracts','glaucoma','macular degeneration','lutein','zeaxanthin','dry eyes','vision supplement','eye vitamins','nearsighted','eye strain','vision loss','eye care'],
+    es:['vista cansada','presbicia','lentes','vision borrosa','catarata','glaucoma','degeneracion macular','luteina','zeaxantina','ojo seco','miopia','astigmatismo','salud ocular','vitamina para vision','vista turbia']
+  }
+};
+
+// ===== COPYCAT FEATURE FUNCTIONS =====
+
+function showToast(msg,type){
+  const t=document.createElement('div');
+  t.className='toast toast-'+(type||'ok');
+  t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),3000);
+}
+
+function toggleAdMenu(e,menuId){
+  e.stopPropagation();
+  document.querySelectorAll('.ad-dropdown-menu.open').forEach(m=>{if(m.id!==menuId)m.classList.remove('open')});
+  document.getElementById(menuId).classList.toggle('open');
+}
+document.addEventListener('click',()=>document.querySelectorAll('.ad-dropdown-menu.open').forEach(m=>m.classList.remove('open')));
+
+function copiarTexto(adId,campo){
+  const cc=COPYCAT_DATA[adId];
+  let texto='';
+  if(campo==='texto'&&cc)texto=cc.texto||'';
+  else if(campo==='titulo'&&cc)texto=cc.titulo||'';
+  else if(campo==='desc'&&cc)texto=cc.desc||'';
+  else if(campo==='cta'&&cc)texto=cc.cta||'';
+  else if(campo==='adlib')texto='https://www.facebook.com/ads/library/?id='+adId;
+  else if(campo==='all'){
+    const parts=[];
+    parts.push('Ad ID: '+adId);
+    parts.push('Ad Library: https://www.facebook.com/ads/library/?id='+adId);
+    if(cc){
+      if(cc.texto)parts.push('\nTexto do Ad:\n'+cc.texto);
+      if(cc.titulo)parts.push('\nTitulo: '+cc.titulo);
+      if(cc.desc)parts.push('Descricao: '+cc.desc);
+      if(cc.url)parts.push('URL: '+cc.url);
+      if(cc.cta)parts.push('CTA: '+cc.cta);
+      if(cc.adv){
+        parts.push('\nAnunciante: '+cc.adv.nome);
+        if(cc.adv.cat)parts.push('Categoria: '+cc.adv.cat);
+        if(cc.adv.ig)parts.push('Instagram: '+cc.adv.ig);
+      }
+    }
+    texto=parts.join('\n');
+  }
+  if(!texto){showToast('Sem dados disponiveis para este campo','info');return}
+  navigator.clipboard.writeText(texto).then(()=>showToast('Copiado!')).catch(()=>prompt('Copie:',texto));
+  document.querySelectorAll('.ad-dropdown-menu.open').forEach(m=>m.classList.remove('open'));
+}
+
+function compartilharAd(adId,pageName,dias){
+  const adLibUrl='https://www.facebook.com/ads/library/?id='+adId;
+  const msg=`Spy: ${pageName} - ${dias}d ativo\nAd Library: ${adLibUrl}`;
+  const waUrl='https://wa.me/?text='+encodeURIComponent(msg);
+  window.open(waUrl,'_blank');
+}
+
+// ===== NICHE KEYWORDS RENDERING =====
+function renderNicheKeywords(){
+  const container=document.getElementById('niche-kw-container');
+  if(!container)return;
+  const niches=Object.keys(NICHE_KEYWORDS);
+  container.innerHTML=niches.map((niche,ni)=>{
+    const langs=NICHE_KEYWORDS[niche];
+    return `<div class="niche-group">
+      <div class="niche-header" onclick="toggleNiche(${ni})">
+        <h4>${niche} <span style="font-size:11px;font-weight:400;color:var(--text-3)">(${langs.pt.length+langs.en.length+langs.es.length} keywords)</span></h4>
+        <div class="niche-lang">
+          <button class="niche-lang-btn active" onclick="event.stopPropagation();switchNicheLang(${ni},'pt')">PT</button>
+          <button class="niche-lang-btn" onclick="event.stopPropagation();switchNicheLang(${ni},'en')">EN</button>
+          <button class="niche-lang-btn" onclick="event.stopPropagation();switchNicheLang(${ni},'es')">ES</button>
+        </div>
+      </div>
+      <div class="niche-body" id="niche-body-${ni}">
+        <div class="niche-chips" id="niche-chips-${ni}">
+          ${langs.pt.map(kw=>`<button class="niche-chip" onclick="clickNicheKw('${escHtml(kw)}')">${escHtml(kw)}</button>`).join('')}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function toggleNiche(idx){
+  const body=document.getElementById('niche-body-'+idx);
+  if(body)body.classList.toggle('open');
+}
+function switchNicheLang(idx,lang){
+  const niche=Object.keys(NICHE_KEYWORDS)[idx];
+  const kws=NICHE_KEYWORDS[niche][lang]||[];
+  const chips=document.getElementById('niche-chips-'+idx);
+  if(chips)chips.innerHTML=kws.map(kw=>`<button class="niche-chip" onclick="clickNicheKw('${escHtml(kw)}')">${escHtml(kw)}</button>`).join('');
+  const group=chips.closest('.niche-group');
+  group.querySelectorAll('.niche-lang-btn').forEach(b=>b.classList.remove('active'));
+  group.querySelectorAll('.niche-lang-btn').forEach(b=>{if(b.textContent.toLowerCase()===lang)b.classList.add('active')});
+}
+function clickNicheKw(kw){
+  document.getElementById('niche-kw-search').value=kw;
+  buscarNicheKw();
+}
+function buscarNicheKw(){
+  const kw=document.getElementById('niche-kw-search').value.trim();
+  if(!kw){showToast('Digite uma keyword','info');return}
+  window.open('https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=BR&search_type=keyword_unordered&q='+encodeURIComponent(kw),'_blank');
+}
+
+// ===== AI GENERATION (usando prompts do Copycat, powered by Claude) =====
+const AI_PROMPTS={
+  keywords_form:function(niche,product){return 'Me de uma lista de palavras-chave presentes em anuncios do Meta Ads/Facebook Ads do nicho "'+niche+'" para vender "'+product+'". Considere copywriting persuasivo e liste sugestoes em portugues, ingles e espanhol. Formate como lista organizada por idioma.'},
+  keywords_sel:function(sel){return 'Me de uma lista de palavras-chave presentes em anuncios do Meta Ads/Facebook Ads relacionados ao texto entre colchetes ['+sel+']. Considere copywriting persuasivo e liste sugestoes em portugues, ingles e espanhol.'},
+  segmentacao:function(sel){return 'Me de sugestoes de segmentacao de publicos para anuncios do Meta Ads/Facebook Ads baseados no conteudo entre colchetes ['+sel+']. Inclua interesses, comportamentos, demograficos e lookalikes.'},
+  analise_copy:function(sel){return 'Analise o conteudo entre colchetes ['+sel+'] e explique as tecnicas de copywriting e persuasao utilizadas. Identifique: gatilhos mentais, estrutura AIDA, apelos emocionais, provas sociais.'},
+  teste_ab:function(sel){return 'Analise o conteudo entre colchetes ['+sel+'] e crie tres variacoes para teste A/B mantendo a estrutura persuasiva. Cada variacao deve testar um angulo diferente.'},
+  oferta:function(sel){return 'Analise o conteudo entre colchetes ['+sel+'] e descreva a estrutura da oferta detalhadamente: proposta de valor, garantia, ancoragem de preco, urgencia, bonus, CTA.'},
+  avatar:function(sel){return 'Analise o conteudo entre colchetes ['+sel+'] e identifique o avatar do cliente ideal: idade, genero, dores, desejos, objecoes, nivel de consciencia, sofisticacao de mercado, crencas limitantes.'},
+  angulos:function(sel){return 'Analise o conteudo entre colchetes ['+sel+'] e gere quatro angulos criativos personalizados para anuncios. Cada angulo com: hook (1 frase), corpo (2-3 linhas), CTA. Angulos: curiosidade, medo, desejo, prova social.'},
+  quiz:function(sel){return 'Analise o conteudo entre colchetes ['+sel+'] e crie um funil de quiz em multiplas etapas. Inclua: 5 perguntas do quiz, 3 resultados possiveis, copy de cada tela, CTA final.'}
+};
+
+function gerarKeywordsIA(){
+  const niche=prompt('Qual o nicho? (ex: emagrecimento, renda extra, ED)');
+  if(!niche)return;
+  const product=prompt('Qual o tipo de produto? (ex: suplemento, curso, app)');
+  if(!product)return;
+  const prompt_text=AI_PROMPTS.keywords_form(niche,product);
+  navigator.clipboard.writeText(prompt_text).then(()=>{
+    showToast('Prompt copiado! Cole no Claude ou ChatGPT.');
+  }).catch(()=>prompt('Copie o prompt:',prompt_text));
+}
+
+function gerarIA(tipo,adId){
+  const cc=COPYCAT_DATA[adId];
+  let sel='';
+  if(cc){
+    sel=cc.texto||'';
+    if(cc.titulo)sel+='\n'+cc.titulo;
+    if(cc.desc)sel+='\n'+cc.desc;
+  }
+  if(!sel){sel=prompt('Cole o texto do anuncio para analise:');if(!sel)return;}
+  const fn=AI_PROMPTS[tipo];
+  if(!fn){showToast('Tipo de analise invalido','info');return;}
+  const prompt_text=fn(sel);
+  navigator.clipboard.writeText(prompt_text).then(()=>{
+    showToast('Prompt copiado! Cole no Claude.');
+  }).catch(()=>prompt('Copie:',prompt_text));
+}
+
+// Init niche keywords when section becomes visible
+const _origNavClick=document.querySelectorAll('.nav-item');
+_origNavClick.forEach(item=>{
+  item.addEventListener('click',function(){
+    if(this.dataset.section==='niche-keywords'){renderNicheKeywords()}
+  });
+});
+
+document.addEventListener('DOMContentLoaded',function(){var v=document.createElement('div');v.style.cssText='position:fixed;bottom:4px;right:8px;font-size:9px;color:var(--text-4);opacity:.5;pointer-events:none;z-index:1';v.textContent='v27';document.body.appendChild(v)});
 </script>
