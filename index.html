@@ -1007,7 +1007,8 @@ function renderFullPanel(a,cc){
   h+='<div style="flex:1;min-width:200px">';
   h+='<div class="cc-section" style="padding:0;border:0;margin:0">';
   var panelRem=!thumbUrl&&!vidUrl;
-  h+='<div><span class="cc-label">AD ID</span><a class="cc-url" href="'+(panelRem?adLibPage:'https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=BR&id='+adId)+'" target="_blank">'+adId+(panelRem?' (removido)':'')+'</a></div>';
+  var panelRemLabel=panelRem?(BLOCKED_ADS.hasOwnProperty(adId)?' (bloqueado)':' (nao coletado)'):'';
+  h+='<div><span class="cc-label">AD ID</span><a class="cc-url" href="https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=BR&id='+adId+'" target="_blank">'+adId+panelRemLabel+'</a></div>';
   h+='<div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:4px">';
   h+='<div><span class="cc-label">Data Inicio</span><div class="cc-val">'+escHtml(dateStr)+'</div></div>';
   h+='<div><span class="cc-label">Dias Rodando</span><div class="cc-val" style="font-weight:700;color:'+diasColor+'">'+diasVal+'d</div></div>';
