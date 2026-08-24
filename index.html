@@ -1295,6 +1295,20 @@ function renderAdsTable(ads){
     <div class="table-footer"><span>Mostrando <span class="count" id="showing-count">${ads.length}</span> de ${allAds.length} ads</span><span>Ultima atualizacao: 23/ago/2026</span></div>
   `;
   renderRows(ads);
+  // ── SISTEMA DE FILTROS COMPOSTOS ──
+  // Todos os filtros (pagina, tempo, busca, ordenacao) passam por _applyFilters().
+  // Cada filtro atualiza SUA variavel de estado e chama _applyFilters(), que
+  // aplica TODOS os filtros ativos em cadeia sobre allAds e re-renderiza.
+  //
+  // Estado:
+  //   _pageF  — filtro de pagina (string). 'all' | 'escala' | 'duplicados' | 'qtde' | nome da pagina
+  //   _timeF  — filtro de tempo (int dias). 0=todos, 3/5/7/14/21/28/60=ultimos N dias, 100=100d+
+  //   _search — busca por AD ID (string parcial)
+  //   _sort   — ordenacao por coluna. null=default, ou {col:'date'|'dias'|'vars', dir:1|-1}
+  //
+  // Ordem de aplicacao: pagina → tempo → busca → ordenacao.
+  // Pra adicionar um filtro novo: criar variavel de estado, aplicar no corpo de _applyFilters(),
+  // e conectar o evento do botao/input chamando _applyFilters() no final.
   let _pageF='all',_timeF=0,_search='',_sort=null;
   function _applyFilters(){
     let r=[...allAds];
