@@ -988,7 +988,7 @@ function renderFullPanel(a,cc){
   if(evo&&evo.ads){for(var i=0;i<evo.ads.length;i++){if(evo.ads[i][0]===adId){variantes=evo.ads[i][2];break}}}
   var adLibPage='https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=BR&view_all_page_id='+(pg?pg.pageId:(a?a.pageId:''));
   var scoreColor=pg&&pg.score>=150?'var(--green)':pg&&pg.score>=80?'var(--yellow)':'var(--text-3)';
-  var diasVal=a?a.dias:(cc?cc.dias:0);
+  var diasVal=a?a.dias:(cc?computeDiasCC(cc.inicio):0);
   var diasColor=diasVal>=100?'var(--green)':diasVal>=30?'var(--yellow)':diasVal>=7?'var(--accent)':'var(--text-3)';
   var dateStr=a?a.date:(cc?cc.inicio:'');
   var typeStr=a?a.type:(cc?cc.tipo:'');
@@ -1165,6 +1165,13 @@ function computeDias(p){
   const d=new Date(parseInt(pts[2]),m,parseInt(pts[0]));
   return Math.max(0,Math.floor((new Date()-d)/86400000));
 }
+function computeDiasCC(inicio){
+  if(!inicio)return 0;
+  const pts=inicio.split('/');
+  if(pts.length!==3)return 0;
+  const d=new Date(parseInt(pts[2]),parseInt(pts[1])-1,parseInt(pts[0]));
+  return Math.max(0,Math.floor((new Date()-d)/86400000));
+}
 
 // ===== RANKING =====
 const sorted=[...PAGES].sort((a,b)=>b.score-a.score);
@@ -1195,7 +1202,7 @@ const heatData={};
 PAGES.forEach(p=>{p.dates.forEach(d=>{heatData[d]=(heatData[d]||0)+1})});
 const hmEl=document.getElementById('heatmap');
 for(let i=30;i>=0;i--){
-  const dt=new Date(2026,7,22);dt.setDate(dt.getDate()-i);
+  const dt=new Date();dt.setDate(dt.getDate()-i);
   const d=dt.getDate();const m=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'][dt.getMonth()];
   const key=`${String(d).padStart(2,'0')}/${m}/${dt.getFullYear()}`;
   const count=heatData[key]||0;
