@@ -439,6 +439,7 @@ canvas{width:100%!important;display:block}
       <div class="nav-section">Discovery</div>
       <div class="nav-item" data-section="discovery"><span class="icon">&#127919;</span>Concorrentes<span class="nav-badge">14</span></div>
       <div class="nav-item" data-section="keywords"><span class="icon">&#128270;</span>Keywords<span class="nav-badge">19/89</span></div>
+      <div class="nav-item" data-section="auto-discovery"><span class="icon">&#128269;</span>Auto-Discovery<span class="nav-badge" id="autodiscovery-count-badge" style="background:var(--green-bg);color:var(--green)">0</span></div>
       <div class="nav-item" data-section="vsls"><span class="icon">&#127909;</span>Extrair VSL<span class="nav-badge" id="vsls-count-badge">0</span></div>
       <div class="nav-item" data-section="vsl-swipe"><span class="icon">&#127916;</span>Swipe de VSLs</div>
       <div class="nav-section">Sistema</div>
@@ -587,6 +588,69 @@ canvas{width:100%!important;display:block}
         <div class="kw-grid" id="kw-grid"></div>
       </div>
 
+      <!-- ===== AUTO-DISCOVERY ===== -->
+      <div class="section" id="sec-auto-discovery">
+        <div style="margin-bottom:20px">
+          <h3 style="font-size:15px;font-weight:700;margin-bottom:4px">Auto-Discovery de Anunciantes</h3>
+          <p style="font-size:12px;color:var(--text-3);line-height:1.5;margin-bottom:16px">Busque por keyword na Ad Library, identifique anunciantes escalados, e adicione ao monitoramento. Scale Score = numero de ads ativos (quanto mais ads, mais escalado).</p>
+
+          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin-bottom:16px">
+            <div style="flex:1;min-width:260px">
+              <label style="font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px">Keyword de busca</label>
+              <input id="ad-kw-input" type="text" placeholder="ex: renda extra, emagrecimento, ganhar dinheiro..." style="width:100%;padding:8px 12px;background:var(--bg-3);border:1px solid var(--border);border-radius:6px;color:var(--text-1);font-size:13px;font-family:inherit;outline:none" />
+            </div>
+            <div style="display:flex;gap:6px">
+              <button onclick="buscarAdLibrary()" style="padding:8px 16px;background:var(--accent);color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;height:37px">Buscar na Ad Library</button>
+              <button onclick="toggleAddForm()" id="ad-add-toggle-btn" style="padding:8px 16px;background:var(--green);color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;height:37px">+ Adicionar</button>
+            </div>
+          </div>
+
+          <div id="ad-add-form" style="display:none;background:var(--bg-2);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:16px">
+            <div style="font-size:12px;font-weight:600;color:var(--text-1);margin-bottom:12px">Registrar anunciante descoberto</div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-bottom:12px">
+              <div>
+                <label style="font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:3px">Nome / Pagina</label>
+                <input id="ad-add-name" type="text" placeholder="Ex: Ricieri Rosset" style="width:100%;padding:6px 10px;background:var(--bg-3);border:1px solid var(--border);border-radius:4px;color:var(--text-1);font-size:12px;font-family:inherit;outline:none" />
+              </div>
+              <div>
+                <label style="font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:3px">Page ID (Facebook)</label>
+                <input id="ad-add-pageid" type="text" placeholder="Ex: 110024568187997" style="width:100%;padding:6px 10px;background:var(--bg-3);border:1px solid var(--border);border-radius:4px;color:var(--text-1);font-size:12px;font-family:inherit;outline:none" />
+              </div>
+              <div>
+                <label style="font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:3px">Ads ativos (Scale Score)</label>
+                <input id="ad-add-adcount" type="number" placeholder="Ex: 150" min="0" style="width:100%;padding:6px 10px;background:var(--bg-3);border:1px solid var(--border);border-radius:4px;color:var(--text-1);font-size:12px;font-family:inherit;outline:none" />
+              </div>
+              <div>
+                <label style="font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:3px">Dominio</label>
+                <input id="ad-add-domain" type="text" placeholder="Ex: exemplo.com.br" style="width:100%;padding:6px 10px;background:var(--bg-3);border:1px solid var(--border);border-radius:4px;color:var(--text-1);font-size:12px;font-family:inherit;outline:none" />
+              </div>
+              <div>
+                <label style="font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:3px">Keyword usada</label>
+                <input id="ad-add-keyword" type="text" placeholder="Ex: renda extra" style="width:100%;padding:6px 10px;background:var(--bg-3);border:1px solid var(--border);border-radius:4px;color:var(--text-1);font-size:12px;font-family:inherit;outline:none" />
+              </div>
+              <div>
+                <label style="font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:3px">Nicho / Mecanismo</label>
+                <input id="ad-add-mech" type="text" placeholder="Ex: Renda em dolar via video curto" style="width:100%;padding:6px 10px;background:var(--bg-3);border:1px solid var(--border);border-radius:4px;color:var(--text-1);font-size:12px;font-family:inherit;outline:none" />
+              </div>
+            </div>
+            <div style="display:flex;gap:8px">
+              <button onclick="salvarDiscovery()" style="padding:6px 16px;background:var(--accent);color:#fff;border:none;border-radius:4px;font-size:12px;font-weight:600;cursor:pointer">Salvar</button>
+              <button onclick="toggleAddForm()" style="padding:6px 16px;background:var(--bg-3);border:1px solid var(--border);border-radius:4px;color:var(--text-3);font-size:12px;cursor:pointer">Cancelar</button>
+            </div>
+          </div>
+
+          <div id="ad-quick-kw" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px"></div>
+        </div>
+
+        <div id="ad-discovery-stats" style="display:none;margin-bottom:16px;display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px"></div>
+        <div id="ad-discovery-table" style="margin-bottom:20px"></div>
+        <div id="ad-discovery-empty" style="text-align:center;padding:40px 20px;color:var(--text-3);font-size:13px">
+          <div style="font-size:28px;margin-bottom:8px">&#128269;</div>
+          Nenhum anunciante descoberto ainda.<br>
+          <span style="font-size:11px;color:var(--text-4);line-height:1.6">Busque uma keyword na Ad Library, identifique anunciantes escalados, e adicione aqui com o botao "+ Adicionar".</span>
+        </div>
+      </div>
+
       <!-- ===== VSLs ===== -->
       <div class="section" id="sec-vsls">
         <div style="margin-bottom:20px">
@@ -665,7 +729,13 @@ const PAGES = [
   {name:'Natalia Beauty',fullName:'Natalia Beauty',pageId:'347189425772727',domain:'nataliabeauty.com.br',ads:12,dias:2,oldest:'21/ago/2026',videos:5,prints:5,status:'teste',label:'TESTE',score:32,plat:'FB, IG',obs:'12 entradas (+2 vs ronda 3). 2 dominios (nataliabeauty + protocoloaura). Teste ativo com 4 criativos no novo ad.',color:'var(--yellow)',
     adIds:['1392948559450256','1596597078494044','1470016874849610','924000846814569','1024310960610863'],
     dates:['21/ago/2026','21/ago/2026','21/ago/2026','21/ago/2026','21/ago/2026']},
-  {name:'Elida Digital',fullName:'Elida Dias - Digital',pageId:'879705961901136',domain:'elidadias.blog',ads:8,dias:1,oldest:'22/ago/2026',videos:8,prints:8,status:'lancamento',label:'LANCAMENTO',score:16,plat:'FB, IG',obs:'Pausa noturna CONFIRMADA (zera a noite, reativa de manha). 8 ads lancados 22/ago. Dominio elidadias.blog.',color:'var(--orange)',ads:7,adIds:['1597982658629188','1088710530383841','4026957884263156','1408204167921819','2895369740826618','2926854784322391','1036768035635998','1461738725766510'],dates:['22/ago/2026','22/ago/2026','22/ago/2026','22/ago/2026','22/ago/2026','22/ago/2026','22/ago/2026','22/ago/2026']}
+  {name:'Elida Digital',fullName:'Elida Dias - Digital',pageId:'879705961901136',domain:'elidadias.blog',ads:8,dias:1,oldest:'22/ago/2026',videos:8,prints:8,status:'lancamento',label:'LANCAMENTO',score:16,plat:'FB, IG',obs:'Pausa noturna CONFIRMADA (zera a noite, reativa de manha). 8 ads lancados 22/ago. Dominio elidadias.blog.',color:'var(--orange)',ads:7,adIds:['1597982658629188','1088710530383841','4026957884263156','1408204167921819','2895369740826618','2926854784322391','1036768035635998','1461738725766510'],dates:['22/ago/2026','22/ago/2026','22/ago/2026','22/ago/2026','22/ago/2026','22/ago/2026','22/ago/2026','22/ago/2026']},
+  {name:'Rafael Bottrel',fullName:'Rafael Bottrel',pageId:'697863416743963',domain:'bottrel.com.br',ads:420,dias:28,oldest:'27/jul/2026',videos:0,prints:0,status:'escalado',label:'ESCALADO',score:420,plat:'FB, IG',obs:'~420 ads ativos. Quiz funnel e-commerce (Ecom Start). Maior Scale Score do nicho monitorado. Nova Lima, MG.',color:'var(--green)',adIds:[],dates:[]},
+  {name:'Gabriel Navaro',fullName:'Gabriel Navaro - Investimentos',pageId:'1140174149181447',domain:'gabrielnavaro.com.br',ads:99,dias:61,oldest:'24/jun/2026',videos:0,prints:0,status:'escalado',label:'ESCALADO',score:99,plat:'FB, IG, AN, MSG',obs:'~99 ads ativos. Investimentos/renda passiva. Aula gratuita. Mesmo operador de GN Investimentos.',color:'var(--green)',adIds:[],dates:[]},
+  {name:'GN Investimentos',fullName:'GN Investimentos (Gabriel Navaro)',pageId:'203347892863682',domain:'gabrielnavaro.com.br',ads:22,dias:0,oldest:'24/ago/2026',videos:0,prints:0,status:'teste',label:'TESTE',score:22,plat:'FB, IG',obs:'~22 ads ativos. Investimentos/renda passiva. Pagina secundaria de Gabriel Navaro.',color:'var(--yellow)',adIds:[],dates:[]},
+  {name:'Hytallo Soares',fullName:'Hytallo Soares Network',pageId:'230357267097473',domain:'geniuzonline.com',ads:38,dias:13,oldest:'11/ago/2026',videos:0,prints:0,status:'escalado',label:'ESCALADO',score:92,plat:'FB, IG',obs:'~38 ads ativos (pagina principal). Aula gratuita geniuzonline.com/aula. Escala forte. Mesmo operador de Soares Hytallo.',color:'var(--green)',adIds:[],dates:[]},
+  {name:'Soares Hytallo',fullName:'Soares Hytallo',pageId:'187162894704828',domain:'geniuzonline.com',ads:54,dias:6,oldest:'18/ago/2026',videos:0,prints:0,status:'escalado',label:'ESCALADO',score:54,plat:'FB, IG',obs:'~54 ads ativos (pagina secundaria). Mesmo operador de Hytallo Soares Network. geniuzonline.com.',color:'var(--green)',adIds:[],dates:[]},
+  {name:'Guilherme Cirilo',fullName:'Guilherme Cirilo - Maquina de Vendas',pageId:'1204682539399842',domain:'guilhermecirilo.com',ads:23,dias:26,oldest:'29/jul/2026',videos:0,prints:0,status:'teste',label:'TESTE',score:23,plat:'FB, IG',obs:'~23 ads ativos. E-commerce/dropshipping (Maquina de Vendas). Loja online sem estoque. Uberlandia, MG.',color:'var(--yellow)',adIds:[],dates:[]}
 ];
 
 const KEYWORDS = [
@@ -688,7 +758,19 @@ const KEYWORDS = [
   {text:'MUDEII DE VIDA',freq:0,status:'done',results:36},
   {text:'ganhar dinheiro pelo celular',freq:0,status:'done',results:6200},
   {text:'renda online sem aparecer',freq:0,status:'done',results:530},
-  {text:'video curto renda dolar',freq:0,status:'done',results:28}
+  {text:'video curto renda dolar',freq:0,status:'done',results:28},
+  {text:'vendas no automatico',freq:0,status:'done',results:1800},
+  {text:'sistema de renda oculta',freq:0,status:'done',results:420},
+  {text:'influenciadora anonima',freq:0,status:'done',results:950},
+  {text:'profissao do futuro digital',freq:0,status:'done',results:1200},
+  {text:'criar video pra marca',freq:0,status:'done',results:680},
+  {text:'verba de marketing marcas',freq:0,status:'done',results:310},
+  {text:'sem seguidores ganhar dinheiro',freq:0,status:'done',results:2400},
+  {text:'largar CLT renda internet',freq:0,status:'done',results:1500},
+  {text:'criar produto digital automatico',freq:0,status:'done',results:890},
+  {text:'redes sociais pagam dinheiro',freq:0,status:'done',results:1100},
+  {text:'pessoa comum ganhar dinheiro internet',freq:0,status:'done',results:3200},
+  {text:'primeiro produto digital renda',freq:0,status:'done',results:740}
 ];
 
 const DISCOVERIES = [
@@ -698,7 +780,6 @@ const DISCOVERIES = [
   {name:'manualdaweb.com',domain:'manualdaweb.com',dias:100,tier:2,match:'A VALIDAR',mecanismo:'-',copy:'-',keywords:1,color:'var(--yellow)',bib:'https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=BR&search_type=keyword_unordered&q=manualdaweb'},
   {name:'Rian Medeiross',domain:'rianmedeiros.com',dias:47,tier:2,match:'MEDIO',mecanismo:'Video UGC',copy:'-',keywords:1,color:'var(--accent)',bib:'https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=BR&search_type=keyword_unordered&q=rianmedeiros'},
   {name:'geniunshop.online',domain:'geniunshop.online',dias:31,tier:2,match:'BAIXO',mecanismo:'-',copy:'-',keywords:2,color:'var(--text-3)',bib:'https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=BR&search_type=keyword_unordered&q=geniunshop'},
-  {name:'Gabriel Navarro',domain:'gabrielnavarro.com.br',dias:96,tier:2,match:'BAIXO',mecanismo:'Investimentos / renda passiva',copy:'-',keywords:2,color:'var(--text-3)',bib:'https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=BR&search_type=keyword_unordered&q=gabrielnavarro'},
   {name:'aprovabancarios.com',domain:'aprovabancarios.com',dias:1565,tier:3,match:'A VALIDAR',mecanismo:'Concursos/finance?',copy:'-',keywords:1,color:'var(--purple)',bib:'https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=BR&search_type=keyword_unordered&q=aprovabancarios'},
   {name:'ganhandotempo.com',domain:'ganhandotempo.com',dias:1252,tier:3,match:'A VALIDAR',mecanismo:'Renda-extra?',copy:'-',keywords:1,color:'var(--purple)',bib:'https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=BR&search_type=keyword_unordered&q=ganhandotempo'},
   {name:'agenciaempregador.com.br',domain:'agenciaempregador.com.br',dias:333,tier:3,match:'BAIXO',mecanismo:'Trabalho remoto',copy:'-',keywords:1,color:'var(--orange)',bib:'https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=BR&search_type=keyword_unordered&q=agenciaempregador'},
@@ -709,7 +790,7 @@ const DISCOVERIES = [
 ];
 
 const SUPABASE_BASE='https://kykudpqqrkigbpkkyren.supabase.co/storage/v1/object/public/spy-media';
-const PAGE_SLUGS={'Elida Dias':'elida-dias','Elida Digital':'elida-dias-digital','Rafaela Chagas':'rafaela-chagas','Natalia Beauty':'natalia-beauty','For Traders Global':'for-traders-global'};
+const PAGE_SLUGS={'Elida Dias':'elida-dias','Elida Digital':'elida-dias-digital','Rafaela Chagas':'rafaela-chagas','Natalia Beauty':'natalia-beauty','For Traders Global':'for-traders-global','Rafael Bottrel':'rafael-bottrel','Gabriel Navaro':'gabriel-navaro','GN Investimentos':'gn-investimentos','Hytallo Soares':'hytallo-soares','Soares Hytallo':'soares-hytallo','Guilherme Cirilo':'guilherme-cirilo'};
 const EXISTING_MEDIA=new Set([
 'elida-dias/1011172491955628.jpg','elida-dias/1011172491955628.mp4','elida-dias/1019920224244369.jpg','elida-dias/1019920224244369.mp4','elida-dias/1030251813152654.jpg','elida-dias/1030251813152654.mp4','elida-dias/1042579405231240.jpg','elida-dias/1042579405231240.mp4','elida-dias/1044096654779086.jpg','elida-dias/1044096654779086.mp4','elida-dias/1049656978061916.jpg','elida-dias/1049656978061916.mp4','elida-dias/1056254210458152.jpg','elida-dias/1056254210458152.mp4','elida-dias/1066275209109130.jpg','elida-dias/1066275209109130.mp4','elida-dias/1069069168962358.jpg','elida-dias/1069069168962358.mp4','elida-dias/1071363872117573.jpg','elida-dias/1071363872117573.mp4','elida-dias/1079513495032018.jpg','elida-dias/1079513495032018.mp4','elida-dias/1083888477481310.jpg','elida-dias/1083888477481310.mp4','elida-dias/1131322006250232.jpg','elida-dias/1131322006250232.mp4','elida-dias/1138580338495003.jpg','elida-dias/1138580338495003.mp4','elida-dias/1310140762174858.jpg','elida-dias/1310140762174858.mp4','elida-dias/1359008722544182.jpg','elida-dias/1359008722544182.mp4','elida-dias/1363924088664643.jpg','elida-dias/1363924088664643.mp4','elida-dias/1380906754237315.jpg','elida-dias/1380906754237315.mp4','elida-dias/1423995609623462.jpg','elida-dias/1423995609623462.mp4','elida-dias/1556281725370522.jpg','elida-dias/1556281725370522.mp4','elida-dias/1564316255485150.jpg','elida-dias/1564316255485150.mp4','elida-dias/1564507498666296.jpg','elida-dias/1564507498666296.mp4','elida-dias/1568185014810637.jpg','elida-dias/1568185014810637.mp4','elida-dias/1575994787554450.jpg','elida-dias/1575994787554450.mp4','elida-dias/1583778866726656.jpg','elida-dias/1583778866726656.mp4','elida-dias/1593167089262644.jpg','elida-dias/1593167089262644.mp4','elida-dias/1611960627264077.jpg','elida-dias/1611960627264077.mp4','elida-dias/1686849215736789.jpg','elida-dias/1686849215736789.mp4','elida-dias/1693559685064213.jpg','elida-dias/1693559685064213.mp4','elida-dias/1697009504718050.jpg','elida-dias/1697009504718050.mp4','elida-dias/1715976586374315.jpg','elida-dias/1715976586374315.mp4','elida-dias/1730806774747128.jpg','elida-dias/1730806774747128.mp4','elida-dias/1743174026624983.jpg','elida-dias/1743174026624983.mp4','elida-dias/1751000105935873.jpg','elida-dias/1751000105935873.mp4','elida-dias/1760200181848410.jpg','elida-dias/1760200181848410.mp4','elida-dias/1781625766361588.jpg','elida-dias/1781625766361588.mp4','elida-dias/1845278709785805.jpg','elida-dias/1845278709785805.mp4','elida-dias/1867383040900554.jpg','elida-dias/1867383040900554.mp4','elida-dias/1960454111332694.jpg','elida-dias/1960454111332694.mp4','elida-dias/2016447142409831.jpg','elida-dias/2016447142409831.mp4','elida-dias/2022624568383087.jpg','elida-dias/2022624568383087.mp4','elida-dias/2049267353128466.jpg','elida-dias/2049267353128466.mp4','elida-dias/2106113799984719.jpg','elida-dias/2106113799984719.mp4','elida-dias/2116230672583953.jpg','elida-dias/2116230672583953.mp4','elida-dias/2249480842518674.jpg','elida-dias/2249480842518674.mp4','elida-dias/2267078390712535.jpg','elida-dias/2267078390712535.mp4','elida-dias/2275643429886835.jpg','elida-dias/2275643429886835.mp4','elida-dias/2465912197253798.jpg','elida-dias/2465912197253798.mp4','elida-dias/2597031387405871.jpg','elida-dias/2597031387405871.mp4','elida-dias/28202194619375979.jpg','elida-dias/28202194619375979.mp4','elida-dias/2834788313565398.jpg','elida-dias/2834788313565398.mp4','elida-dias/3219905471543371.jpg','elida-dias/3219905471543371.mp4','elida-dias/3276667335876344.jpg','elida-dias/3276667335876344.mp4','elida-dias/4592430854334501.jpg','elida-dias/4592430854334501.mp4','elida-dias/945419997808871.jpg','elida-dias/945419997808871.mp4','elida-dias/969315979531616.jpg','elida-dias/969315979531616.mp4','elida-dias/994578046939405.jpg','elida-dias/994578046939405.mp4',
 'elida-dias-digital/1036768035635998.jpg','elida-dias-digital/1036768035635998.mp4','elida-dias-digital/1044303555249215.jpg','elida-dias-digital/1073755801799236.jpg','elida-dias-digital/1080055631668962.jpg','elida-dias-digital/1088710530383841.jpg','elida-dias-digital/1088710530383841.mp4','elida-dias-digital/1099082236014256.jpg','elida-dias-digital/109908223601425616.jpg','elida-dias-digital/109908223601425616.mp4','elida-dias-digital/1104072275489188.jpg','elida-dias-digital/110407227548918816.jpg','elida-dias-digital/110407227548918816.mp4','elida-dias-digital/1349595340228930.jpg','elida-dias-digital/134959534022893016.jpg','elida-dias-digital/134959534022893016.mp4','elida-dias-digital/1356891016646750.jpg','elida-dias-digital/1376400168017146.jpg','elida-dias-digital/1408204167921819.jpg','elida-dias-digital/1411110144272376.jpg','elida-dias-digital/1413899907300528.jpg','elida-dias-digital/1422943783038065.jpg','elida-dias-digital/142294378303806516.jpg','elida-dias-digital/142294378303806516.mp4','elida-dias-digital/1487090300114730.jpg','elida-dias-digital/148709030011473016.jpg','elida-dias-digital/148709030011473016.mp4','elida-dias-digital/1536409737799833.jpg','elida-dias-digital/1556932029548348.jpg','elida-dias-digital/1563048921975695.jpg','elida-dias-digital/1603455094528377.jpg','elida-dias-digital/160345509452837716.jpg','elida-dias-digital/160345509452837716.mp4','elida-dias-digital/1625665282284800.jpg','elida-dias-digital/162566528228480016.jpg','elida-dias-digital/162566528228480016.mp4','elida-dias-digital/1634892898153319.jpg','elida-dias-digital/1670218100736963.jpg','elida-dias-digital/1761975538176592.jpg','elida-dias-digital/1767546430920241.jpg','elida-dias-digital/1779553879719678.jpg','elida-dias-digital/177955387971967816.jpg','elida-dias-digital/177955387971967816.mp4','elida-dias-digital/1818848615808546.jpg','elida-dias-digital/1829857681726375.jpg','elida-dias-digital/1916299565705107.jpg','elida-dias-digital/191629956570510716.jpg','elida-dias-digital/191629956570510716.mp4','elida-dias-digital/1934422310529509.jpg','elida-dias-digital/2011002839602091.jpg','elida-dias-digital/2126347587917560.jpg','elida-dias-digital/2138346917060999.jpg','elida-dias-digital/213834691706099916.jpg','elida-dias-digital/213834691706099916.mp4','elida-dias-digital/2185045699022086.jpg','elida-dias-digital/2222453024997952.jpg','elida-dias-digital/2266232414144058.jpg','elida-dias-digital/2321962325299837.jpg','elida-dias-digital/2442612942880039.jpg','elida-dias-digital/2658943284547820.jpg','elida-dias-digital/28473130145624917.jpg','elida-dias-digital/2847313014562491716.jpg','elida-dias-digital/2847313014562491716.mp4','elida-dias-digital/2895369740826618.jpg','elida-dias-digital/2895369740826618.mp4','elida-dias-digital/2926854784322391.jpg','elida-dias-digital/2926854784322391.mp4','elida-dias-digital/4026957884263156.jpg','elida-dias-digital/4026957884263156.mp4','elida-dias-digital/4383317558600659.jpg','elida-dias-digital/923242043676610.jpg',
@@ -905,6 +986,7 @@ document.querySelectorAll('.nav-item[data-section]').forEach(item=>{
     if(item.dataset.section==='charts')setTimeout(initCharts,50);
     if(item.dataset.section==='vsls')loadVsls();
     if(item.dataset.section==='vsl-swipe')loadVslSwipeTab();
+    if(item.dataset.section==='auto-discovery')initAutoDiscovery();
     document.getElementById('sidebar').classList.remove('open');
   });
 });
@@ -2051,5 +2133,230 @@ async function excluirVsl(id){
     loadVsls();
   }catch(e){alert('Erro ao excluir: '+e.message);}
 }
-document.addEventListener('DOMContentLoaded',function(){var v=document.createElement('div');v.style.cssText='position:fixed;bottom:4px;right:8px;font-size:9px;color:var(--text-4);opacity:.5;pointer-events:none;z-index:1';v.textContent='v25';document.body.appendChild(v)});
+// ===== AUTO-DISCOVERY =====
+const AD_STORAGE_KEY='spy_auto_discovery';
+let adDiscoveryData=[];
+const SEED_DISCOVERY=[
+  {id:'seed_elida',name:'Elida Dias',pageId:'110024568187997',adCount:68,domain:'inlead.digital',keywords:['renda extra','ganhar dinheiro','sem aparecer + ganhar','sistema de renda oculta','vendas no automatico','inteligencia artificial + renda','criar produto digital automatico','pessoa comum ganhar dinheiro internet','produto milionario','largar CLT renda internet'],mech:'Quiz renda extra digital + Sistema de Renda Oculta com IA',status:'referencia',monitorando:true,seed:true,createdAt:'2026-08-22T00:00:00Z',updatedAt:'2026-08-23T00:00:00Z'},
+  {id:'seed_rafaela',name:'Rafaela Chagas',pageId:'108726887198665',adCount:26,domain:'rafaelachagas.com.br',keywords:['renda extra','ganhar dinheiro','influenciadora anonima','profissao do futuro digital','criar video pra marca','verba de marketing marcas','sem seguidores ganhar dinheiro','ugc + renda','largar CLT renda internet','ganhar dinheiro celular sem aparecer'],mech:'Influenciadora Anonima / UGC pra marcas (Profissao do Futuro)',status:'referencia',monitorando:true,seed:true,createdAt:'2026-08-22T00:00:00Z',updatedAt:'2026-08-23T00:00:00Z'},
+  {id:'seed_ricieri',name:'Ricieri Rosset',pageId:'',adCount:86,domain:'ricierirosset.com.br',keywords:['renda extra','sem aparecer + ganhar','ganhar dinheiro pelo celular','video curto renda dolar','redes sociais pagam dinheiro','renda em dolar video curto','largar CLT renda internet'],mech:'Renda em dolar via video curto nas redes sociais',status:'referencia',monitorando:true,seed:true,createdAt:'2026-08-22T00:00:00Z',updatedAt:'2026-08-23T00:00:00Z'},
+  {id:'seed_bottrel',name:'Rafael Bottrel',pageId:'697863416743963',adCount:420,domain:'bottrel.com.br',keywords:['loja online','ecom start','quiz ecommerce','faturar este mes','loja pronta','renda extra'],mech:'Quiz funnel e-commerce (Ecom Start) - loja online pronta',status:'referencia',monitorando:true,seed:true,createdAt:'2026-08-24T00:00:00Z',updatedAt:'2026-08-24T00:00:00Z'},
+  {id:'seed_navaro',name:'Gabriel Navaro',pageId:'1140174149181447',adCount:99,domain:'gabrielnavaro.com.br',keywords:['investir','renda passiva','dinheiro trabalhar pra voce','inflacao','aula gratuita investimentos','comecar a investir','proteger da inflacao'],mech:'Aula gratuita investimentos + renda passiva',status:'referencia',monitorando:true,seed:true,createdAt:'2026-08-24T00:00:00Z',updatedAt:'2026-08-24T00:00:00Z'},
+  {id:'seed_gn',name:'GN Investimentos',pageId:'203347892863682',adCount:22,domain:'gabrielnavaro.com.br',keywords:['investir','renda passiva','dinheiro trabalhar pra voce','comecar a investir'],mech:'Pagina secundaria Gabriel Navaro - investimentos',status:'referencia',monitorando:true,seed:true,createdAt:'2026-08-24T00:00:00Z',updatedAt:'2026-08-24T00:00:00Z'},
+  {id:'seed_hytallo',name:'Hytallo Soares',pageId:'230357267097473',adCount:38,domain:'geniuzonline.com',keywords:['ganhar dinheiro','renda extra','aula gratuita','geniuzonline','trabalhar online','renda pelo celular','sem experiencia ganhar dinheiro'],mech:'Aula gratuita geniuzonline.com - renda online',status:'referencia',monitorando:true,seed:true,createdAt:'2026-08-24T00:00:00Z',updatedAt:'2026-08-24T00:00:00Z'},
+  {id:'seed_hytallo2',name:'Soares Hytallo',pageId:'187162894704828',adCount:54,domain:'geniuzonline.com',keywords:['ganhar dinheiro','renda extra','aula gratuita','geniuzonline','trabalhar online'],mech:'Pagina secundaria Hytallo Soares - geniuzonline',status:'referencia',monitorando:true,seed:true,createdAt:'2026-08-24T00:00:00Z',updatedAt:'2026-08-24T00:00:00Z'},
+  {id:'seed_cirilo',name:'Guilherme Cirilo',pageId:'1204682539399842',adCount:23,domain:'guilhermecirilo.com',keywords:['vender online','loja online','sem estoque','maquina de vendas','dropshipping','ecommerce','loja propria'],mech:'E-commerce/dropshipping - Maquina de Vendas (loja sem estoque)',status:'referencia',monitorando:true,seed:true,createdAt:'2026-08-24T00:00:00Z',updatedAt:'2026-08-24T00:00:00Z'}
+];
+
+let _storageOk=true;
+try{localStorage.setItem('_test','1');localStorage.removeItem('_test');}catch(e){_storageOk=false;}
+function loadDiscoveryData(){
+  let userData=[];
+  try{if(_storageOk){const raw=localStorage.getItem(AD_STORAGE_KEY);userData=raw?JSON.parse(raw):[];}}catch(e){userData=[];}
+  const seedNames=new Set(SEED_DISCOVERY.map(s=>s.name.toLowerCase()));
+  const userOnly=userData.filter(d=>!d.seed&&!seedNames.has(d.name.toLowerCase()));
+  adDiscoveryData=[...SEED_DISCOVERY.map(s=>{
+    const override=userData.find(u=>u.seed&&u.id===s.id);
+    return override?{...s,...override,seed:true,status:'referencia'}:s;
+  }),...userOnly];
+  updateDiscoveryBadge();
+}
+function saveDiscoveryData(){
+  try{if(_storageOk)localStorage.setItem(AD_STORAGE_KEY,JSON.stringify(adDiscoveryData));}catch(e){}
+  updateDiscoveryBadge();
+}
+function updateDiscoveryBadge(){
+  const badge=document.getElementById('autodiscovery-count-badge');
+  if(badge)badge.textContent=adDiscoveryData.length;
+}
+
+function buscarAdLibrary(){
+  const kw=document.getElementById('ad-kw-input').value.trim();
+  if(!kw){alert('Digite uma keyword para buscar');return;}
+  const url='https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=BR&search_type=keyword_unordered&q='+encodeURIComponent(kw);
+  window.open(url,'_blank');
+  const kwField=document.getElementById('ad-add-keyword');
+  if(kwField)kwField.value=kw;
+}
+
+function toggleAddForm(){
+  const form=document.getElementById('ad-add-form');
+  form.style.display=form.style.display==='none'?'block':'none';
+}
+
+function salvarDiscovery(){
+  const name=document.getElementById('ad-add-name').value.trim();
+  const pageId=document.getElementById('ad-add-pageid').value.trim();
+  const adCount=parseInt(document.getElementById('ad-add-adcount').value)||0;
+  const domain=document.getElementById('ad-add-domain').value.trim();
+  const keyword=document.getElementById('ad-add-keyword').value.trim();
+  const mech=document.getElementById('ad-add-mech').value.trim();
+  if(!name){alert('Nome do anunciante obrigatorio');return;}
+  if(!adCount){alert('Numero de ads ativos obrigatorio (Scale Score)');return;}
+  const existing=adDiscoveryData.find(d=>d.name.toLowerCase()===name.toLowerCase());
+  if(existing){
+    if(confirm('Anunciante "'+name+'" ja existe com '+existing.adCount+' ads. Atualizar para '+adCount+'?')){
+      existing.adCount=adCount;
+      existing.updatedAt=new Date().toISOString();
+      if(pageId)existing.pageId=pageId;
+      if(domain)existing.domain=domain;
+      if(keyword&&!existing.keywords.includes(keyword))existing.keywords.push(keyword);
+      if(mech)existing.mech=mech;
+    }else return;
+  }else{
+    adDiscoveryData.push({
+      id:Date.now(),name,pageId,adCount,domain,
+      keywords:keyword?[keyword]:[],mech,
+      status:'descoberto',monitorando:false,
+      createdAt:new Date().toISOString(),
+      updatedAt:new Date().toISOString()
+    });
+  }
+  saveDiscoveryData();
+  renderDiscoveryTable();
+  document.getElementById('ad-add-name').value='';
+  document.getElementById('ad-add-pageid').value='';
+  document.getElementById('ad-add-adcount').value='';
+  document.getElementById('ad-add-domain').value='';
+  document.getElementById('ad-add-mech').value='';
+  toggleAddForm();
+}
+
+function toggleMonitorar(id){
+  const d=adDiscoveryData.find(x=>String(x.id)===String(id));
+  if(!d)return;
+  d.monitorando=!d.monitorando;
+  d.status=d.seed?'referencia':d.monitorando?'monitorando':'descoberto';
+  d.updatedAt=new Date().toISOString();
+  saveDiscoveryData();
+  renderDiscoveryTable();
+}
+
+function removerDiscovery(id){
+  const d=adDiscoveryData.find(x=>String(x.id)===String(id));
+  if(d&&d.seed){alert('Referencias nao podem ser removidas');return;}
+  if(!confirm('Remover este anunciante da lista?'))return;
+  adDiscoveryData=adDiscoveryData.filter(x=>String(x.id)!==String(id));
+  saveDiscoveryData();
+  renderDiscoveryTable();
+}
+
+function editarAdCount(id){
+  const d=adDiscoveryData.find(x=>String(x.id)===String(id));
+  if(!d)return;
+  const novo=prompt('Novo numero de ads ativos para "'+d.name+'":', d.adCount);
+  if(novo===null)return;
+  const n=parseInt(novo);
+  if(isNaN(n)||n<0){alert('Numero invalido');return;}
+  d.adCount=n;
+  d.updatedAt=new Date().toISOString();
+  saveDiscoveryData();
+  renderDiscoveryTable();
+}
+
+function renderDiscoveryTable(){
+  const container=document.getElementById('ad-discovery-table');
+  const empty=document.getElementById('ad-discovery-empty');
+  const stats=document.getElementById('ad-discovery-stats');
+  if(!adDiscoveryData.length){
+    container.innerHTML='';
+    empty.style.display='block';
+    stats.style.display='none';
+    return;
+  }
+  empty.style.display='none';
+  stats.style.display='grid';
+  const sorted=[...adDiscoveryData].sort((a,b)=>b.adCount-a.adCount);
+  const maxAds=Math.max(...sorted.map(d=>d.adCount));
+  const monitorando=sorted.filter(d=>d.monitorando).length;
+  const totalAdsDisc=sorted.reduce((s,d)=>s+d.adCount,0);
+  const avgAds=sorted.length?Math.round(totalAdsDisc/sorted.length):0;
+  stats.innerHTML=`
+    <div style="background:var(--bg-2);border:1px solid var(--border);border-radius:8px;padding:12px 14px">
+      <div style="font-size:20px;font-weight:700;color:var(--text-1)">${sorted.length}</div>
+      <div style="font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px">Descobertos</div>
+    </div>
+    <div style="background:var(--bg-2);border:1px solid var(--border);border-radius:8px;padding:12px 14px">
+      <div style="font-size:20px;font-weight:700;color:var(--green)">${monitorando}</div>
+      <div style="font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px">Monitorando</div>
+    </div>
+    <div style="background:var(--bg-2);border:1px solid var(--border);border-radius:8px;padding:12px 14px">
+      <div style="font-size:20px;font-weight:700;color:var(--accent)">${maxAds}</div>
+      <div style="font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px">Top Scale Score</div>
+    </div>
+    <div style="background:var(--bg-2);border:1px solid var(--border);border-radius:8px;padding:12px 14px">
+      <div style="font-size:20px;font-weight:700;color:var(--purple)">${avgAds}</div>
+      <div style="font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px">Media Ads</div>
+    </div>
+  `;
+  container.innerHTML=`
+    <div style="overflow-x:auto">
+      <table><thead><tr>
+        <th style="width:40px">#</th>
+        <th>Anunciante</th>
+        <th>Dominio</th>
+        <th>Scale Score</th>
+        <th style="min-width:100px">Barra</th>
+        <th>Keywords</th>
+        <th>Mecanismo</th>
+        <th>Status</th>
+        <th>Atualizado</th>
+        <th style="min-width:160px">Acoes</th>
+      </tr></thead>
+      <tbody>${sorted.map((d,i)=>{
+        const pct=maxAds>0?Math.round(d.adCount/maxAds*100):0;
+        const tier=d.adCount>=100?'escalado':d.adCount>=30?'lancamento':d.adCount>=10?'teste':'pausado';
+        const tierLabel=d.adCount>=100?'ESCALA':d.adCount>=30?'SOLIDO':d.adCount>=10?'ATIVO':'NOVO';
+        const statusCls=d.seed?'lancamento':d.monitorando?'escalado':'teste';
+        const statusLabel=d.seed?'REFERENCIA':d.monitorando?'MONITORANDO':'DESCOBERTO';
+        const updDate=d.updatedAt?new Date(d.updatedAt).toLocaleDateString('pt-BR'):'';
+        const bibUrl=d.pageId
+          ?'https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=BR&view_all_page_id='+d.pageId+'&search_type=page'
+          :'https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=BR&search_type=keyword_unordered&q='+encodeURIComponent(d.name);
+        return `<tr>
+          <td><div class="rank-num rank-${i<3?i+1:4}">${i+1}</div></td>
+          <td>
+            <div style="font-weight:600">${escHtml(d.name)}</div>
+            ${d.pageId?'<div class="mono" style="font-size:10px;color:var(--text-4)">'+escHtml(d.pageId)+'</div>':''}
+          </td>
+          <td class="mono" style="font-size:11px">${d.domain?'<a href="https://'+escHtml(d.domain)+'" target="_blank" style="color:var(--cyan);text-decoration:none">'+escHtml(d.domain)+'</a>':'-'}</td>
+          <td style="font-weight:700;font-size:16px;color:${d.adCount>=100?'var(--green)':d.adCount>=30?'var(--accent)':'var(--text-2)'}">${d.adCount}</td>
+          <td><div class="score-bar"><div class="score-fill" style="width:${pct}%;background:${d.adCount>=100?'var(--green)':d.adCount>=30?'var(--accent)':'var(--text-3)'}"></div></div></td>
+          <td style="font-size:11px;color:var(--text-3)">${d.keywords.length?d.keywords.map(k=>'<span style="display:inline-block;padding:1px 6px;background:var(--bg-3);border-radius:3px;font-size:10px;margin:1px">'+escHtml(k)+'</span>').join(' '):'-'}</td>
+          <td style="font-size:11px;color:var(--text-2)">${d.mech?escHtml(d.mech):'-'}</td>
+          <td><span class="status-chip status-${statusCls}">${statusLabel}</span></td>
+          <td style="font-size:11px;color:var(--text-3)">${updDate}</td>
+          <td>
+            <div style="display:flex;gap:4px;flex-wrap:wrap">
+              <a href="${bibUrl}" target="_blank" style="padding:3px 8px;background:var(--accent-bg);color:var(--accent);border-radius:4px;font-size:10px;font-weight:600;text-decoration:none;border:1px solid var(--accent)">Ad Library</a>
+              <button onclick="toggleMonitorar('${d.id}')" style="padding:3px 8px;background:${d.monitorando?'var(--green-bg)':'var(--bg-3)'};color:${d.monitorando?'var(--green)':'var(--text-2)'};border:1px solid ${d.monitorando?'var(--green)':'var(--border)'};border-radius:4px;font-size:10px;font-weight:600;cursor:pointer;font-family:inherit">${d.monitorando?'Monitorando':'Monitorar'}</button>
+              <button onclick="editarAdCount('${d.id}')" style="padding:3px 6px;background:var(--bg-3);border:1px solid var(--border);border-radius:4px;color:var(--text-3);font-size:10px;cursor:pointer;font-family:inherit" title="Atualizar contagem de ads">&#9998;</button>
+              ${d.seed?'':`<button onclick="removerDiscovery('${d.id}')" style="padding:3px 6px;background:var(--red-bg);border:none;border-radius:4px;color:var(--red);font-size:10px;cursor:pointer;font-family:inherit" title="Remover">X</button>`}
+            </div>
+          </td>
+        </tr>`;
+      }).join('')}</tbody></table>
+    </div>
+  `;
+}
+
+function renderQuickKeywords(){
+  const el=document.getElementById('ad-quick-kw');
+  if(!el)return;
+  const topKw=KEYWORDS.filter(k=>k.status==='done'&&k.results>=100).sort((a,b)=>b.results-a.results).slice(0,12);
+  el.innerHTML='<span style="font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;padding:4px 0">Keywords populares:</span>'+
+    topKw.map(k=>`<button onclick="document.getElementById('ad-kw-input').value='${escHtml(k.text)}';buscarAdLibrary()" style="padding:3px 10px;background:var(--bg-3);border:1px solid var(--border);border-radius:12px;color:var(--text-2);font-size:11px;cursor:pointer;font-family:inherit;white-space:nowrap">${escHtml(k.text)} <span style="color:var(--text-4)">${k.results>=1000?(k.results/1000).toFixed(1)+'k':k.results}</span></button>`).join('');
+}
+
+let adDiscoveryInit=false;
+function initAutoDiscovery(){
+  if(adDiscoveryInit)return;
+  loadDiscoveryData();
+  renderDiscoveryTable();
+  renderQuickKeywords();
+  adDiscoveryInit=true;
+}
+loadDiscoveryData();
+
+document.addEventListener('DOMContentLoaded',function(){var v=document.createElement('div');v.style.cssText='position:fixed;bottom:4px;right:8px;font-size:9px;color:var(--text-4);opacity:.5;pointer-events:none;z-index:1';v.textContent='v26';document.body.appendChild(v)});
 </script>
