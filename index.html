@@ -1137,7 +1137,7 @@ function renderAdsTable(ads){
         <button class="filter-btn" data-f="escala" style="border-color:var(--green);color:var(--green)">Escala (100d+)</button>
         <button class="filter-btn" data-f="duplicados" style="border-color:var(--purple);color:var(--purple)">Duplicados</button>
         <button class="filter-btn" data-f="qtde" style="border-color:var(--yellow);color:var(--yellow)">Qtde ADs</button>
-        ${PAGES.filter(p=>p.ads>0).map(p=>`<button class="filter-btn" data-f="${p.name}">${p.name.split(' ')[0]}</button>`).join('')}
+        ${PAGES.filter(p=>p.adIds&&p.adIds.length>0).map(p=>`<button class="filter-btn" data-f="${p.name}">${p.name.split(' ')[0]}</button>`).join('')}
       </div>
     </div>
     <div class="table-wrap">
