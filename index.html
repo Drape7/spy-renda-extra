@@ -490,8 +490,7 @@ canvas{width:100%!important;display:block}
       <div class="nav-item" data-section="intel"><span class="icon">&#128373;</span>Intel Competitiva</div>
       <div class="nav-section">Discovery</div>
       <div class="nav-item" data-section="discovery"><span class="icon">&#127919;</span>Concorrentes<span class="nav-badge">14</span></div>
-      <div class="nav-item" data-section="keywords"><span class="icon">&#128270;</span>Keywords<span class="nav-badge">19/89</span></div>
-      <div class="nav-item" data-section="niche-keywords"><span class="icon">&#127793;</span>Niche Keywords<span class="nav-badge" style="background:var(--orange-bg);color:var(--orange)">14</span></div>
+      <div class="nav-item" data-section="keywords"><span class="icon">&#128270;</span>Keywords<span class="nav-badge" id="kw-nav-badge">19/89</span></div>
       <div class="nav-item" data-section="auto-discovery"><span class="icon">&#128269;</span>Auto-Discovery<span class="nav-badge" id="autodiscovery-count-badge" style="background:var(--green-bg);color:var(--green)">0</span></div>
       <div class="nav-item" data-section="vsls"><span class="icon">&#127909;</span>Extrair VSL<span class="nav-badge" id="vsls-count-badge">0</span></div>
       <div class="nav-item" data-section="vsl-swipe"><span class="icon">&#127916;</span>Swipe de VSLs</div>
@@ -635,29 +634,25 @@ canvas{width:100%!important;display:block}
       <!-- ===== KEYWORDS ===== -->
       <div class="section" id="sec-keywords">
         <div style="margin-bottom:20px">
-          <h3 style="font-size:14px;font-weight:700;margin-bottom:4px">Discovery por Keywords</h3>
-          <p style="font-size:12px;color:var(--text-3)">89 keywords extraidas do corpus. Buscar na Ad Library para descobrir novos concorrentes.</p>
-        </div>
-        <div class="kw-grid" id="kw-grid"></div>
-      </div>
-
-      <!-- ===== NICHE KEYWORDS (Copycat) ===== -->
-      <div class="section" id="sec-niche-keywords">
-        <div style="margin-bottom:20px">
-          <h3 style="font-size:15px;font-weight:700;margin-bottom:4px">Niche Keywords (14 nichos x 3 idiomas)</h3>
-          <p style="font-size:12px;color:var(--text-3);line-height:1.5;margin-bottom:12px">Keywords organizadas por nicho e idioma, extraidas de ads escalados. Clique em qualquer keyword pra buscar direto na Ad Library do Meta. Use pra descobrir novos concorrentes e angulos.</p>
-          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin-bottom:16px">
-            <div style="flex:1;min-width:260px">
-              <label style="font-size:11px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px">Buscar keyword na Ad Library</label>
-              <div style="display:flex;gap:6px">
-                <input id="niche-kw-search" type="text" placeholder="Digite ou clique numa keyword..." style="flex:1;padding:8px 12px;background:var(--bg-3);border:1px solid var(--border);border-radius:8px;color:var(--text-1);font-size:13px;font-family:inherit">
-                <button onclick="buscarNicheKw()" style="padding:8px 18px;background:var(--accent);border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap">Buscar Ad Library</button>
-              </div>
-            </div>
-            <button onclick="gerarKeywordsIA()" class="ai-btn" style="padding:8px 18px;border-radius:8px;font-size:13px">Gerar Keywords com IA</button>
+          <h3 style="font-size:14px;font-weight:700;margin-bottom:4px">Keywords</h3>
+          <p style="font-size:12px;color:var(--text-3);margin-bottom:12px">Keywords do corpus + niche keywords por idioma. Clique pra buscar direto na Ad Library.</p>
+          <div style="display:flex;gap:6px">
+            <input id="kw-search-input" type="text" placeholder="Digite ou clique numa keyword..." style="flex:1;padding:8px 12px;background:var(--bg-3);border:1px solid var(--border);border-radius:8px;color:var(--text-1);font-size:13px;font-family:inherit">
+            <button onclick="buscarKwAdLib()" style="padding:8px 18px;background:var(--accent);border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap">Buscar Ad Library</button>
           </div>
         </div>
-        <div id="niche-kw-container"></div>
+        <div class="kw-grid" id="kw-grid"></div>
+        <div style="margin-top:28px;padding-top:20px;border-top:1px solid var(--border)">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+            <h4 style="font-size:13px;font-weight:700;margin:0">Renda Extra — Niche Keywords</h4>
+            <div style="display:flex;gap:6px">
+              <button class="niche-lang-btn active" onclick="switchKwLang('pt')">PT</button>
+              <button class="niche-lang-btn" onclick="switchKwLang('en')">EN</button>
+              <button class="niche-lang-btn" onclick="switchKwLang('es')">ES</button>
+            </div>
+          </div>
+          <div class="niche-chips" id="renda-extra-chips"></div>
+        </div>
       </div>
 
       <!-- ===== AUTO-DISCOVERY ===== -->
@@ -1762,7 +1757,7 @@ document.getElementById('discovery-cards').innerHTML=topDisc.map(d=>`
 const kwDone=KEYWORDS.filter(k=>k.status==='done').length;
 document.getElementById('kw-grid').innerHTML=`<div style="margin-bottom:16px;padding:12px 16px;background:var(--accent-bg);border-radius:10px;font-size:13px;color:var(--accent)"><strong>${kwDone}/${KEYWORDS.length}</strong> keywords buscadas. Resultados detalhados em <code>rondas/2026-08-22-discovery-keywords.md</code></div>`+
 KEYWORDS.map(k=>`
-  <div class="kw-card">
+  <div class="kw-card" style="cursor:pointer" onclick="clickKw('${k.text}')">
     <div>
       <div class="kw-text">${k.text}</div>
       <div class="kw-freq">${k.status==='done'?k.results.toLocaleString()+' resultados':'freq: '+k.freq}</div>
@@ -2576,77 +2571,10 @@ function initAutoDiscovery(){
 loadDiscoveryData();
 
 // ===== NICHE KEYWORDS DATABASE (Copycat Ads extraction) =====
-const NICHE_KEYWORDS={
-  'Emagrecimento':{
-    pt:['emagrecer rapido','perder barriga','dieta para emagrecer','remedio para emagrecer','como perder peso','secar barriga','eliminar gordura','barriga chapada','dieta low carb','jejum intermitente','shake emagrecedor','capsula emagrecedora','metabolismo acelerado','queimar gordura','perder medidas'],
-    en:['weight loss','lose belly fat','fat burner','keto diet','slim down fast','metabolism booster','appetite suppressant','burn fat','get lean','weight loss supplement','diet pills','flat stomach','lose weight fast','body transformation','fat loss'],
-    es:['bajar de peso','perder grasa','dieta para adelgazar','quemar grasa abdominal','pastillas para adelgazar','metabolismo rapido','adelgazar rapido','eliminar grasa','dieta keto','suplemento para bajar de peso','barriga plana','perder peso rapido','grasa abdominal','quema grasa','reducir medidas']
-  },
-  'Renda Extra':{
-    pt:['renda extra','ganhar dinheiro online','trabalhar em casa','renda pelo celular','ganhar dinheiro na internet','sem aparecer ganhar','dinheiro extra','trabalho remoto','freelancer','renda passiva','negocio online','empreender do zero','vender na internet','marketing digital','afiliado digital'],
-    en:['make money online','side hustle','work from home','passive income','earn money online','online business','freelancing','digital marketing','affiliate marketing','extra income','remote work','money making','online income','financial freedom','quit your job'],
-    es:['ganar dinero online','trabajo desde casa','ingresos extra','negocio online','ganar dinero por internet','renta pasiva','emprender online','marketing digital','afiliados','trabajar desde el celular','ingresos pasivos','dinero extra','libertad financiera','negocio digital','vender por internet']
-  },
-  'Saude Masculina':{
-    pt:['disfuncao eretil','como durar mais','libido masculina','testosterona','vigor masculino','ereacao fraca','ejaculacao precoce','potencia sexual','saude do homem','suplemento masculino','impotencia','desempenho sexual','forca masculina','energia masculina','vitalidade'],
-    en:['erectile dysfunction','male enhancement','testosterone booster','last longer','male vitality','low libido','sexual performance','mens health supplement','stamina','vigor','potency','male energy','bedroom performance','ED treatment','sex drive'],
-    es:['disfuncion erectil','potencia sexual','testosterona','vigor masculino','libido masculina','rendimiento sexual','salud del hombre','suplemento masculino','energia masculina','eyaculacion precoz','ereccion debil','durar mas','vitalidad masculina','fuerza masculina','impotencia']
-  },
-  'Diabetes':{
-    pt:['controlar diabetes','glicose alta','diabetes tipo 2','baixar acucar no sangue','remedio natural diabetes','neuropatia diabetica','pre diabetes','insulina natural','glicemia alta','dieta para diabetico','hemoglobina glicada','pes formigando','retinopatia','acucar no sangue','resistencia insulina'],
-    en:['blood sugar control','diabetes type 2','lower blood sugar','diabetic neuropathy','insulin resistance','prediabetes','glucose control','natural diabetes remedy','A1C levels','diabetic supplement','blood sugar support','manage diabetes','diabetes reversal','sugar control','nerve damage'],
-    es:['controlar diabetes','bajar azucar en sangre','diabetes tipo 2','glucosa alta','neuropatia diabetica','prediabetes','resistencia insulina','remedio natural diabetes','hemoglobina glucosilada','dieta para diabeticos','azucar en la sangre','insulina natural','control glucosa','suplemento diabetico','hormigueo pies']
-  },
-  'Dor nas Articulacoes':{
-    pt:['dor no joelho','artrose','dor nas costas','inflamacao articular','condroitina','colageno articular','dor cronica','artrite','hernia de disco','dor na coluna','tendinite','bursite','cartilagem','mobilidade articular','dor lombar'],
-    en:['joint pain relief','knee pain','arthritis treatment','back pain','joint supplement','glucosamine','collagen for joints','chronic pain','inflammation','cartilage repair','mobility','stiffness','joint health','ligament support','sciatica'],
-    es:['dolor de rodilla','artrosis','dolor articular','dolor de espalda','colageno articular','condroitina','artritis','hernia de disco','inflamacion articular','dolor cronico','movilidad articular','cartilago','tendinitis','bursitis','dolor lumbar']
-  },
-  'Beleza e Skincare':{
-    pt:['anti rugas','rejuvenescimento facial','acido hialuronico','colageno','manchas na pele','pele jovem','creme facial','botox natural','lifting facial','vitamina C pele','melasma','olheiras','poros dilatados','firmeza da pele','envelhecimento'],
-    en:['anti aging cream','wrinkle remover','hyaluronic acid','collagen supplement','dark spots','skin rejuvenation','face cream','natural botox','skin tightening','vitamin C serum','melasma','dark circles','pore minimizer','youthful skin','anti wrinkle'],
-    es:['anti arrugas','rejuvenecimiento facial','acido hialuronico','colageno','manchas en la piel','crema facial','botox natural','piel joven','lifting facial','vitamina C piel','melasma','ojeras','poros dilatados','firmeza piel','envejecimiento']
-  },
-  'Queda de Cabelo':{
-    pt:['queda de cabelo','calvicie','crescer cabelo','alopecia','cabelo ralo','minoxidil','finasterida','implante capilar','cabelo forte','biotina','crescimento capilar','entradas','couro cabeludo','fio grosso','cabelo masculino'],
-    en:['hair loss','hair growth','baldness','thinning hair','regrow hair','minoxidil','hair transplant','biotin','alopecia','receding hairline','thicker hair','scalp treatment','hair regrowth','hair supplement','stop hair loss'],
-    es:['caida de cabello','calvicie','crecimiento capilar','alopecia','cabello delgado','minoxidil','implante capilar','biotina','pelo fuerte','cuero cabelludo','entradas','cabello grueso','perdida de pelo','tratamiento capilar','pelo masculino']
-  },
-  'Financas e Investimentos':{
-    pt:['investir dinheiro','renda fixa','acoes','tesouro direto','investimento seguro','carteira de investimentos','dividendos','fundos imobiliarios','mercado financeiro','educacao financeira','poupanca','CDB','criptomoedas','bitcoin','independencia financeira'],
-    en:['investing','stocks','cryptocurrency','passive investing','dividend stocks','index funds','real estate investing','portfolio','financial freedom','bitcoin','retirement planning','stock market','wealth building','compound interest','ETF'],
-    es:['invertir dinero','acciones','criptomonedas','renta fija','fondos de inversion','dividendos','mercado financiero','educacion financiera','bitcoin','independencia financiera','bolsa de valores','inversion segura','cartera de inversiones','ahorro','bienes raices']
-  },
-  'E-commerce':{
-    pt:['loja online','dropshipping','vender online','ecommerce','shopify','loja virtual','sem estoque','maquina de vendas','marketplace','produto vencedor','fornecedor','importar produtos','trafego pago','loja pronta','vender no mercado livre'],
-    en:['dropshipping','ecommerce','online store','shopify store','sell online','winning product','supplier','product research','facebook ads ecommerce','print on demand','amazon FBA','private label','wholesale','profit margin','scaling ads'],
-    es:['tienda online','dropshipping','vender por internet','ecommerce','shopify','tienda virtual','sin inventario','maquina de ventas','marketplace','producto ganador','proveedor','importar productos','trafico pago','tienda lista','vender en linea']
-  },
-  'Relacionamentos':{
-    pt:['reconquistar ex','como conquistar','relacionamento','autoestima','dependencia emocional','ciumes','separacao','casamento','namoro','amor proprio','comunicacao no casal','linguagem do amor','terapia de casal','confianca','paixao'],
-    en:['get your ex back','relationship advice','dating tips','self esteem','marriage counseling','love language','breakup recovery','attraction','confidence','communication skills','toxic relationship','emotional intelligence','couples therapy','romantic','commitment'],
-    es:['reconquistar ex','como conquistar','relacion de pareja','autoestima','dependencia emocional','celos','separacion','matrimonio','noviazgo','amor propio','comunicacion en pareja','lenguaje del amor','terapia de pareja','confianza','pasion']
-  },
-  'Pets':{
-    pt:['adestrar cachorro','racao natural','cachorro ansioso','comportamento canino','saude do pet','gato','veterinario','pulgas','carrapato','alimentacao natural pet','latido excessivo','passeio com cachorro','filhote','treinar cachorro','pet shop'],
-    en:['dog training','natural dog food','anxious dog','dog behavior','pet health','cat care','vet','flea treatment','tick prevention','raw diet dog','barking','puppy training','dog supplement','pet wellness','grooming'],
-    es:['adiestrar perro','comida natural perro','perro ansioso','comportamiento canino','salud mascota','gato','veterinario','pulgas','garrapata','alimentacion natural mascota','ladrido excesivo','cachorro','entrenar perro','tienda mascotas','cuidado mascota']
-  },
-  'Ansiedade e Sono':{
-    pt:['ansiedade','insonia','dormir melhor','calmante natural','estresse','melatonina','sono profundo','relaxamento','nervosismo','panico','transtorno de ansiedade','meditacao','remedios naturais','terapia','burnout'],
-    en:['anxiety relief','sleep better','insomnia','natural calm','stress relief','melatonin','deep sleep','relaxation','panic attack','anxiety supplement','meditation','sleep aid','burnout','mental health','nervous system'],
-    es:['ansiedad','insomnio','dormir mejor','calmante natural','estres','melatonina','sueno profundo','relajacion','nerviosismo','panico','trastorno de ansiedad','meditacion','remedios naturales','terapia','burnout']
-  },
-  'Memoria e Foco':{
-    pt:['memoria fraca','foco e concentracao','esquecimento','noootropico','cerebro','lucidez mental','alzheimer','demencia','vitamina para memoria','raciocinio','neblina mental','funcao cognitiva','energia mental','suplemento cerebral','mente afiada'],
-    en:['brain supplement','memory loss','focus and concentration','nootropic','cognitive function','brain fog','mental clarity','alzheimer prevention','brain health','smart drug','memory booster','attention','mental energy','brain power','mental sharpness'],
-    es:['memoria debil','foco y concentracion','olvidos','noootropico','cerebro','lucidez mental','alzheimer','demencia','vitamina para memoria','razonamiento','niebla mental','funcion cognitiva','energia mental','suplemento cerebral','mente aguda']
-  },
-  'Visao':{
-    pt:['vista cansada','presbiopia','oculos','visao embaçada','catarata','glaucoma','degeneracao macular','luteina','zeaxantina','olho seco','miopia','astigmatismo','saude ocular','vitamina para visao','vista turva'],
-    en:['eye health','blurry vision','presbyopia','cataracts','glaucoma','macular degeneration','lutein','zeaxanthin','dry eyes','vision supplement','eye vitamins','nearsighted','eye strain','vision loss','eye care'],
-    es:['vista cansada','presbicia','lentes','vision borrosa','catarata','glaucoma','degeneracion macular','luteina','zeaxantina','ojo seco','miopia','astigmatismo','salud ocular','vitamina para vision','vista turbia']
-  }
+const RENDA_EXTRA_KW={
+  pt:['renda extra','ganhar dinheiro online','trabalhar em casa','renda pelo celular','ganhar dinheiro na internet','sem aparecer ganhar','dinheiro extra','trabalho remoto','freelancer','renda passiva','negocio online','empreender do zero','vender na internet','marketing digital','afiliado digital'],
+  en:['make money online','side hustle','work from home','passive income','earn money online','online business','freelancing','digital marketing','affiliate marketing','extra income','remote work','money making','online income','financial freedom','quit your job'],
+  es:['ganar dinero online','trabajo desde casa','ingresos extra','negocio online','ganar dinero por internet','renta pasiva','emprender online','marketing digital','afiliados','trabajar desde el celular','ingresos pasivos','dinero extra','libertad financiera','negocio digital','vender por internet']
 };
 
 // ===== COPYCAT FEATURE FUNCTIONS =====
@@ -2704,49 +2632,25 @@ function compartilharAd(adId,pageName,dias){
   window.open(waUrl,'_blank');
 }
 
-// ===== NICHE KEYWORDS RENDERING =====
-function renderNicheKeywords(){
-  const container=document.getElementById('niche-kw-container');
-  if(!container)return;
-  const niches=Object.keys(NICHE_KEYWORDS);
-  container.innerHTML=niches.map((niche,ni)=>{
-    const langs=NICHE_KEYWORDS[niche];
-    return `<div class="niche-group">
-      <div class="niche-header" onclick="toggleNiche(${ni})">
-        <h4>${niche} <span style="font-size:11px;font-weight:400;color:var(--text-3)">(${langs.pt.length+langs.en.length+langs.es.length} keywords)</span></h4>
-        <div class="niche-lang">
-          <button class="niche-lang-btn active" onclick="event.stopPropagation();switchNicheLang(${ni},'pt')">PT</button>
-          <button class="niche-lang-btn" onclick="event.stopPropagation();switchNicheLang(${ni},'en')">EN</button>
-          <button class="niche-lang-btn" onclick="event.stopPropagation();switchNicheLang(${ni},'es')">ES</button>
-        </div>
-      </div>
-      <div class="niche-body" id="niche-body-${ni}">
-        <div class="niche-chips" id="niche-chips-${ni}">
-          ${langs.pt.map(kw=>`<button class="niche-chip" onclick="clickNicheKw('${escHtml(kw)}')">${escHtml(kw)}</button>`).join('')}
-        </div>
-      </div>
-    </div>`;
-  }).join('');
+// ===== RENDA EXTRA NICHE KEYWORDS =====
+function renderRendaExtraKw(lang){
+  const chips=document.getElementById('renda-extra-chips');
+  if(!chips)return;
+  const kws=RENDA_EXTRA_KW[lang]||RENDA_EXTRA_KW.pt;
+  chips.innerHTML=kws.map(kw=>`<button class="niche-chip" onclick="clickKw('${escHtml(kw)}')">${escHtml(kw)}</button>`).join('');
 }
-function toggleNiche(idx){
-  const body=document.getElementById('niche-body-'+idx);
-  if(body)body.classList.toggle('open');
+function switchKwLang(lang){
+  renderRendaExtraKw(lang);
+  document.querySelectorAll('#sec-keywords .niche-lang-btn').forEach(b=>{
+    b.classList.toggle('active',b.textContent.toLowerCase()===lang);
+  });
 }
-function switchNicheLang(idx,lang){
-  const niche=Object.keys(NICHE_KEYWORDS)[idx];
-  const kws=NICHE_KEYWORDS[niche][lang]||[];
-  const chips=document.getElementById('niche-chips-'+idx);
-  if(chips)chips.innerHTML=kws.map(kw=>`<button class="niche-chip" onclick="clickNicheKw('${escHtml(kw)}')">${escHtml(kw)}</button>`).join('');
-  const group=chips.closest('.niche-group');
-  group.querySelectorAll('.niche-lang-btn').forEach(b=>b.classList.remove('active'));
-  group.querySelectorAll('.niche-lang-btn').forEach(b=>{if(b.textContent.toLowerCase()===lang)b.classList.add('active')});
+function clickKw(kw){
+  document.getElementById('kw-search-input').value=kw;
+  buscarKwAdLib();
 }
-function clickNicheKw(kw){
-  document.getElementById('niche-kw-search').value=kw;
-  buscarNicheKw();
-}
-function buscarNicheKw(){
-  const kw=document.getElementById('niche-kw-search').value.trim();
+function buscarKwAdLib(){
+  const kw=document.getElementById('kw-search-input').value.trim();
   if(!kw){showToast('Digite uma keyword','info');return}
   window.open('https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=BR&search_type=keyword_unordered&q='+encodeURIComponent(kw),'_blank');
 }
@@ -2792,13 +2696,7 @@ function gerarIA(tipo,adId){
   }).catch(()=>prompt('Copie:',prompt_text));
 }
 
-// Init niche keywords when section becomes visible
-const _origNavClick=document.querySelectorAll('.nav-item');
-_origNavClick.forEach(item=>{
-  item.addEventListener('click',function(){
-    if(this.dataset.section==='niche-keywords'){renderNicheKeywords()}
-  });
-});
+renderRendaExtraKw('pt');
 
 document.addEventListener('DOMContentLoaded',function(){var v=document.createElement('div');v.style.cssText='position:fixed;bottom:4px;right:8px;font-size:9px;color:var(--text-4);opacity:.5;pointer-events:none;z-index:1';v.textContent='v27';document.body.appendChild(v)});
 </script>
