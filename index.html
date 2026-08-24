@@ -1264,7 +1264,7 @@ function renderAdsTable(ads){
   const card=document.getElementById('ads-table-card');
   card.innerHTML=`
     <div class="table-top">
-      <h3>Ads Coletados (${ads.length})</h3>
+      <h3>Ads Coletados (<span id="ads-header-count">${ads.length}</span>)</h3>
       <div class="table-controls">
         <input class="search-input" placeholder="Buscar por ID..." id="search-ads" type="text">
         <button class="filter-btn active" data-f="all">Todos</button>
@@ -1295,43 +1295,50 @@ function renderAdsTable(ads){
     <div class="table-footer"><span>Mostrando <span class="count" id="showing-count">${ads.length}</span> de ${allAds.length} ads</span><span>Ultima atualizacao: 23/ago/2026</span></div>
   `;
   renderRows(ads);
+  let _pageF='all',_timeF=0,_search='',_sort=null;
+  function _applyFilters(){
+    let r=[...allAds];
+    if(_pageF==='escala')r=r.filter(a=>a.dias>=100);
+    else if(_pageF==='duplicados')r=r.filter(a=>a.vars>1);
+    else if(_pageF!=='all'&&_pageF!=='qtde')r=r.filter(a=>a.page===_pageF);
+    if(_timeF===100)r=r.filter(a=>a.dias>=100);
+    else if(_timeF>0){const c=new Date();c.setDate(c.getDate()-_timeF);r=r.filter(a=>a.dateObj>=c);}
+    if(_search)r=r.filter(a=>a.id.includes(_search));
+    if(_sort){r.sort((a,b)=>{let va=a[_sort.col],vb=b[_sort.col];if(_sort.col==='date'){va=a.dateObj;vb=b.dateObj}if(_sort.col==='dias'){va=a.dias;vb=b.dias}if(_sort.col==='vars'){va=a.vars;vb=b.vars}return va<vb?-_sort.dir:va>vb?_sort.dir:0;});}
+    else if(_pageF==='escala'||_timeF===100)r.sort((a,b)=>b.dias-a.dias);
+    else if(_pageF==='duplicados')r.sort((a,b)=>b.vars-a.vars||b.dias-a.dias);
+    else if(_pageF==='qtde')r.sort((a,b)=>{const ca=allAds.filter(x=>x.page===a.page).length,cb=allAds.filter(x=>x.page===b.page).length;return cb-ca||b.dias-a.dias});
+    else if(_timeF>0)r.sort((a,b)=>b.dateObj-a.dateObj);
+    renderRows(r);
+  }
   card.querySelectorAll('.filter-btn').forEach(btn=>{
     btn.addEventListener('click',()=>{
       card.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
       btn.classList.add('active');
-      const f=btn.dataset.f;
-      var filtered=f==='all'?allAds:f==='escala'?allAds.filter(a=>a.dias>=100).sort((a,b)=>b.dias-a.dias):f==='duplicados'?allAds.filter(a=>a.vars>1).sort((a,b)=>b.vars-a.vars||b.dias-a.dias):f==='qtde'?[...allAds].sort((a,b)=>{var ca=allAds.filter(x=>x.page===a.page).length,cb=allAds.filter(x=>x.page===b.page).length;return cb-ca||b.dias-a.dias}):allAds.filter(a=>a.page===f);
-      renderRows(filtered);
+      _pageF=btn.dataset.f;
+      _sort=null;
+      _applyFilters();
     });
   });
   card.querySelector('#search-ads').addEventListener('input',e=>{
-    const q=e.target.value.trim();
-    if(!q){renderRows(allAds);return}
-    renderRows(allAds.filter(a=>a.id.includes(q)));
+    _search=e.target.value.trim();
+    _applyFilters();
   });
   card.querySelectorAll('th[data-s]').forEach(th=>{
     th.addEventListener('click',()=>{
       const col=th.dataset.s;
       const dir=th._dir===1?-1:1;th._dir=dir;
-      const s=[...allAds].sort((a,b)=>{
-        let va=a[col],vb=b[col];
-        if(col==='date'){va=a.dateObj;vb=b.dateObj}
-        if(col==='dias'){va=a.dias;vb=b.dias}
-        if(col==='vars'){va=a.vars;vb=b.vars}
-        return va<vb?-dir:va>vb?dir:0;
-      });
-      renderRows(s);
+      _sort={col,dir};
+      _applyFilters();
     });
   });
   card.querySelectorAll('.time-btn').forEach(btn=>{
     btn.addEventListener('click',()=>{
       card.querySelectorAll('.time-btn').forEach(b=>b.classList.remove('active'));
       btn.classList.add('active');
-      const days=parseInt(btn.dataset.days);
-      if(!days){renderRows(allAds);return}
-      if(days===100){renderRows(allAds.filter(a=>a.dias>=100).sort((a,b)=>b.dias-a.dias));return}
-      const cutoff=new Date();cutoff.setDate(cutoff.getDate()-days);
-      renderRows(allAds.filter(a=>a.dateObj>=cutoff).sort((a,b)=>b.dateObj-a.dateObj));
+      _timeF=parseInt(btn.dataset.days);
+      _sort=null;
+      _applyFilters();
     });
   });
 }
@@ -1396,6 +1403,8 @@ function renderRows(ads){
   }).join('');
   const cnt=document.getElementById('showing-count');
   if(cnt)cnt.textContent=ads.length;
+  const hcnt=document.getElementById('ads-header-count');
+  if(hcnt)hcnt.textContent=ads.length;
 }
 renderAdsTable(allAds);
 
