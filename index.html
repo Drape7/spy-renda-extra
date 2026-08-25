@@ -2045,6 +2045,19 @@ if(ep)ep.innerHTML=PAGES.map(function(pg){
   if(sc.validando)barParts.push('<div style="width:'+Math.max(2,Math.round(sc.validando/total*100))+'%;background:var(--yellow);height:6px" title="'+sc.validando+' validando"></div>');
   if(sc.teste)barParts.push('<div style="width:'+Math.max(2,Math.round(sc.teste/total*100))+'%;background:var(--orange);height:6px" title="'+sc.teste+' teste"></div>');
   var libUrl='https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=BR&view_all_page_id='+pg.pageId+'&search_type=page';
+  var recent=ads.filter(function(a){return a.dias<=7}).sort(function(a,b){return a.dias-b.dias});
+  var recentHtml='';
+  if(recent.length){
+    recentHtml='<div style="margin-top:10px;padding:10px 12px;background:var(--bg-2);border-radius:6px;border:1px solid var(--border)">'+
+    '<div style="font-size:11px;font-weight:600;color:var(--cyan);margin-bottom:6px">Ads dos ultimos 7 dias ('+recent.length+')</div>'+
+    '<div style="display:flex;flex-wrap:wrap;gap:4px">'+
+    recent.map(function(a){
+      var adUrl='https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=BR&id='+a.id;
+      var media=bestMediaUrl(pg.name,a.id);
+      return '<a href="'+adUrl+'" target="_blank" style="font-size:10px;font-family:monospace;padding:3px 7px;background:var(--bg-3);border-radius:4px;color:var(--cyan);text-decoration:none;border:1px solid var(--border)" title="'+a.dias+'d ativo'+(media?' (midia coletada)':'')+'">'+a.id+(media?' &#9654;':'')+'</a>';
+    }).join('')+
+    '</div></div>';
+  }
   return '<div class="evo-page" style="padding:12px 16px">'+
     '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">'+
     '<div style="display:flex;align-items:center;gap:8px">'+
@@ -2063,7 +2076,7 @@ if(ep)ep.innerHTML=PAGES.map(function(pg){
     (sc.campeao?'<span><span style="color:var(--accent)">&#9679;</span> '+sc.campeao+' camp</span>':'')+
     (sc.validando?'<span><span style="color:var(--yellow)">&#9679;</span> '+sc.validando+' val</span>':'')+
     (sc.teste?'<span><span style="color:var(--orange)">&#9679;</span> '+sc.teste+' teste</span>':'')+
-    '</div></div>';
+    '</div>'+recentHtml+'</div>';
 }).join('');
 })();
 
