@@ -1993,7 +1993,7 @@ var fmts={};escalados.forEach(function(a){if(a.intel.formato!=='?')fmts[a.intel.
 
 var filEl=document.getElementById('ic-filters');
 filEl.innerHTML='<select id="ic-f-page"><option value="">Todos Anunciantes</option>'+Object.keys(pages).sort().map(function(p){return '<option value="'+escHtml(p)+'">'+escHtml(p)+'</option>'}).join('')+'</select>'
-+'<select id="ic-f-status"><option value="">Todos Status</option><option value="veterano">VETERANO 100d+</option><option value="campeao">CAMPEAO 30d+</option><option value="validando">VALIDANDO 7d+</option><option value="teste">TESTE</option></select>'
++'<select id="ic-f-status"><option value="">Escalados 30d+</option><option value="todos">TODOS</option><option value="veterano">VETERANO 100d+</option><option value="campeao">CAMPEAO 30d+</option><option value="validando">VALIDANDO 7d+</option><option value="teste">TESTE &lt;7d</option></select>'
 +'<select id="ic-f-hook"><option value="">Todos Hooks</option>'+Object.keys(hooks).sort().map(function(h){return '<option value="'+h+'">'+h+'</option>'}).join('')+'</select>'
 +'<select id="ic-f-fmt"><option value="">Todos Formatos</option>'+Object.keys(fmts).sort().map(function(f){return '<option value="'+f+'">'+f+'</option>'}).join('')+'</select>';
 
@@ -2031,10 +2031,10 @@ function applyFilters(){
   var fs=document.getElementById('ic-f-status').value;
   var fh=document.getElementById('ic-f-hook').value;
   var ff=document.getElementById('ic-f-fmt').value;
-  var base=fs?allAds:escalados;
+  var base=(fs==='todos'||fs)?allAds:escalados;
   var filtered=base.filter(function(a){
     if(fp&&a.page!==fp)return false;
-    if(fs){var c=clfy(a.dias);if(c.cls!==fs)return false}
+    if(fs&&fs!=='todos'){var c=clfy(a.dias);if(c.cls!==fs)return false}
     if(fh&&a.intel.hookType!==fh)return false;
     if(ff&&a.intel.formato!==ff)return false;
     return true;
