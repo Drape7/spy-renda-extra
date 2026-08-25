@@ -246,34 +246,40 @@ canvas{width:100%!important;display:block}
 .feed-text strong{color:var(--text-1)}
 .feed-time{font-size:10px;color:var(--text-4);font-family:'JetBrains Mono',monospace;margin-top:2px}
 
-/* REPORTS */
-.rpt-tracking{background:var(--bg-2);border:1px solid var(--border);border-radius:14px;padding:20px 24px;margin-bottom:24px}
-.rpt-tracking h4{font-size:13px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
-.rpt-tracking-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
-.rpt-tracking-cell{text-align:center;padding:10px 8px;background:var(--bg-3);border-radius:10px}
-.rpt-tracking-cell .rpt-page{font-size:11px;font-weight:600;color:var(--text-2);margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.rpt-tracking-cell .rpt-count{font-size:22px;font-weight:800;font-family:'JetBrains Mono',monospace}
-.rpt-tracking-cell .rpt-delta{font-size:11px;font-weight:600;font-family:'JetBrains Mono',monospace;margin-top:2px}
-.rpt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px}
-.rpt-card{background:var(--bg-2);border:1px solid var(--border);border-radius:14px;overflow:hidden;transition:border-color .15s}
-.rpt-card:hover{border-color:var(--accent)}
-.rpt-card-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg-3)}
-.rpt-card-head h4{font-size:13px;font-weight:700}
-.rpt-card-head .rpt-badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:12px;font-family:'JetBrains Mono',monospace}
-.rpt-card-body{padding:16px 18px}
-.rpt-card-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
-.rpt-metric{text-align:center;padding:8px 6px;background:var(--bg-3);border-radius:8px}
-.rpt-metric-val{font-size:18px;font-weight:800;font-family:'JetBrains Mono',monospace}
-.rpt-metric-label{font-size:9px;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
-.rpt-card-summary{font-size:11px;color:var(--text-2);line-height:1.6;margin-bottom:14px;max-height:80px;overflow:hidden;position:relative}
-.rpt-card-summary::after{content:'';position:absolute;bottom:0;left:0;right:0;height:30px;background:linear-gradient(transparent,var(--bg-2))}
-.rpt-card-actions{display:flex;gap:8px}
-.rpt-btn{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:12px;font-weight:600;font-family:'Inter',sans-serif;transition:all .15s}
-.rpt-btn-primary{background:var(--accent);color:#fff}
-.rpt-btn-primary:hover{background:var(--accent-2)}
-.rpt-btn-secondary{background:var(--bg-3);color:var(--text-2);border:1px solid var(--border)}
-.rpt-btn-secondary:hover{background:var(--bg-4);color:var(--text-1)}
-@media(max-width:600px){.rpt-tracking-grid{grid-template-columns:repeat(2,1fr)}.rpt-grid{grid-template-columns:1fr}}
+/* INTELIGENCIA CRIATIVA */
+.ic-kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:24px}
+.ic-kpi{text-align:center;padding:14px 10px;background:var(--bg-2);border:1px solid var(--border);border-radius:12px}
+.ic-kpi-val{font-size:26px;font-weight:800;font-family:'JetBrains Mono',monospace}
+.ic-kpi-label{font-size:10px;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px;margin-top:4px}
+.ic-filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
+.ic-filters select{padding:6px 10px;border-radius:8px;border:1px solid var(--border);background:var(--bg-3);color:var(--text-1);font-size:12px;font-family:'Inter',sans-serif;cursor:pointer}
+.ic-table-wrap{overflow-x:auto;margin-bottom:28px;border:1px solid var(--border);border-radius:12px;background:var(--bg-2)}
+.ic-table{width:100%;border-collapse:collapse;font-size:12px}
+.ic-table th{padding:10px 12px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--text-3);background:var(--bg-3);border-bottom:1px solid var(--border);position:sticky;top:0;white-space:nowrap}
+.ic-table td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+.ic-table tr:last-child td{border-bottom:none}
+.ic-table tr:hover{background:var(--bg-3)}
+.ic-badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;font-family:'JetBrains Mono',monospace;white-space:nowrap}
+.ic-thumb{width:48px;height:48px;border-radius:6px;object-fit:cover;background:var(--bg-4);flex-shrink:0}
+.ic-patterns{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px}
+.ic-pattern-card{background:var(--bg-2);border:1px solid var(--border);border-radius:12px;padding:16px}
+.ic-pattern-card h4{font-size:12px;font-weight:700;margin-bottom:12px;color:var(--text-2)}
+.ic-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:11px}
+.ic-bar-label{width:110px;text-align:right;color:var(--text-2);flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ic-bar{flex:1;height:16px;border-radius:4px;background:var(--bg-3);overflow:hidden}
+.ic-bar-fill{height:100%;border-radius:4px;transition:width .3s}
+.ic-bar-count{width:30px;font-family:'JetBrains Mono',monospace;color:var(--text-3);font-size:10px}
+.ic-adv-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+.ic-adv-card{background:var(--bg-2);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.ic-adv-head{padding:12px 16px;background:var(--bg-3);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
+.ic-adv-head h4{font-size:13px;font-weight:700}
+.ic-adv-body{padding:14px 16px;display:none}
+.ic-adv-body.open{display:block}
+.ic-adv-stat{display:inline-flex;align-items:center;gap:4px;margin-right:14px;font-size:11px;color:var(--text-2)}
+.ic-adv-stat strong{color:var(--text-1);font-family:'JetBrains Mono',monospace}
+.ic-insight{padding:12px 16px;background:var(--bg-3);border-radius:10px;font-size:11px;color:var(--text-2);line-height:1.6;margin-top:12px}
+@media(max-width:768px){.ic-kpi-grid{grid-template-columns:repeat(3,1fr)}.ic-patterns{grid-template-columns:1fr}.ic-adv-cards{grid-template-columns:1fr}}
+@media(max-width:480px){.ic-kpi-grid{grid-template-columns:repeat(2,1fr)}}
 
 /* INTEL - CONTROLE DETECTION */
 .intel-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:16px;margin-bottom:28px}
@@ -505,7 +511,7 @@ canvas{width:100%!important;display:block}
       <div class="nav-section">Analise</div>
       <div class="nav-item" data-section="charts"><span class="icon">&#9670;</span>Graficos</div>
       <div class="nav-item" data-section="timeline"><span class="icon">&#8986;</span>Timeline</div>
-      <div class="nav-item" data-section="reports"><span class="icon">&#128196;</span>Relatorios<span class="nav-badge" style="background:var(--cyan-bg);color:var(--cyan)">6</span></div>
+      <div class="nav-item" data-section="reports"><span class="icon">&#128161;</span>Intel Criativa<span class="nav-badge" id="ic-badge" style="background:var(--accent-bg);color:var(--accent)">0</span></div>
       <div class="nav-item" data-section="activity"><span class="icon">&#9889;</span>Atividade</div>
       <div class="nav-item" data-section="intel"><span class="icon">&#128373;</span>Intel Competitiva</div>
       <div class="nav-section">Discovery</div>
@@ -605,14 +611,17 @@ canvas{width:100%!important;display:block}
         <div class="timeline-card"><h3>Historico de Rondas</h3><div class="tl" id="timeline"></div></div>
       </div>
 
-      <!-- ===== REPORTS ===== -->
+      <!-- ===== INTELIGENCIA CRIATIVA ===== -->
       <div class="section" id="sec-reports">
         <div style="margin-bottom:20px">
-          <h3 style="font-size:14px;font-weight:700;margin-bottom:4px">Relatorios de Ronda</h3>
-          <p style="font-size:12px;color:var(--text-3)">Historico completo de todas as verificacoes de anuncios. Cada "ronda" e uma coleta automatica dos ads ativos nas paginas monitoradas. Clique em "Copiar .md" para baixar o relatorio ou "Ver Completo" para ler aqui.</p>
+          <h3 style="font-size:14px;font-weight:700;margin-bottom:4px">Inteligencia Criativa</h3>
+          <p style="font-size:12px;color:var(--text-3)">Ranking de criativos escalados por longevidade. Ads com 30+ dias = validados pelo mercado. 100+ dias = controles provados com gasto de midia real.</p>
         </div>
-        <div class="rpt-tracking" id="rpt-tracking"></div>
-        <div id="rpt-history"></div>
+        <div id="ic-kpis"></div>
+        <div id="ic-filters" class="ic-filters"></div>
+        <div id="ic-table-wrap" class="ic-table-wrap"></div>
+        <div id="ic-patterns"></div>
+        <div id="ic-advertisers"></div>
       </div>
 
       <!-- ===== ACTIVITY ===== -->
@@ -963,6 +972,46 @@ const COPYCAT_DATA={
 '1575751994144593':{texto:RAFAELA_COPY,titulo:'ASSISTA AGORA!',desc:'',url:'http://lp.rafaelachagas.com.br/fpf-vsl-v1',cta:'Saiba mais',tipo:'Vídeo único',criativos:2,plat:'FACEBOOK, INSTAGRAM, AUDIENCE NETWORK, MESSENGER, THREADS',inicio:'30/07/2026',dias:23,adv:{nome:'Rafaela Chagas',cat:'Blog pessoal',criacao:'30/09/2019',ativDias:2517,likes:5918,verif:false,ig:894717,igUser:'rafaelachagas'}},
 '1572626367931793':{texto:RAFAELA_COPY,titulo:'ASSISTA AGORA!',desc:'',url:'http://lp.rafaelachagas.com.br/fpf-vsl-v1',cta:'Saiba mais',tipo:'Vídeo único',criativos:1,plat:'FACEBOOK, INSTAGRAM, AUDIENCE NETWORK, MESSENGER, THREADS',inicio:'31/07/2026',dias:22,adv:{nome:'Rafaela Chagas',cat:'Blog pessoal',criacao:'30/09/2019',ativDias:2517,likes:5918,verif:false,ig:894717,igUser:'rafaelachagas'}}
 };
+
+const PAGE_INTEL={
+'Rafaela Chagas':{formato:'talking-head',angulo:'profissao-futuro',beneficios:['sem-aparecer','sem-seguidores','sem-investir']},
+'For Traders Global':{formato:'talking-head',angulo:'renda-dolar',beneficios:['renda-dolar','trading','prop-trading']},
+'Elida Empreendedora':{formato:'ugc',angulo:'mudei-de-vida',beneficios:['renda-online','transformacao']},
+'Elida Digital':{formato:'ugc',angulo:'mudei-de-vida',beneficios:['renda-online','transformacao']},
+'Natalia Beauty':{formato:'talking-head',angulo:'metodo-simples',beneficios:['celular','do-zero']},
+'Rafael Bottrel':{formato:'talking-head',angulo:'metodo-simples',beneficios:['ecommerce','sem-estoque','do-zero']},
+'Gabriel Navaro':{formato:'talking-head',angulo:'renda-dolar',beneficios:['investimentos','renda-passiva']},
+'GN Investimentos':{formato:'talking-head',angulo:'renda-dolar',beneficios:['investimentos','renda-passiva']},
+'Hytallo Soares':{formato:'ugc',angulo:'funcao-oculta',beneficios:['celular','sem-aparecer','ia-automatico']},
+'Soares Hytallo':{formato:'ugc',angulo:'funcao-oculta',beneficios:['celular','sem-aparecer','ia-automatico']},
+'Guilherme Cirilo':{formato:'talking-head',angulo:'metodo-simples',beneficios:['ecommerce','sem-estoque','do-zero']},
+'Ricieri Rosset':{formato:'ugc',angulo:'renda-dolar',beneficios:['renda-dolar','video-curto','celular']}
+};
+const AD_INTEL={
+'1262329632343808':{hookType:'dor-empatia',formato:'talking-head',angulo:'profissao-futuro',notas:'Controle Rafaela #1. 419d.'},
+'3072452909573755':{hookType:'dor-empatia',formato:'talking-head',angulo:'profissao-futuro',notas:'Controle Rafaela #2. 419d. Mesmo hook.'},
+'723211677274469':{hookType:'curiosidade',formato:'talking-head',angulo:'profissao-futuro',notas:'Hook unico Rafaela. 412d.'},
+'1730806774747128':{hookType:'prova-social',formato:'ugc',angulo:'mudei-de-vida',notas:'Hook MUDEII DE VIDA. Elida.'},
+'2049267353128466':{hookType:'pattern-interrupt',formato:'ugc',angulo:'mudei-de-vida',notas:'Hook VEJAA ISSOO. Elida.'},
+'1897521051070652':{hookType:'autoridade',formato:'talking-head',angulo:'renda-dolar',notas:'Controle ForTraders. 424d. Ad mais antigo do nicho.'}
+};
+function getAdIntel(adId,pageName){
+var base=PAGE_INTEL[pageName]||{};var specific=AD_INTEL[adId]||{};var cc=COPYCAT_DATA[adId];
+var hookText='';var hookType=specific.hookType||'';
+if(cc&&cc.texto){
+  var t=typeof cc.texto==='string'?cc.texto:'';
+  hookText=t.split('\n')[0].substring(0,120);
+  if(!hookType){
+    if(/^Muitas pessoas/i.test(hookText))hookType='dor-empatia';
+    else if(/MUDE/i.test(hookText))hookType='prova-social';
+    else if(/VEJA/i.test(hookText))hookType='pattern-interrupt';
+    else if(/descobre|descobri/i.test(hookText))hookType='curiosidade';
+    else if(/R\$|por dia/i.test(hookText))hookType='desejo';
+  }
+}
+return{hook:hookText,hookType:hookType||'?',formato:specific.formato||base.formato||'?',angulo:specific.angulo||base.angulo||'?',beneficios:specific.beneficios||base.beneficios||[],notas:specific.notas||''};
+}
+
 const EVO_DATA={
 'Elida Digital':{unicos:8,entradas:8,ads:[
 ['1597982658629188',1,1],['1088710530383841',1,1],['4026957884263156',1,1],['1408204167921819',1,1],
@@ -994,14 +1043,6 @@ const EVO_DATA={
 ['961166313456743',94,1],['2325083604686836',94,1],['3783131838537930',72,1],['2434916216920987',33,1],
 ['817454878029508',30,3],['2000692073907891',30,3],['4580321805582607',30,2],['2142172746641854',26,1]]}
 };
-const ROUND_DELTAS=[
-{name:'Elida Digital',rounds:[{r:'Noite',c:0,u:0},{r:'06h',c:8,u:8},{r:'12h',c:8,u:8},{r:'12h-r4',c:7,u:8},{r:'18h',c:7,u:8},{r:'0h',c:5,u:8}]},
-{name:'Elida Empreendedora',rounds:[{r:'Noite',c:62,u:0},{r:'06h',c:85,u:0},{r:'12h',c:85,u:21},{r:'12h-r4',c:68,u:21},{r:'18h',c:65,u:21},{r:'0h',c:79,u:21}]},
-{name:'Rafaela Chagas',rounds:[{r:'Noite',c:26,u:0},{r:'06h',c:56,u:0},{r:'12h',c:56,u:26},{r:'12h-r4',c:56,u:26},{r:'18h',c:56,u:26},{r:'0h',c:56,u:26}]},
-{name:'Natalia Beauty',rounds:[{r:'Noite',c:10,u:0},{r:'06h',c:10,u:0},{r:'12h',c:10,u:7},{r:'12h-r4',c:12,u:7},{r:'18h',c:9,u:9},{r:'0h',c:9,u:9}]},
-{name:'For Traders',rounds:[{r:'Noite',c:84,u:0},{r:'06h',c:150,u:0},{r:'12h',c:150,u:28},{r:'12h-r4',c:150,u:28},{r:'18h',c:150,u:28},{r:'0h',c:150,u:28}]}
-];
-
 function escHtml(s){if(!s)return '';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 function renderCCPanel(cc){return renderFullPanel(null,cc)}
 function toggleCC(adId){
@@ -1678,134 +1719,160 @@ function initCharts(){
 setTimeout(initCharts,100);
 window.addEventListener('resize',()=>setTimeout(initCharts,100));
 
-// ===== REPORTS DATA + RENDERING =====
-const ROUND_REPORTS=[
-{id:'r6',name:'Ronda 6 (0h)',date:'23/ago/2026',time:'01:00',tipo:'Manual',pages:5,ads:299,delta:12,novos:0,removidos:2,
- highlights:'Pausa noturna Elida Digital (7->5, -2). INVERSAO Elida Empreendedora (65->79, +14). Estrategia dual horarios invertidos confirmada. Demais estaveis.',
- filename:'2026-08-23-00h-ronda.md',
- content:`# Ronda 6 (0h) - 23/08/2026\n\n**Horario:** ~01:00 BRT (23/ago)\n**Paginas visitadas:** 5/5\n**Ads totais:** 299\n**Delta vs r5 (18h 22/ago):** +12 (287 -> 299)\n**Ads novos identificados:** 0 confirmados\n**Ads removidos estimados:** 2 (Elida Digital, pausa noturna)\n\n---\n\n## Resumo por pagina\n\n### 1. Elida Dias - Digital (879705961901136)\n- **Ads ativos:** 5\n- **Delta:** -2 (7 -> 5)\n- **Dominio:** elidadias.blog\n- **IDs ativos:** 1597982658629188, 1088710530383841, 4026957884263156, 2926854784322391, 1036768035635998\n- **Obs:** Pausa noturna confirmada pela 2a noite consecutiva.\n\n### 2. Elida Dias - Empreendedora Digital (110024568187997)\n- **Ads ativos:** ~79\n- **Delta:** +14 (65 -> 79)\n- **Dominio:** inlead.digital\n- **Obs:** INVERSAO da tendencia de queda (85 -> 68 -> 65 -> agora 79). Reativacao noturna significativa. Exato oposto do padrao da Digital.\n\n### 3. Rafaela Chagas (108726887198665)\n- **Ads ativos:** 56\n- **Delta:** 0 (estavel)\n- **Dominio:** rafaelachagas.com.br\n- **Obs:** Estavel ha 5 rondas consecutivas.\n\n### 4. Natalia Beauty (347189425772727)\n- **Ads ativos:** 9\n- **Delta:** 0 (estavel)\n- **Dominio:** nataliabeauty.com.br\n\n### 5. For Traders Global (712240488633970)\n- **Ads ativos:** ~150 (country=ALL)\n- **Delta:** 0 (estavel)\n- **Dominio:** fortraders.com\n\n---\n\n## Tendencias\n\n1. **Estrategia dual Elida:** Digital = diurna (pausa noturna). Empreendedora = ativacao noturna (+14).\n2. **Estabilidade:** Rafaela, Natalia, ForTraders inalterados.\n\n## Evolucao completa\n\n| Pagina | Noite r1 | 06h r2 | 12h r3 | 12h-r4 | 18h r5 | 0h r6 |\n|--------|----------|--------|--------|--------|--------|-------|\n| Elida Digital | 0 | 8 | 8 | 7 | 7 | 5 |\n| Elida Empreendedora | 62 | 85 | 85 | 68 | 65 | 79 |\n| Rafaela Chagas | 26 | 56 | 56 | 56 | 56 | 56 |\n| Natalia Beauty | 10 | 10 | 10 | 12 | 9 | 9 |\n| For Traders | 84 | 150 | 150 | 150 | 150 | 150 |\n| **TOTAL** | **182** | **309** | **309** | **293** | **287** | **299** |\n`},
-{id:'r5',name:'Ronda 5 (18h)',date:'22/ago/2026',time:'18:00',tipo:'Manual',pages:5,ads:287,delta:-6,novos:2,removidos:8,
- highlights:'Queda continua Elida Empreendedora: 68->65 (-3, acumulado -24% desde pico). Natalia -3 (2 novos + 5 removidos, alta rotatividade). Rafaela e ForTraders estaveis.',
- filename:'2026-08-22-18h-ronda.md',
- content:`# Ronda 5 (18h) - 22/08/2026\n\n**Horario:** ~00:30 BRT\n**Paginas visitadas:** 5/5\n**Ads totais:** 287\n**Delta vs r4 (12h):** -6 (293 -> 287)\n**Ads novos identificados:** 2 (Natalia Beauty)\n**Ads removidos estimados:** 8\n\n---\n\n## Resumo por pagina\n\n### 1. Elida Dias - Digital\n- **Ads ativos:** 7 (estavel)\n\n### 2. Elida Dias - Empreendedora Digital\n- **Ads ativos:** 65 (-3)\n- Continuidade da queda: 85 -> 68 -> 65. Acumulado -24% desde pico.\n\n### 3. Rafaela Chagas\n- **Ads ativos:** 56 (estavel)\n\n### 4. Natalia Beauty\n- **Ads ativos:** 9 (-3, 2 novos + ~5 removidos)\n- Novos: 1058734576740661, 1578975967285695\n\n### 5. For Traders Global\n- **Ads ativos:** ~150 (estavel)\n\n---\n\n## Evolucao do dia\n\n| Pagina | Noite | 06h | 12h | 12h-r4 | 18h |\n|--------|-------|-----|-----|--------|-----|\n| Elida Digital | 0 | 8 | 8 | 7 | 7 |\n| Elida Empreendedora | 62 | 85 | 85 | 68 | 65 |\n| Rafaela Chagas | 26 | 56 | 56 | 56 | 56 |\n| Natalia Beauty | 10 | 10 | 10 | 12 | 9 |\n| For Traders | 84 | 150 | 150 | 150 | 150 |\n| **TOTAL** | **182** | **309** | **309** | **293** | **287** |\n`},
-{id:'r4',name:'Ronda 4 (12h)',date:'22/ago/2026',time:'12:00',tipo:'Manual',pages:5,ads:293,delta:-16,novos:2,removidos:18,
- highlights:'Elida Empreendedora caiu 20% (85 para 68, -17 ads). Natalia +2 (novo dominio protocoloaura). Rafaela e ForTraders estaveis.',
- filename:'2026-08-22-12h-ronda.md',
- content:`# Ronda 12h - 22/ago/2026\n\n> 4a ronda do sistema. Manual (sessao ativa, continuacao).\n\n## Resumo\n\n- **Paginas visitadas:** 5/5\n- **Ads totais:** 293 (era 309, **-16 vs ronda anterior**)\n- **Ads novos (Natalia):** +2\n- **Ads removidos (Elida):** -18 (Digital -1, Empreendedora -17)\n- **Videos salvos:** 0\n\n## Contagens por Pagina\n\n| # | Pagina | 06h (anterior) | 12h (agora) | Delta | Obs |\n|---|--------|---------------|-------------|-------|-----|\n| 1 | Elida Dias - Digital | 8 | **7** | **-1** | Removeu 1 ad |\n| 2 | Elida Dias - Empreendedora Digital | 85 | **68** | **-17** | Queda forte (-20%), otimizacao ou pausa de campanha |\n| 3 | Rafaela Chagas | 56 | **56** | 0 | Estavel |\n| 4 | Natalia Beauty | 10 | **12** | **+2** | Novo dominio protocoloaura.com.br com 4 criativos |\n| 5 | For Traders Global | 150 | **150** | 0 | Estavel, ad campeao 148 DIAS |\n\n**Total: 293 (-16 vs 309 da ronda 06h)**\n\n## Analise dos Movimentos\n\n### Elida Empreendedora: queda de 20% (-17 ads)\n- De 85 para 68 entradas ativas\n- Possivel: (a) otimizacao de campanha cortando ads de baixo desempenho, (b) pausa temporaria de um conjunto, (c) ajuste orcamentario\n- Significativo porque e a pagina principal da Elida com maior volume\n- **Monitorar na proxima ronda** se estabiliza, cai mais, ou recupera\n\n### Elida Digital: -1 ad\n- De 8 para 7\n- Movimento pequeno, pode ser rotina de teste (pausou 1 variante)\n\n### Natalia Beauty: +2 ads, novo dominio\n- De 10 para 12\n- Ad novo: ID 1392948559450256 (21/ago, 2 criativos, nataliabeauty.com.br, 1 DIA)\n- Ad novo: ID 1079476271282458 (22/ago, 4 criativos, **protocoloaura.com.br**, HOJE)\n- O ad de protocoloaura com 4 criativos indica teste A/B/C/D ativo\n\n### Rafaela Chagas e For Traders: estaveis\n- Rafaela: 56 resultados, ad campeao 94 DIAS (ID 927888070253355, 20/mai/2026)\n- For Traders: 150 resultados, ad campeao 148 DIAS (ID 2410985602706394, 27/mar/2026)\n\n## Evolucao Historica (4 rondas)\n\n| Pagina | Noite (r1) | 06h (r2) | 12h (r3) | 12h (r4) | Tendencia |\n|--------|-----------|----------|----------|----------|----------|\n| Elida Digital | 0 | 8 | 8 | 7 | Pausa noturna, leve queda |\n| Elida Empreendedora | 62 | 85 | 85 | 68 | Subiu forte, agora caiu 20% |\n| Rafaela Chagas | 26 | 56 | 56 | 56 | Estavel desde 06h |\n| Natalia Beauty | 10 | 10 | 10 | 12 | Leve crescimento |\n| For Traders Global | 84 | 150 | 150 | 150 | Estavel desde 06h |\n| **Total** | **182** | **309** | **309** | **293** | **-5% vs pico** |\n\n## Proxima ronda: 18h\n- Prioridade: confirmar se Elida Empreendedora estabilizou ou segue caindo\n- Monitorar se Natalia sobe mais (testes ativos)\n`},
-{id:'r3',name:'Ronda 3 (12h)',date:'22/ago/2026',time:'12:00',tipo:'Manual',pages:5,ads:309,delta:0,novos:0,removidos:0,
- highlights:'Contagens estaveis. Captura de prints (metodologia Fogaca). Rafaela e For Traders com ads 400+ dias confirmados.',
- filename:'2026-08-22-12h-ronda-r3.md',
- content:`# Ronda 12h - 22/ago/2026\n\n> 3a ronda do sistema. Manual (sessao ativa).\n\n## Resumo\n\n- **Paginas visitadas:** 5/5\n- **Ads totais:** 309 (=0 vs ronda 6h, estavel)\n- **Videos salvos:** 0 (nenhum ad novo nesta ronda)\n- **Objetivo principal:** capturar prints da Ad Library (grid de anuncios) para acompanhar evolucao de criativos (metodologia Fogaca)\n\n## Contagens por Pagina\n\n| # | Pagina | 6h (anterior) | 12h (agora) | Delta | CopyCat Unicos | Dominio |\n|---|--------|--------------|-------------|-------|----------------|---------|\n| 1 | Elida Dias - Digital | 8 | 8 | 0 | 8 | elidadias.blog |\n| 2 | Elida Dias - Empreendedora Digital | 85 | 85 | 0 | 21 | inlead.digital |\n| 3 | Rafaela Chagas | 56 | 56 | 0 | 26 | rafaelachagas.com.br |\n| 4 | Natalia Beauty | 10 | 10 | 0 | 7 | nataliabeauty.com.br / protocoloaura.com.br |\n| 5 | For Traders Global | 150 | 150 | 0 | 28 | fortraders.com |\n\n**Total: 309 (estavel desde 6h)**\n\n## Descobertas desta ronda\n\n### Rafaela e For Traders com ads de mais de 1 ANO\n- **Rafaela Chagas** tem ad ativo desde **30/jun/2025** (419 dias!)\n- **For Traders Global** tem ad ativo desde **25/jun/2025** (424 dias!)\n- Ads que rodam por mais de 1 ano = ROI positivo consistente.\n\n### Natalia Beauty opera 2 funis separados\n- nataliabeauty.com.br (dominio principal)\n- protocoloaura.com.br (produto/protocolo especifico)\n\n### Contagens estaveis no meio do dia\n- Zero variacao entre 6h e 12h nas 5 paginas\n\n## Proxima ronda: 18h\n`},
-{id:'r2',name:'Ronda 2 (06h)',date:'22/ago/2026',time:'06:03',tipo:'Cron',pages:5,ads:309,delta:127,novos:127,removidos:0,
- highlights:'Salto de 182 para 309 (+127). Elida Digital reativou (pausa noturna confirmada). Rafaela mais que dobrou (26 para 56).',
- filename:'2026-08-22-06h-ronda.md',
- content:`# Ronda 06h - 22/ago/2026\n\n> 2a ronda do sistema. Automatizada via cron (6h03).\n\n## Resumo\n\n- **Paginas visitadas:** 5/5\n- **Ads totais:** 309 (+127 vs ronda noturna)\n- **Videos salvos:** 0 (nenhum ad novo baixado nesta ronda)\n\n## Contagens por Pagina\n\n| # | Pagina | Noite (anterior) | Manha (agora) | Delta | Obs |\n|---|--------|-----------------|---------------|-------|-----|\n| 1 | Elida Dias - Digital | 0 | 8 | +8 | Pausa noturna CONFIRMADA. Dominio: elidadias.blog |\n| 2 | Elida Dias - Empreendedora Digital | 62 | 85 | +23 | Escalada agressiva. Dominio: inlead.digital |\n| 3 | Rafaela Chagas | 26 | 56 | +30 | Escalada forte, mais que dobrou |\n| 4 | Natalia Beauty | 9 | 10 | +1 | Estavel. Dois dominios |\n| 5 | For Traders Global | 85 | 150 | +65 | 28 unicos (CopyCat), 150 entradas (Meta) |\n\n## Descobertas\n\n### Elida Dias opera 2 paginas com 2 dominios diferentes\n- Elida Dias - Digital: elidadias.blog (8 ads)\n- Elida Dias - Empreendedora Digital: inlead.digital (85 ads)\n- A pagina Digital faz pausa noturna e reativa de manha\n\n### Rafaela Chagas escalando forte\n- De 26 para 56 ads em menos de 12h\n- Ad mais antigo: 94 dias (20/mai)\n\n## Proxima ronda: 12h\n`},
-{id:'r1',name:'Ronda 1 (Noite)',date:'22/ago/2026',time:'23:00',tipo:'Inaugural',pages:5,ads:182,delta:0,novos:182,removidos:0,
- highlights:'Primeira ronda. Elida Digital zerada (pausa noturna). Rafaela e For Traders 400+ dias. Elida Empreendedora lancamento massivo (62 ads em 2 dias).',
- filename:'2026-08-22-noite-ronda.md',
- content:`# Ronda 2026-08-22 (noite) - INAUGURAL\n\n> Primeira ronda do sistema de espionagem. Horario: noturno (~23h BRT).\n\n## Resumo\n\n| Pagina | Ads Ativos | Ad Mais Antigo | Dias Rodando | Sinal |\n|--------|-----------|----------------|--------------|-------|\n| Elida Dias - Digital | 0 | - | - | Pausado (noturno) |\n| Elida Dias - Empreendedora Digital | 62 | 20/ago/2026 | 2 | Lancamento massivo |\n| Rafaela Chagas | 26 | 30/jun/2025 | 419 | Escala comprovada |\n| Natalia Beauty | 9 | 21/ago/2026 | 1 | Lancamento novo |\n| For Traders Global | 85 entradas (28 unicos) | 25/jun/2025 | 424 | Escala comprovada |\n\n**Total de ads monitorados:** 182 entradas / 125 unicos (aprox)\n**Paginas visitadas:** 5/5\n\n## Insights da Ronda\n\n1. Rafaela Chagas e For Traders Global sao os players mais estabelecidos (400+ dias)\n2. Elida Dias esta num lancamento massivo (62 ads em 2 dias)\n3. Natalia Beauty acabou de lancar (9 ads ontem)\n4. For Traders Global opera em nicho adjacente (trading/forex)\n5. Proxima ronda (manha): verificar se Elida Dias - Digital reativa os ads\n`}
-];
+// ===== INTELIGENCIA CRIATIVA RENDERING =====
+(function renderIntel(){
+var clfy=function(d){return d>=100?{cls:'veterano',label:'VETERANO',color:'var(--green)',bg:'var(--green-bg)'}:d>=30?{cls:'campeao',label:'CAMPEAO',color:'var(--accent)',bg:'var(--accent-bg)'}:d>=7?{cls:'validando',label:'VALIDANDO',color:'var(--yellow)',bg:'rgba(234,179,8,.12)'}:{cls:'teste',label:'TESTE',color:'var(--orange)',bg:'rgba(249,115,22,.12)'}};
+var hookColors={curiosidade:'var(--cyan)',desejo:'var(--purple)','prova-social':'var(--green)','dor-empatia':'var(--accent)','pattern-interrupt':'var(--orange)',autoridade:'var(--yellow)',novidade:'var(--cyan)','?':'var(--text-3)'};
+var fmtColors={ugc:'var(--orange)','talking-head':'var(--accent)',screencast:'var(--cyan)',testimonial:'var(--green)',reaction:'var(--purple)',entrevista:'var(--yellow)',slideshow:'var(--text-3)','?':'var(--text-3)'};
 
-const latestRound=ROUND_REPORTS[0];
-const trackingData=ROUND_DELTAS.map(function(p){
-  var last=p.rounds[p.rounds.length-1];
-  var prev=p.rounds.length>1?p.rounds[p.rounds.length-2]:null;
-  var d=prev?last.c-prev.c:0;
-  return {name:p.name,count:last.c,delta:d};
-});
-
-(function renderReports(){
-  var track=document.getElementById('rpt-tracking');
-  track.innerHTML='<h4><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 2s infinite"></span> Tracking em Tempo Real (Ultima Ronda: '+latestRound.name+')</h4>'
-  +'<div class="rpt-tracking-grid">'+trackingData.map(function(t){
-    var clr=t.delta>0?'var(--green)':t.delta<0?'var(--red)':'var(--text-3)';
-    var sign=t.delta>0?'+':'';
-    return '<div class="rpt-tracking-cell"><div class="rpt-page">'+t.name+'</div><div class="rpt-count" style="color:var(--text-1)">'+t.count+'</div><div class="rpt-delta" style="color:'+clr+'">'+sign+t.delta+'</div></div>';
-  }).join('')+'</div>';
-
-  var days={};
-  ROUND_REPORTS.forEach(function(r){
-    if(!days[r.date])days[r.date]=[];
-    days[r.date].push(r);
+var allAds=[];
+PAGES.forEach(function(p){
+  if(!p.adIds)return;
+  p.adIds.forEach(function(id,i){
+    var dateStr=p.dates&&p.dates[i]?p.dates[i]:p.oldest;
+    var dias=computeDias({oldest:dateStr});
+    var intel=getAdIntel(id,p.name);
+    allAds.push({id:id,page:p.name,fullName:p.fullName||p.name,dias:dias,dateStr:dateStr,intel:intel,pageObj:p});
   });
-  var dayKeys=Object.keys(days);
+});
+allAds.sort(function(a,b){return b.dias-a.dias});
 
-  var hist=document.getElementById('rpt-history');
-  hist.innerHTML=dayKeys.map(function(day,di){
-    var rounds=days[day];
-    var totalAds=rounds[0].ads;
-    var firstAds=rounds[rounds.length-1].ads;
-    var dayDelta=totalAds-firstAds;
-    var daySign=dayDelta>0?'+':'';
-    var dayClr=dayDelta>0?'var(--green)':dayDelta<0?'var(--red)':'var(--text-3)';
-    var isToday=di===0;
+var escalados=allAds.filter(function(a){return a.dias>=30});
+var veteranos=allAds.filter(function(a){return a.dias>=100});
+var comIntel=allAds.filter(function(a){return a.intel.hookType!=='?'||a.intel.formato!=='?'});
+var fmtSet={};allAds.forEach(function(a){if(a.intel.formato!=='?')fmtSet[a.intel.formato]=1});
 
-    return '<div style="margin-bottom:20px">'
-    +'<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg-3);border-radius:8px;cursor:pointer;user-select:none" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display===\'none\'?\'block\':\'none\';this.querySelector(\'.day-arrow\').textContent=this.nextElementSibling.style.display===\'none\'?\'\\u25B6\':\'\\u25BC\'">'
-    +'<span class="day-arrow" style="font-size:10px;color:var(--text-3)">'+(isToday?'\u25BC':'\u25B6')+'</span>'
-    +'<span style="font-size:13px;font-weight:700;color:var(--text-1)">'+day+'</span>'
-    +(isToday?'<span style="font-size:9px;padding:2px 8px;border-radius:10px;background:var(--accent-bg);color:var(--accent);font-weight:600">HOJE</span>':'')
-    +'<span style="font-size:11px;color:var(--text-3)">'+rounds.length+' ronda'+(rounds.length>1?'s':'')+'</span>'
-    +'<span style="font-size:11px;color:'+dayClr+';margin-left:auto">'+daySign+dayDelta+' ads no dia</span>'
-    +'</div>'
-    +'<div class="rpt-grid" style="'+(isToday?'':'display:none;')+'margin-top:8px">'
-    +rounds.map(function(r){
-      var badgeClr=r.delta>0?'background:var(--green-bg);color:var(--green)':r.delta<0?'background:var(--red-bg);color:var(--red)':'background:var(--bg-4);color:var(--text-3)';
-      var deltaSign=r.delta>0?'+':'';
-      var deltaStr=r.delta===0?'=0':deltaSign+r.delta;
-      return '<div class="rpt-card"><div class="rpt-card-head"><h4>'+r.name+'</h4><span class="rpt-badge" style="'+badgeClr+'">'+r.tipo+'</span></div>'
-      +'<div class="rpt-card-body">'
-      +'<div class="rpt-card-metrics">'
-      +'<div class="rpt-metric"><div class="rpt-metric-val" style="color:var(--accent)">'+r.pages+'</div><div class="rpt-metric-label">Paginas</div></div>'
-      +'<div class="rpt-metric"><div class="rpt-metric-val" style="color:var(--green)">'+r.ads+'</div><div class="rpt-metric-label">Ads Total</div></div>'
-      +'<div class="rpt-metric"><div class="rpt-metric-val" style="color:'+(r.delta<0?'var(--red)':r.delta>0?'var(--green)':'var(--text-3)')+'">'+deltaStr+'</div><div class="rpt-metric-label">Delta</div></div>'
-      +'</div>'
-      +'<div class="rpt-card-summary">'+r.highlights+'</div>'
-      +'<div class="rpt-card-actions">'
-      +'<button class="rpt-btn rpt-btn-primary" data-rpt-id="'+r.id+'">Copiar .md</button>'
-      +'<button class="rpt-btn rpt-btn-secondary" data-rpt-expand="'+r.id+'">Ver Completo</button>'
-      +'</div></div></div>';
-    }).join('')
-    +'</div></div>';
+var kpiEl=document.getElementById('ic-kpis');
+kpiEl.className='ic-kpi-grid';
+kpiEl.innerHTML=[
+  {v:allAds.length,l:'Total Monitorados',c:'var(--text-1)'},
+  {v:escalados.length,l:'Escalados 30d+',c:'var(--accent)'},
+  {v:veteranos.length,l:'Veteranos 100d+',c:'var(--green)'},
+  {v:comIntel.length,l:'Com Intel',c:'var(--cyan)'},
+  {v:Object.keys(fmtSet).length,l:'Formatos',c:'var(--purple)'}
+].map(function(k){return '<div class="ic-kpi"><div class="ic-kpi-val" style="color:'+k.c+'">'+k.v+'</div><div class="ic-kpi-label">'+k.l+'</div></div>'}).join('');
+
+var badge=document.getElementById('ic-badge');
+if(badge)badge.textContent=escalados.length;
+
+var pages={};allAds.forEach(function(a){pages[a.page]=1});
+var hooks={};escalados.forEach(function(a){if(a.intel.hookType!=='?')hooks[a.intel.hookType]=1});
+var fmts={};escalados.forEach(function(a){if(a.intel.formato!=='?')fmts[a.intel.formato]=1});
+
+var filEl=document.getElementById('ic-filters');
+filEl.innerHTML='<select id="ic-f-page"><option value="">Todos Anunciantes</option>'+Object.keys(pages).sort().map(function(p){return '<option value="'+escHtml(p)+'">'+escHtml(p)+'</option>'}).join('')+'</select>'
++'<select id="ic-f-status"><option value="">Todos Status</option><option value="veterano">VETERANO 100d+</option><option value="campeao">CAMPEAO 30d+</option><option value="validando">VALIDANDO 7d+</option><option value="teste">TESTE</option></select>'
++'<select id="ic-f-hook"><option value="">Todos Hooks</option>'+Object.keys(hooks).sort().map(function(h){return '<option value="'+h+'">'+h+'</option>'}).join('')+'</select>'
++'<select id="ic-f-fmt"><option value="">Todos Formatos</option>'+Object.keys(fmts).sort().map(function(f){return '<option value="'+f+'">'+f+'</option>'}).join('')+'</select>';
+
+function renderTable(ads){
+  var wrap=document.getElementById('ic-table-wrap');
+  if(!ads.length){wrap.innerHTML='<p style="color:var(--text-3);font-size:12px;padding:20px">Nenhum ad encontrado com os filtros atuais.</p>';return}
+  var rows=ads.map(function(a){
+    var c=clfy(a.dias);
+    var thumb=mediaUrl(a.page,a.id,'jpg');
+    var vid=mediaUrl(a.page,a.id,'mp4');
+    var thumbHtml=thumb?'<img class="ic-thumb" src="'+thumb+'" alt="" loading="lazy">':'<div class="ic-thumb" style="background:var(--bg-4);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--text-3)">?</div>';
+    var hkColor=hookColors[a.intel.hookType]||'var(--text-3)';
+    var fColor=fmtColors[a.intel.formato]||'var(--text-3)';
+    var hookTxt=a.intel.hook?escHtml(a.intel.hook.substring(0,80))+(a.intel.hook.length>80?'...':''):'<span style="color:var(--text-3)">-</span>';
+    var actions='';
+    if(vid){actions+='<span style="cursor:pointer;font-size:14px" title="Assistir" onclick="event.stopPropagation();openVideoModal(\''+vid+'\',\''+(thumb||'')+'\',\''+a.id+'\')">&#9654;</span>'}
+    actions+='<a href="https://www.facebook.com/ads/library/?active_status=all&ad_type=all&country=BR&id='+a.id+'" target="_blank" rel="noopener" style="font-size:12px;color:var(--accent);text-decoration:none" title="Ad Library" onclick="event.stopPropagation()">&#128279;</a>';
+    return '<tr>'
+    +'<td>'+thumbHtml+'</td>'
+    +'<td style="font-size:11px;white-space:nowrap">'+escHtml(a.page)+'</td>'
+    +'<td style="font-family:JetBrains Mono,monospace;font-weight:700">'+a.dias+'d</td>'
+    +'<td><span class="ic-badge" style="background:'+c.bg+';color:'+c.color+'">'+c.label+'</span></td>'
+    +'<td style="font-size:10px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="'+(a.intel.hook?escHtml(a.intel.hook):'')+'">'+hookTxt+'</td>'
+    +'<td><span class="ic-badge" style="background:rgba(0,0,0,.15);color:'+fColor+'">'+a.intel.formato+'</span></td>'
+    +'<td><span class="ic-badge" style="background:rgba(0,0,0,.15);color:var(--text-2)">'+a.intel.angulo+'</span></td>'
+    +'<td style="display:flex;gap:8px;align-items:center">'+actions+'</td>'
+    +'</tr>';
   }).join('');
+  wrap.innerHTML='<table class="ic-table"><thead><tr><th>Thumb</th><th>Anunciante</th><th>Dias</th><th>Status</th><th>Hook</th><th>Formato</th><th>Angulo</th><th>Acoes</th></tr></thead><tbody>'+rows+'</tbody></table>';
+}
+renderTable(escalados);
+
+function applyFilters(){
+  var fp=document.getElementById('ic-f-page').value;
+  var fs=document.getElementById('ic-f-status').value;
+  var fh=document.getElementById('ic-f-hook').value;
+  var ff=document.getElementById('ic-f-fmt').value;
+  var base=fs?allAds:escalados;
+  var filtered=base.filter(function(a){
+    if(fp&&a.page!==fp)return false;
+    if(fs){var c=clfy(a.dias);if(c.cls!==fs)return false}
+    if(fh&&a.intel.hookType!==fh)return false;
+    if(ff&&a.intel.formato!==ff)return false;
+    return true;
+  });
+  renderTable(filtered);
+}
+['ic-f-page','ic-f-status','ic-f-hook','ic-f-fmt'].forEach(function(id){
+  document.getElementById(id).addEventListener('change',applyFilters);
+});
+
+var patEl=document.getElementById('ic-patterns');
+var fmtCounts={};var angCounts={};
+escalados.forEach(function(a){
+  var f=a.intel.formato;fmtCounts[f]=(fmtCounts[f]||0)+1;
+  var g=a.intel.angulo;angCounts[g]=(angCounts[g]||0)+1;
+});
+function barChart(title,counts,colorMap){
+  var entries=Object.keys(counts).map(function(k){return {k:k,v:counts[k]}}).sort(function(a,b){return b.v-a.v});
+  var max=entries.length?entries[0].v:1;
+  return '<div class="ic-pattern-card"><h4>'+title+'</h4>'+entries.map(function(e){
+    var pct=Math.round(e.v/max*100);
+    var clr=colorMap&&colorMap[e.k]?colorMap[e.k]:'var(--accent)';
+    return '<div class="ic-bar-row"><span class="ic-bar-label">'+escHtml(e.k)+'</span><div class="ic-bar"><div class="ic-bar-fill" style="width:'+pct+'%;background:'+clr+'"></div></div><span class="ic-bar-count">'+e.v+'</span></div>';
+  }).join('')+'</div>';
+}
+patEl.className='ic-patterns';
+patEl.innerHTML=barChart('Distribuicao por Formato (Escalados)',fmtCounts,fmtColors)+barChart('Distribuicao por Angulo (Escalados)',angCounts,{});
+if(veteranos.length>0){
+  var topFmt={};veteranos.forEach(function(a){var f=a.intel.formato;topFmt[f]=(topFmt[f]||0)+1});
+  var topFmtKey=Object.keys(topFmt).sort(function(a,b){return topFmt[b]-topFmt[a]})[0]||'?';
+  var topAng={};veteranos.forEach(function(a){var g=a.intel.angulo;topAng[g]=(topAng[g]||0)+1});
+  var topAngKey=Object.keys(topAng).sort(function(a,b){return topAng[b]-topAng[a]})[0]||'?';
+  var pctFmt=Math.round((topFmt[topFmtKey]||0)/veteranos.length*100);
+  patEl.innerHTML+='<div class="ic-insight">'+pctFmt+'% dos controles (100d+) usam formato <strong>'+topFmtKey+'</strong> com angulo dominante <strong>'+topAngKey+'</strong>.</div>';
+}
+
+var advEl=document.getElementById('ic-advertisers');
+var advMap={};
+escalados.forEach(function(a){
+  if(!advMap[a.page])advMap[a.page]={name:a.page,fullName:a.fullName,total:0,escalados:0,veteranos:0,fmts:{},obs:'',ads:[]};
+  advMap[a.page].escalados++;
+  if(a.dias>=100)advMap[a.page].veteranos++;
+  if(a.intel.formato!=='?')advMap[a.page].fmts[a.intel.formato]=(advMap[a.page].fmts[a.intel.formato]||0)+1;
+  advMap[a.page].ads.push(a);
+});
+PAGES.forEach(function(p){if(advMap[p.name]){advMap[p.name].total=p.adIds?p.adIds.length:0;advMap[p.name].obs=p.obs||''}});
+var advKeys=Object.keys(advMap).sort(function(a,b){return advMap[b].escalados-advMap[a].escalados});
+advEl.className='ic-adv-cards';
+advEl.innerHTML=advKeys.map(function(k){
+  var adv=advMap[k];
+  var topFmt=Object.keys(adv.fmts).sort(function(a,b){return adv.fmts[b]-adv.fmts[a]})[0]||'?';
+  var maxDias=adv.ads.length?Math.max.apply(null,adv.ads.map(function(a){return a.dias})):0;
+  return '<div class="ic-adv-card">'
+  +'<div class="ic-adv-head" onclick="this.nextElementSibling.classList.toggle(\'open\')">'
+  +'<span style="font-weight:700;font-size:12px">'+escHtml(adv.fullName)+'</span>'
+  +'<span style="display:flex;gap:8px;align-items:center">'
+  +'<span class="ic-adv-stat" style="color:var(--accent)">'+adv.escalados+' esc</span>'
+  +'<span class="ic-adv-stat" style="color:var(--green)">'+adv.veteranos+' vet</span>'
+  +'<span class="ic-adv-stat" style="color:var(--text-3)">'+adv.total+' total</span>'
+  +'<span style="font-size:10px;color:var(--text-3)">▼</span>'
+  +'</span></div>'
+  +'<div class="ic-adv-body">'
+  +'<div style="display:flex;gap:16px;flex-wrap:wrap;font-size:11px;margin-bottom:8px">'
+  +'<span>Formato dominante: <strong>'+topFmt+'</strong></span>'
+  +'<span>Ad mais antigo: <strong>'+maxDias+'d</strong></span>'
+  +'</div>'
+  +(adv.obs?'<p style="font-size:11px;color:var(--text-3);margin:0;line-height:1.5">'+escHtml(adv.obs)+'</p>':'')
+  +'</div></div>';
+}).join('');
 })();
-
-document.querySelectorAll('[data-rpt-id]').forEach(function(btn){
-  btn.addEventListener('click',async function(){
-    var rid=btn.getAttribute('data-rpt-id');
-    var rpt=ROUND_REPORTS.find(function(r){return r.id===rid});
-    if(!rpt)return;
-    btn.textContent='Copiando...';
-    try{
-      await navigator.clipboard.writeText(rpt.content);
-      btn.textContent='Copiado!';
-      setTimeout(function(){btn.textContent='Copiar .md'},2000);
-    }catch(e){
-      var ta=document.createElement('textarea');
-      ta.value=rpt.content;ta.style.position='fixed';ta.style.left='-9999px';
-      document.body.appendChild(ta);ta.select();document.execCommand('copy');
-      document.body.removeChild(ta);
-      btn.textContent='Copiado!';
-      setTimeout(function(){btn.textContent='Copiar .md'},2000);
-    }
-  });
-});
-
-document.querySelectorAll('[data-rpt-expand]').forEach(function(btn){
-  btn.addEventListener('click',function(){
-    var rid=btn.getAttribute('data-rpt-expand');
-    var rpt=ROUND_REPORTS.find(function(r){return r.id===rid});
-    if(!rpt)return;
-    var existing=document.getElementById('rpt-full-'+rid);
-    if(existing){existing.remove();btn.textContent='Ver Completo';return}
-    var div=document.createElement('div');
-    div.id='rpt-full-'+rid;
-    div.style.cssText='margin-top:14px;padding:16px;background:var(--bg-3);border-radius:10px;font-family:JetBrains Mono,monospace;font-size:11px;color:var(--text-2);white-space:pre-wrap;line-height:1.6;max-height:400px;overflow-y:auto';
-    div.textContent=rpt.content;
-    btn.closest('.rpt-card-body').appendChild(div);
-    btn.textContent='Fechar';
-  });
-});
 
 // ===== TIMELINE =====
 document.getElementById('timeline').innerHTML=`
