@@ -346,6 +346,25 @@ canvas{width:100%!important;display:block}
 .cc-adv-header{margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}
 @media(max-width:768px){.cc-panel{grid-template-columns:1fr}}
 
+/* PROJETOS */
+.media-gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;padding:12px 16px}
+.media-thumb{position:relative;aspect-ratio:16/9;border-radius:6px;overflow:hidden;cursor:pointer;background:var(--bg-3);transition:transform .15s,box-shadow .15s}
+.media-thumb:hover{transform:scale(1.03);box-shadow:0 4px 16px rgba(0,0,0,.4)}
+.media-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.media-thumb .mt-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:28px;height:28px;background:rgba(0,0,0,.6);border-radius:50%;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.media-thumb .mt-play::after{content:'';width:0;height:0;border-style:solid;border-width:6px 0 6px 10px;border-color:transparent transparent transparent #fff;margin-left:2px}
+.media-thumb .mt-badge{position:absolute;top:4px;right:4px;font-size:8px;font-weight:700;padding:1px 5px;border-radius:3px;text-transform:uppercase;letter-spacing:.3px}
+.mt-badge-ativo{background:var(--green-bg);color:var(--green)}
+.mt-badge-hist{background:var(--bg-4);color:var(--text-3)}
+.media-thumb.mt-hist{opacity:.65}
+.media-thumb.mt-hist:hover{opacity:1}
+.proj-header-badges{display:flex;gap:6px;flex-wrap:wrap}
+.proj-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;font-family:'JetBrains Mono',monospace}
+.proj-filter-row{display:flex;gap:6px;padding:8px 16px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.proj-filter-btn{padding:4px 12px;border-radius:5px;border:1px solid var(--border);background:var(--bg-2);color:var(--text-2);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s}
+.proj-filter-btn:hover,.proj-filter-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+@media(max-width:768px){.media-gallery{grid-template-columns:repeat(auto-fill,minmax(100px,1fr))}}
+
 /* EVOLUTION */
 .evo-page{background:var(--bg-2);border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:16px}
 .evo-page-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--bg-3);flex-wrap:wrap;gap:8px}
@@ -481,6 +500,7 @@ canvas{width:100%!important;display:block}
       <div class="nav-item active" data-section="overview"><span class="icon">&#9678;</span>Overview<span class="nav-badge">LIVE</span></div>
       <div class="nav-item" data-section="pages"><span class="icon">&#9733;</span>Paginas<span class="nav-badge" id="pages-count-badge">5</span></div>
       <div class="nav-item" data-section="ads"><span class="icon">&#9881;</span>Ads Coletados<span class="nav-badge" id="ads-count-badge">94</span></div>
+      <div class="nav-item" data-section="projetos"><span class="icon">&#128193;</span>Projetos<span class="nav-badge" id="projetos-count-badge">0</span></div>
       <div class="nav-item" data-section="evolucao"><span class="icon">&#9650;</span>Evolucao<span class="nav-badge" style="background:var(--green-bg);color:var(--green)">90</span></div>
       <div class="nav-section">Analise</div>
       <div class="nav-item" data-section="charts"><span class="icon">&#9670;</span>Graficos</div>
@@ -542,6 +562,14 @@ canvas{width:100%!important;display:block}
           <p style="font-size:12px;color:var(--text-3);line-height:1.5">Todos os anuncios coletados das paginas monitoradas. Clique no video/print pra assistir, no Ad ID pra abrir na Biblioteca do Meta, e em "+ Info" pra ver detalhes completos. Filtros: <strong style="color:var(--green)">Escala (100d+)</strong> = criativos comprovados (100+ dias = retorno positivo confirmado), <strong style="color:var(--purple)">Duplicados</strong> = ads com mais de 1 variante rodando (o anunciante testa versoes), <strong style="color:var(--yellow)">Qtde ADs</strong> = ordena por pagina com mais ads ativos. Clique no titulo das colunas pra ordenar.</p>
         </div>
         <div class="table-card" id="ads-table-card"></div>
+      </div>
+
+      <!-- ===== PROJETOS ===== -->
+      <div class="section" id="sec-projetos">
+        <div style="margin-bottom:16px">
+          <p style="font-size:12px;color:var(--text-3);line-height:1.5">Todas as midias coletadas, organizadas por anunciante. Inclui videos e prints de ads que ja sairam da Biblioteca (rotacionados/removidos). <strong style="color:var(--green)">Ativo</strong> = ad ainda na Biblioteca. <strong style="color:var(--text-3)">Historico</strong> = ad removido, midia preservada.</p>
+        </div>
+        <div class="detail-grid" id="projetos-grid"></div>
       </div>
 
       <!-- ===== EVOLUCAO ===== -->
@@ -878,6 +906,23 @@ function safeAdUrl(page,adId){var s=PAGE_SLUGS[page];var has=s&&(EXISTING_MEDIA.
 function bestMediaUrl(page,adId){var s=PAGE_SLUGS[page];if(!s)return null;if(EXISTING_MEDIA.has(s+'/'+adId+'.mp4'))return SUPABASE_BASE+'/'+s+'/'+adId+'.mp4';if(EXISTING_MEDIA.has(s+'/'+adId+'.jpg'))return SUPABASE_BASE+'/'+s+'/'+adId+'.jpg';return null}
 const BLOCKED_ADS={'906964368692982':'Bloqueado pelo Meta (cookie verification)','1750959192996770':'Bloqueado pelo Meta (cookie verification)'};
 
+const SLUG_TO_PAGE={};
+Object.entries(PAGE_SLUGS).forEach(function(e){SLUG_TO_PAGE[e[1]]=e[0]});
+const MEDIA_BY_PROJECT={};
+EXISTING_MEDIA.forEach(function(key){
+  var slash=key.indexOf('/');
+  var slug=key.substring(0,slash);
+  var rest=key.substring(slash+1);
+  var dot=rest.lastIndexOf('.');
+  var adId=rest.substring(0,dot);
+  var ext=rest.substring(dot+1);
+  var pageName=SLUG_TO_PAGE[slug];
+  if(!pageName)return;
+  if(!MEDIA_BY_PROJECT[pageName])MEDIA_BY_PROJECT[pageName]={};
+  if(!MEDIA_BY_PROJECT[pageName][adId])MEDIA_BY_PROJECT[pageName][adId]={};
+  MEDIA_BY_PROJECT[pageName][adId][ext]=true;
+});
+
 const RAFAELA_COPY=`Muitas pessoas buscam uma forma de gerar renda online, mas o desafio é encontrar algo que funcione de verdade — sem precisar aparecer, sem ter seguidores, sem investir alto.
 
 Eu compreendo essa busca. Depois de testar diferentes caminhos, encontrei um método que mudou tudo.
@@ -1105,6 +1150,7 @@ document.querySelectorAll('.nav-item[data-section]').forEach(item=>{
     if(item.dataset.section==='vsls')loadVsls();
     if(item.dataset.section==='vsl-swipe')loadVslSwipeTab();
     if(item.dataset.section==='auto-discovery')initAutoDiscovery();
+    if(item.dataset.section==='projetos')renderProjetosTab();
     document.getElementById('sidebar').classList.remove('open');
   });
 });
@@ -1244,6 +1290,100 @@ document.getElementById('detail-grid').innerHTML=PAGES.map(p=>`
     </div>
   </div>
 `).join('');
+
+// ===== PROJETOS TAB =====
+var _projetosRendered=false;
+function renderProjetosTab(){
+  if(_projetosRendered)return;
+  _projetosRendered=true;
+  var grid=document.getElementById('projetos-grid');
+  var pageNames=Object.keys(MEDIA_BY_PROJECT).sort(function(a,b){
+    return Object.keys(MEDIA_BY_PROJECT[b]).length-Object.keys(MEDIA_BY_PROJECT[a]).length;
+  });
+  var totalMedia=0;
+  var html='';
+  pageNames.forEach(function(pageName){
+    var ads=MEDIA_BY_PROJECT[pageName];
+    var adIds=Object.keys(ads);
+    var slug=PAGE_SLUGS[pageName];
+    var pg=PAGES.find(function(p){return p.name===pageName});
+    var activeIds=pg?new Set(pg.adIds):new Set();
+    var videoCount=0,printCount=0,activeCount=0,histCount=0;
+    adIds.forEach(function(id){
+      if(ads[id].mp4)videoCount++;
+      if(ads[id].jpg)printCount++;
+      if(activeIds.has(id))activeCount++;
+      else histCount++;
+    });
+    totalMedia+=adIds.length;
+    html+='<div class="detail-card">';
+    html+='<div class="detail-card-header" style="cursor:pointer" onclick="toggleProjGallery(this)">';
+    html+='<h4>'+pageName+'</h4>';
+    html+='<div class="proj-header-badges">';
+    html+='<span class="proj-badge" style="background:var(--purple-bg);color:var(--purple)">'+videoCount+' videos</span>';
+    html+='<span class="proj-badge" style="background:var(--cyan-bg);color:var(--cyan)">'+printCount+' prints</span>';
+    if(activeCount>0)html+='<span class="proj-badge" style="background:var(--green-bg);color:var(--green)">'+activeCount+' ativos</span>';
+    if(histCount>0)html+='<span class="proj-badge" style="background:var(--bg-4);color:var(--text-3)">'+histCount+' historicos</span>';
+    html+='</div>';
+    html+='</div>';
+    html+='<div class="detail-card-body" style="padding:0">';
+    html+='<div class="proj-filter-row">';
+    html+='<button class="proj-filter-btn active" onclick="filterProj(this,\''+pageName+'\',\'all\')">Todos ('+adIds.length+')</button>';
+    if(activeCount>0)html+='<button class="proj-filter-btn" onclick="filterProj(this,\''+pageName+'\',\'ativo\')">Ativos ('+activeCount+')</button>';
+    if(histCount>0)html+='<button class="proj-filter-btn" onclick="filterProj(this,\''+pageName+'\',\'hist\')">Historicos ('+histCount+')</button>';
+    html+='<button class="proj-filter-btn" onclick="filterProj(this,\''+pageName+'\',\'video\')">So Video ('+videoCount+')</button>';
+    html+='</div>';
+    html+='<div class="media-gallery" id="proj-gallery-'+slug+'">';
+    adIds.sort(function(a,b){
+      var aA=activeIds.has(a)?0:1,bA=activeIds.has(b)?0:1;
+      if(aA!==bA)return aA-bA;
+      return a.localeCompare(b);
+    });
+    adIds.forEach(function(id){
+      var isActive=activeIds.has(id);
+      var hasVid=!!ads[id].mp4;
+      var hasJpg=!!ads[id].jpg;
+      var thumbUrl=hasJpg?SUPABASE_BASE+'/'+slug+'/'+id+'.jpg':'';
+      var vidUrl=hasVid?SUPABASE_BASE+'/'+slug+'/'+id+'.mp4':'';
+      html+='<div class="media-thumb'+(isActive?'':' mt-hist')+'" data-status="'+(isActive?'ativo':'hist')+'" data-has-video="'+(hasVid?'1':'0')+'" onclick="openVideoModal('+(hasVid?"'"+vidUrl+"'":"null")+','+(hasJpg?"'"+thumbUrl+"'":"null")+',\''+id+'\')">';
+      if(hasJpg)html+='<img src="'+thumbUrl+'" loading="lazy" alt="'+id+'" onerror="this.style.display=\'none\'">';
+      else html+='<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--text-4)">'+id.slice(-6)+'</div>';
+      if(hasVid)html+='<div class="mt-play"></div>';
+      html+='<span class="mt-badge '+(isActive?'mt-badge-ativo':'mt-badge-hist')+'">'+(isActive?'Ativo':'Hist')+'</span>';
+      html+='</div>';
+    });
+    html+='</div>';
+    html+='</div>';
+    html+='</div>';
+  });
+  grid.innerHTML=html;
+  var badge=document.getElementById('projetos-count-badge');
+  if(badge)badge.textContent=pageNames.length;
+}
+function filterProj(btn,pageName,mode){
+  var slug=PAGE_SLUGS[pageName];
+  var gallery=document.getElementById('proj-gallery-'+slug);
+  if(!gallery)return;
+  btn.parentElement.querySelectorAll('.proj-filter-btn').forEach(function(b){b.classList.remove('active')});
+  btn.classList.add('active');
+  gallery.querySelectorAll('.media-thumb').forEach(function(t){
+    var s=t.getAttribute('data-status');
+    var v=t.getAttribute('data-has-video');
+    if(mode==='all')t.style.display='';
+    else if(mode==='ativo')t.style.display=s==='ativo'?'':'none';
+    else if(mode==='hist')t.style.display=s==='hist'?'':'none';
+    else if(mode==='video')t.style.display=v==='1'?'':'none';
+  });
+}
+function toggleProjGallery(header){
+  var body=header.nextElementSibling;
+  if(!body)return;
+  body.style.display=body.style.display==='none'?'':'none';
+}
+(function(){
+  var badge=document.getElementById('projetos-count-badge');
+  if(badge)badge.textContent=Object.keys(MEDIA_BY_PROJECT).length;
+})();
 
 // ===== ADS TABLE =====
 let allAds=[];
