@@ -567,7 +567,7 @@ canvas{width:100%!important;display:block}
       <!-- ===== PROJETOS ===== -->
       <div class="section" id="sec-projetos">
         <div style="margin-bottom:16px">
-          <p style="font-size:12px;color:var(--text-3);line-height:1.5">Todas as midias coletadas, organizadas por anunciante. Inclui videos e prints de ads que ja sairam da Biblioteca (rotacionados/removidos). <strong style="color:var(--green)">Ativo</strong> = ad ainda na Biblioteca. <strong style="color:var(--text-3)">Historico</strong> = ad removido, midia preservada.</p>
+          <p style="font-size:12px;color:var(--text-3);line-height:1.5">Videos coletados dos anunciantes escalados. Inclui videos de ads que ja sairam da Biblioteca (rotacionados/removidos). <strong style="color:var(--green)">Ativo</strong> = ad ainda na Biblioteca. <strong style="color:var(--text-3)">Hist</strong> = ad removido, video preservado.</p>
         </div>
         <div class="detail-grid" id="projetos-grid"></div>
       </div>
@@ -1297,58 +1297,59 @@ function renderProjetosTab(){
   if(_projetosRendered)return;
   _projetosRendered=true;
   var grid=document.getElementById('projetos-grid');
-  var pageNames=Object.keys(MEDIA_BY_PROJECT).sort(function(a,b){
-    return Object.keys(MEDIA_BY_PROJECT[b]).length-Object.keys(MEDIA_BY_PROJECT[a]).length;
+  var pageNames=Object.keys(MEDIA_BY_PROJECT).filter(function(name){
+    var pg=PAGES.find(function(p){return p.name===name});
+    return pg&&pg.status==='escalado';
+  }).sort(function(a,b){
+    var aVids=0,bVids=0;
+    Object.keys(MEDIA_BY_PROJECT[a]).forEach(function(id){if(MEDIA_BY_PROJECT[a][id].mp4)aVids++});
+    Object.keys(MEDIA_BY_PROJECT[b]).forEach(function(id){if(MEDIA_BY_PROJECT[b][id].mp4)bVids++});
+    return bVids-aVids;
   });
-  var totalMedia=0;
+  var totalVids=0;
   var html='';
   pageNames.forEach(function(pageName){
     var ads=MEDIA_BY_PROJECT[pageName];
-    var adIds=Object.keys(ads);
     var slug=PAGE_SLUGS[pageName];
     var pg=PAGES.find(function(p){return p.name===pageName});
     var activeIds=pg?new Set(pg.adIds):new Set();
-    var videoCount=0,printCount=0,activeCount=0,histCount=0;
-    adIds.forEach(function(id){
-      if(ads[id].mp4)videoCount++;
-      if(ads[id].jpg)printCount++;
-      if(activeIds.has(id))activeCount++;
-      else histCount++;
-    });
-    totalMedia+=adIds.length;
+    var videoIds=Object.keys(ads).filter(function(id){return !!ads[id].mp4});
+    if(videoIds.length===0)return;
+    var activeCount=0,histCount=0;
+    videoIds.forEach(function(id){if(activeIds.has(id))activeCount++;else histCount++});
+    totalVids+=videoIds.length;
     html+='<div class="detail-card">';
     html+='<div class="detail-card-header" style="cursor:pointer" onclick="toggleProjGallery(this)">';
     html+='<h4>'+pageName+'</h4>';
     html+='<div class="proj-header-badges">';
-    html+='<span class="proj-badge" style="background:var(--purple-bg);color:var(--purple)">'+videoCount+' videos</span>';
-    html+='<span class="proj-badge" style="background:var(--cyan-bg);color:var(--cyan)">'+printCount+' prints</span>';
+    html+='<span class="proj-badge" style="background:var(--purple-bg);color:var(--purple)">'+videoIds.length+' videos</span>';
     if(activeCount>0)html+='<span class="proj-badge" style="background:var(--green-bg);color:var(--green)">'+activeCount+' ativos</span>';
-    if(histCount>0)html+='<span class="proj-badge" style="background:var(--bg-4);color:var(--text-3)">'+histCount+' historicos</span>';
+    if(histCount>0)html+='<span class="proj-badge" style="background:var(--bg-4);color:var(--text-3)">'+histCount+' hist</span>';
     html+='</div>';
     html+='</div>';
     html+='<div class="detail-card-body" style="padding:0">';
-    html+='<div class="proj-filter-row">';
-    html+='<button class="proj-filter-btn active" onclick="filterProj(this,\''+pageName+'\',\'all\')">Todos ('+adIds.length+')</button>';
-    if(activeCount>0)html+='<button class="proj-filter-btn" onclick="filterProj(this,\''+pageName+'\',\'ativo\')">Ativos ('+activeCount+')</button>';
-    if(histCount>0)html+='<button class="proj-filter-btn" onclick="filterProj(this,\''+pageName+'\',\'hist\')">Historicos ('+histCount+')</button>';
-    html+='<button class="proj-filter-btn" onclick="filterProj(this,\''+pageName+'\',\'video\')">So Video ('+videoCount+')</button>';
-    html+='</div>';
+    if(activeCount>0&&histCount>0){
+      html+='<div class="proj-filter-row">';
+      html+='<button class="proj-filter-btn active" onclick="filterProj(this,\''+pageName+'\',\'all\')">Todos ('+videoIds.length+')</button>';
+      html+='<button class="proj-filter-btn" onclick="filterProj(this,\''+pageName+'\',\'ativo\')">Ativos ('+activeCount+')</button>';
+      html+='<button class="proj-filter-btn" onclick="filterProj(this,\''+pageName+'\',\'hist\')">Historicos ('+histCount+')</button>';
+      html+='</div>';
+    }
     html+='<div class="media-gallery" id="proj-gallery-'+slug+'">';
-    adIds.sort(function(a,b){
+    videoIds.sort(function(a,b){
       var aA=activeIds.has(a)?0:1,bA=activeIds.has(b)?0:1;
       if(aA!==bA)return aA-bA;
       return a.localeCompare(b);
     });
-    adIds.forEach(function(id){
+    videoIds.forEach(function(id){
       var isActive=activeIds.has(id);
-      var hasVid=!!ads[id].mp4;
       var hasJpg=!!ads[id].jpg;
       var thumbUrl=hasJpg?SUPABASE_BASE+'/'+slug+'/'+id+'.jpg':'';
-      var vidUrl=hasVid?SUPABASE_BASE+'/'+slug+'/'+id+'.mp4':'';
-      html+='<div class="media-thumb'+(isActive?'':' mt-hist')+'" data-status="'+(isActive?'ativo':'hist')+'" data-has-video="'+(hasVid?'1':'0')+'" onclick="openVideoModal('+(hasVid?"'"+vidUrl+"'":"null")+','+(hasJpg?"'"+thumbUrl+"'":"null")+',\''+id+'\')">';
+      var vidUrl=SUPABASE_BASE+'/'+slug+'/'+id+'.mp4';
+      html+='<div class="media-thumb'+(isActive?'':' mt-hist')+'" data-status="'+(isActive?'ativo':'hist')+'" data-has-video="1" onclick="openVideoModal(\''+vidUrl+'\','+(hasJpg?"'"+thumbUrl+"'":"null")+',\''+id+'\')">';
       if(hasJpg)html+='<img src="'+thumbUrl+'" loading="lazy" alt="'+id+'" onerror="this.style.display=\'none\'">';
       else html+='<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--text-4)">'+id.slice(-6)+'</div>';
-      if(hasVid)html+='<div class="mt-play"></div>';
+      html+='<div class="mt-play"></div>';
       html+='<span class="mt-badge '+(isActive?'mt-badge-ativo':'mt-badge-hist')+'">'+(isActive?'Ativo':'Hist')+'</span>';
       html+='</div>';
     });
@@ -1382,7 +1383,7 @@ function toggleProjGallery(header){
 }
 (function(){
   var badge=document.getElementById('projetos-count-badge');
-  if(badge)badge.textContent=Object.keys(MEDIA_BY_PROJECT).length;
+  if(badge){var c=0;Object.keys(MEDIA_BY_PROJECT).forEach(function(n){var pg=PAGES.find(function(p){return p.name===n});if(pg&&pg.status==='escalado'){var has=false;Object.keys(MEDIA_BY_PROJECT[n]).forEach(function(id){if(MEDIA_BY_PROJECT[n][id].mp4)has=true});if(has)c++}});badge.textContent=c;}
 })();
 
 // ===== ADS TABLE =====
