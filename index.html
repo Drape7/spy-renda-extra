@@ -576,11 +576,9 @@ canvas{width:100%!important;display:block}
       <div class="section" id="sec-evolucao">
         <div style="margin-bottom:20px">
           <h3 style="font-size:14px;font-weight:700;margin-bottom:4px">Evolucao de Criativos</h3>
-          <p style="font-size:12px;color:var(--text-3)">Lifecycle de cada criativo por pagina. Classificacao automatica por dias ativo. Dados: 22/ago/2026, ronda 12h (r4). 90 ads unicos monitorados.</p>
+          <p style="font-size:12px;color:var(--text-3);line-height:1.5">Resultado dos ultimos 7 dias. Classificacao por tempo ativo na Biblioteca de Anuncios. Dados calculados em tempo real a partir das datas de cada ad.</p>
         </div>
-        <div class="kpi-grid" id="evo-kpis" style="grid-template-columns:repeat(6,1fr)"></div>
-        <div class="evo-highlight-grid" id="evo-highlights"></div>
-        <div class="evo-page-highlights" id="evo-page-highlights"></div>
+        <div class="kpi-grid" id="evo-kpis" style="grid-template-columns:repeat(5,1fr)"></div>
         <div class="evo-legend">
           <span style="font-weight:600;color:var(--text-3)">Classificacao:</span>
           <div class="evo-legend-item"><div class="evo-legend-dot" style="background:var(--green)"></div>Veterano (100+d)</div>
@@ -588,9 +586,7 @@ canvas{width:100%!important;display:block}
           <div class="evo-legend-item"><div class="evo-legend-dot" style="background:var(--yellow)"></div>Validando (7-29d)</div>
           <div class="evo-legend-item"><div class="evo-legend-dot" style="background:var(--orange)"></div>Teste (&lt;7d)</div>
         </div>
-        <div style="margin:20px 0 12px"><h3 style="font-size:14px;font-weight:700">Delta entre Rondas (Quem Parou, Quem Acelerou)</h3><p style="font-size:12px;color:var(--text-3);margin-top:4px">Comparacao de contagem de ads entre rondas. 6 rondas completadas ate 23/ago.</p></div>
-        <div class="delta-grid" id="delta-grid"></div>
-        <div style="margin:28px 0 12px"><h3 style="font-size:14px;font-weight:700">Ads por Pagina (ordenados por longevidade)</h3></div>
+        <div style="margin:20px 0 12px"><h3 style="font-size:14px;font-weight:700">Resumo por Anunciante</h3></div>
         <div id="evo-pages"></div>
       </div>
 
@@ -2003,103 +1999,71 @@ document.getElementById('heuristics').innerHTML = heuristics.map(h=>`
   </div>
 `).join('');
 
-// ===== EVOLUCAO =====
+// ===== EVOLUCAO (dinamico, todas as paginas) =====
 (function(){
-const allEvo=[];
-Object.entries(EVO_DATA).forEach(([page,data])=>{data.ads.forEach(a=>allEvo.push({page,id:a[0],dias:a[1],vars:a[2]}))});
-const classify=d=>d>=100?{cls:'veterano',label:'VETERANO',color:'var(--green)'}:d>=30?{cls:'campeao',label:'CAMPEAO',color:'var(--accent)'}:d>=7?{cls:'validando',label:'VALIDANDO',color:'var(--yellow)'}:{cls:'teste-evo',label:'TESTE',color:'var(--orange)'};
-const veteranos=allEvo.filter(a=>a.dias>=100).length;
-const campeoes=allEvo.filter(a=>a.dias>=30&&a.dias<100).length;
-const validando=allEvo.filter(a=>a.dias>=7&&a.dias<30).length;
-const testes=allEvo.filter(a=>a.dias<7).length;
-const maxDias=Math.max(...allEvo.map(a=>a.dias));
-// HIGHLIGHTS
-const sortedByDias=[...allEvo].sort(function(a,b){return b.dias-a.dias});
-const sortedByVars=[...allEvo].sort(function(a,b){return b.vars-a.vars||b.dias-a.dias});
-const topLong=sortedByDias[0];
-const topVars=sortedByVars[0];
-const clsLong=classify(topLong.dias);
-const clsVars=classify(topVars.dias);
-var topVarsCount=allEvo.filter(function(a){return a.vars===topVars.vars}).length;
-var topLongCount=allEvo.filter(function(a){return a.dias===topLong.dias}).length;
-var hlEl=document.getElementById('evo-highlights');
-if(hlEl)hlEl.innerHTML=
-'<div class="evo-highlight evo-highlight-longevity">'+
-'<div class="evo-highlight-tag" style="background:var(--green-bg);color:var(--green)">&#9733; Maior Longevidade</div>'+
-'<div class="evo-highlight-value" style="color:var(--green)">'+topLong.dias+'d</div>'+
-'<div class="evo-highlight-sub">No ar desde o inicio do monitoramento'+(topLongCount>1?' ('+topLongCount+' ads empatados)':'')+'</div>'+
-'<a class="evo-highlight-id" href="'+safeAdUrl(topLong.page,topLong.id)+'" target="_blank">ID: '+topLong.id+'</a>'+(bestMediaUrl(topLong.page,topLong.id)?'<a class="evo-highlight-media" href="'+bestMediaUrl(topLong.page,topLong.id)+'" target="_blank">&#9654; Ver Criativo</a>':'')+
-'<div class="evo-highlight-meta"><span>'+topLong.page+'</span><span class="class-'+clsLong.cls+'">'+clsLong.label+'</span><span>'+topLong.vars+' variante'+(topLong.vars>1?'s':'')+'</span></div>'+
-'</div>'+
-'<div class="evo-highlight evo-highlight-variants">'+
-'<div class="evo-highlight-tag" style="background:var(--purple-bg,var(--accent-bg));color:var(--purple,var(--accent))">&#9881; Mais Duplicatas/Variantes</div>'+
-'<div class="evo-highlight-value" style="color:var(--purple,var(--accent))">'+topVars.vars+'v</div>'+
-'<div class="evo-highlight-sub">Maior numero de versoes do mesmo criativo'+(topVarsCount>1?' ('+topVarsCount+' ads com '+topVars.vars+' variantes)':'')+'</div>'+
-'<a class="evo-highlight-id" href="'+safeAdUrl(topVars.page,topVars.id)+'" target="_blank">ID: '+topVars.id+'</a>'+(bestMediaUrl(topVars.page,topVars.id)?'<a class="evo-highlight-media" href="'+bestMediaUrl(topVars.page,topVars.id)+'" target="_blank">&#9654; Ver Criativo</a>':'')+
-'<div class="evo-highlight-meta"><span>'+topVars.page+'</span><span class="class-'+clsVars.cls+'">'+clsVars.label+'</span><span>'+topVars.dias+'d ativo</span></div>'+
-'</div>';
-// PER-PAGE HIGHLIGHTS
-var phEl=document.getElementById('evo-page-highlights');
-if(phEl){
-var pageGroups={};
-allEvo.forEach(function(a){if(!pageGroups[a.page])pageGroups[a.page]=[];pageGroups[a.page].push(a)});
-var phOrder=['Elida Digital','Elida Empreendedora','Rafaela Chagas','Natalia Beauty','For Traders Global'];
-var phColors={'Elida Digital':'var(--orange)','Elida Empreendedora':'var(--orange)','Rafaela Chagas':'var(--green)','Natalia Beauty':'var(--yellow)','For Traders Global':'var(--green)'};
-var phBorderCls={'Elida Digital':'evo-ph-card-orange','Elida Empreendedora':'evo-ph-card-orange','Rafaela Chagas':'evo-ph-card-green','Natalia Beauty':'evo-ph-card-yellow','For Traders Global':'evo-ph-card-green'};
-phEl.innerHTML='<h3>Destaques por Anunciante</h3><div class="evo-ph-grid">'+phOrder.map(function(pName){
-var ads=pageGroups[pName];if(!ads||!ads.length)return '';
-var topL=ads.reduce(function(best,a){return a.dias>best.dias?a:best},ads[0]);
-var topV=ads.reduce(function(best,a){return a.vars>best.vars?a:(a.vars===best.vars&&a.dias>best.dias?a:best)},ads[0]);
-var clL=classify(topL.dias);
-var clV=classify(topV.dias);
-return '<div class="evo-ph-card '+phBorderCls[pName]+'">'+
-'<div class="evo-ph-name"><div class="ph-color" style="background:'+phColors[pName]+'"></div>'+pName+' <span style="font-weight:400;font-size:11px;color:var(--text-3)">('+ads.length+' ads)</span></div>'+
-'<div class="evo-ph-row"><div><div class="evo-ph-label" style="color:var(--green)">Maior Longevidade</div><div class="evo-ph-val" style="color:var(--green)">'+topL.dias+'d</div><a class="evo-ph-id" href="'+safeAdUrl(pName,topL.id)+'" target="_blank">'+topL.id+'</a>'+(bestMediaUrl(pName,topL.id)?'<a class="evo-ph-media" href="'+bestMediaUrl(pName,topL.id)+'" target="_blank">&#9654; Ver Criativo</a>':'')+'</div><div style="text-align:right"><span class="evo-ph-class class-'+clL.cls+'">'+clL.label+'</span><div style="font-size:10px;color:var(--text-3);margin-top:4px">'+topL.vars+'v</div></div></div>'+
-'<div class="evo-ph-row"><div><div class="evo-ph-label" style="color:var(--purple,var(--accent))">Mais Variantes</div><div class="evo-ph-val" style="color:var(--purple,var(--accent))">'+topV.vars+'v</div><a class="evo-ph-id" href="'+safeAdUrl(pName,topV.id)+'" target="_blank">'+topV.id+'</a>'+(bestMediaUrl(pName,topV.id)?'<a class="evo-ph-media" href="'+bestMediaUrl(pName,topV.id)+'" target="_blank">&#9654; Ver Criativo</a>':'')+'</div><div style="text-align:right"><span class="evo-ph-class class-'+clV.cls+'">'+clV.label+'</span><div style="font-size:10px;color:var(--text-3);margin-top:4px">'+topV.dias+'d</div></div></div>'+
-'</div>';
-}).join('')+'</div>';
-}
-const ek=document.getElementById('evo-kpis');
+var today=new Date();
+var allEvo=[];
+PAGES.forEach(function(p){
+  p.adIds.forEach(function(id,i){
+    var d=p.dates[i]||p.oldest;
+    var pts=d.split('/');
+    var dateObj=today;
+    if(pts.length>=2){var yr=pts.length===3?parseInt(pts[2]):today.getFullYear();var mo=_m[pts[1].toLowerCase()];if(mo!==undefined)dateObj=new Date(yr,mo,parseInt(pts[0]))}
+    var dias=Math.max(0,Math.floor((today-dateObj)/86400000));
+    allEvo.push({page:p.name,id:id,dias:dias});
+  });
+});
+var classify=function(d){return d>=100?{cls:'veterano',label:'VETERANO',color:'var(--green)'}:d>=30?{cls:'campeao',label:'CAMPEAO',color:'var(--accent)'}:d>=7?{cls:'validando',label:'VALIDANDO',color:'var(--yellow)'}:{cls:'teste-evo',label:'TESTE',color:'var(--orange)'}};
+var veteranos=allEvo.filter(function(a){return a.dias>=100}).length;
+var campeoes=allEvo.filter(function(a){return a.dias>=30&&a.dias<100}).length;
+var validando=allEvo.filter(function(a){return a.dias>=7&&a.dias<30}).length;
+var testes=allEvo.filter(function(a){return a.dias<7}).length;
+var novos7d=allEvo.filter(function(a){return a.dias<=7}).length;
+var ek=document.getElementById('evo-kpis');
 if(ek)ek.innerHTML=[
-{label:'Total Unicos',value:90,color:'var(--accent)',bg:'var(--accent-bg)',sub:'5 paginas'},
+{label:'Total Monitorados',value:allEvo.length,color:'var(--accent)',bg:'var(--accent-bg)',sub:PAGES.length+' paginas'},
+{label:'Novos (7d)',value:novos7d,color:'var(--cyan)',bg:'var(--cyan-bg)',sub:'Ultimos 7 dias'},
 {label:'Veteranos (100+d)',value:veteranos,color:'var(--green)',bg:'var(--green-bg)',sub:'Escala comprovada'},
 {label:'Campeoes (30-99d)',value:campeoes,color:'var(--accent)',bg:'var(--accent-bg)',sub:'Validados'},
-{label:'Validando (7-29d)',value:validando,color:'var(--yellow)',bg:'var(--yellow-bg)',sub:'Em avaliacao'},
-{label:'Testes (<7d)',value:testes,color:'var(--orange)',bg:'var(--orange-bg)',sub:'Recem lancados'},
-{label:'Rondas',value:6,color:'var(--cyan)',bg:'var(--cyan-bg)',sub:'23/ago/2026'}
-].map(k=>'<div class="kpi"><div class="kpi-top"><div class="kpi-icon" style="background:'+k.bg+';color:'+k.color+'">&#9679;</div><div class="kpi-trend neutral">'+k.sub+'</div></div><div class="kpi-value" style="color:'+k.color+'">'+k.value+'</div><div class="kpi-label">'+k.label+'</div></div>').join('');
-const deltaPageIds={'Elida Digital':'879705961901136','Elida Empreendedora':'110024568187997','Rafaela Chagas':'108726887198665','Natalia Beauty':'347189425772727','For Traders':'712240488633970'};
-const dg=document.getElementById('delta-grid');
-if(dg)dg.innerHTML=ROUND_DELTAS.map(function(p){
-const rounds=p.rounds;let rows='';
-for(let i=0;i<rounds.length;i++){
-const prev=i>0?rounds[i-1].c:null;const delta=prev!==null?rounds[i].c-prev:null;
-const cls=delta===null?'delta-same':delta>0?'delta-up':delta===0?'delta-same':'delta-down';
-const sign=delta>0?'+':'';
-rows+='<div class="delta-row"><span class="delta-label">'+rounds[i].r+'</span><span class="delta-val">'+rounds[i].c+' ads</span>'+(delta!==null?'<span class="delta-val '+cls+'">'+sign+delta+'</span>':'<span class="delta-val delta-same">base</span>')+'</div>';
-}
-rows+='<div class="delta-row" style="margin-top:6px;padding-top:6px;border-top:2px solid var(--border)"><span class="delta-label" style="font-weight:600">Unicos extraidos</span><span class="delta-val" style="color:var(--green)">'+rounds[rounds.length-1].u+'</span></div>';
-var dpid=deltaPageIds[p.name];
-var nameHtml=dpid?'<a href="https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=BR&view_all_page_id='+dpid+'&search_type=page" target="_blank" style="color:inherit;text-decoration:none" title="Abrir biblioteca de anuncios">'+p.name+' &#128279;</a>':p.name;
-return '<div class="delta-card"><div class="delta-name">'+nameHtml+'</div>'+rows+'</div>';
-}).join('');
-const pageOrder=['Rafaela Chagas','For Traders Global','Elida Empreendedora','Natalia Beauty','Elida Digital'];
-const ep=document.getElementById('evo-pages');
-if(ep)ep.innerHTML=pageOrder.map(function(pName){
-const data=EVO_DATA[pName];if(!data)return '';
-const ads=data.ads;
-const sc={veterano:0,campeao:0,validando:0,teste:0};
-ads.forEach(function(a){const c=classify(a[1]);if(c.cls==='teste-evo')sc.teste++;else sc[c.cls]++});
-const sp=[];
-if(sc.veterano)sp.push('<span style="background:var(--green-bg);color:var(--green)">'+sc.veterano+' vet</span>');
-if(sc.campeao)sp.push('<span style="background:var(--accent-bg);color:var(--accent)">'+sc.campeao+' camp</span>');
-if(sc.validando)sp.push('<span style="background:var(--yellow-bg);color:var(--yellow)">'+sc.validando+' val</span>');
-if(sc.teste)sp.push('<span style="background:var(--orange-bg);color:var(--orange)">'+sc.teste+' teste</span>');
-const bars=ads.map(function(a){
-const c=classify(a[1]);const pct=maxDias>0?Math.max(1,Math.round(a[1]/maxDias*100)):1;
-return '<div class="evo-bar-row"><a class="evo-id" href="'+safeAdUrl(pName,a[0])+'" target="_blank" title="'+a[0]+'">'+a[0]+'</a><div class="evo-bar-wrap"><div class="evo-bar-fill" style="width:'+pct+'%;background:'+c.color+'">'+(a[1]>20?a[1]+'d':'')+'</div></div><div class="evo-days" style="color:'+c.color+'">'+a[1]+'d</div><div class="evo-class"><span class="class-'+c.cls+'">'+c.label+'</span></div><div class="evo-vars">'+a[2]+'v</div></div>';
-}).join('');
-return '<div class="evo-page"><div class="evo-page-header"><h4>'+pName+' <span style="font-weight:400;font-size:12px;color:var(--text-3)">('+data.unicos+' unicos / '+data.entradas+' entradas)</span></h4><div class="evo-summary">'+sp.join('')+'</div></div><div class="evo-body">'+bars+'</div></div>';
+{label:'Validando+Teste',value:validando+testes,color:'var(--yellow)',bg:'var(--yellow-bg)',sub:validando+' validando, '+testes+' teste'}
+].map(function(k){return '<div class="kpi"><div class="kpi-top"><div class="kpi-icon" style="background:'+k.bg+';color:'+k.color+'">&#9679;</div><div class="kpi-trend neutral">'+k.sub+'</div></div><div class="kpi-value" style="color:'+k.color+'">'+k.value+'</div><div class="kpi-label">'+k.label+'</div></div>'}).join('');
+var pageGroups={};
+allEvo.forEach(function(a){if(!pageGroups[a.page])pageGroups[a.page]=[];pageGroups[a.page].push(a)});
+var ep=document.getElementById('evo-pages');
+if(ep)ep.innerHTML=PAGES.map(function(pg){
+  var ads=pageGroups[pg.name]||[];
+  if(!ads.length)return '';
+  var sc={veterano:0,campeao:0,validando:0,teste:0};
+  ads.forEach(function(a){var c=classify(a.dias);if(c.cls==='teste-evo')sc.teste++;else sc[c.cls]++});
+  var maxD=Math.max.apply(null,ads.map(function(a){return a.dias}));
+  var novos=ads.filter(function(a){return a.dias<=7}).length;
+  var clsMax=classify(maxD);
+  var total=ads.length;
+  var barParts=[];
+  if(sc.veterano)barParts.push('<div style="width:'+Math.max(2,Math.round(sc.veterano/total*100))+'%;background:var(--green);height:6px" title="'+sc.veterano+' veterano(s)"></div>');
+  if(sc.campeao)barParts.push('<div style="width:'+Math.max(2,Math.round(sc.campeao/total*100))+'%;background:var(--accent);height:6px" title="'+sc.campeao+' campeao(s)"></div>');
+  if(sc.validando)barParts.push('<div style="width:'+Math.max(2,Math.round(sc.validando/total*100))+'%;background:var(--yellow);height:6px" title="'+sc.validando+' validando"></div>');
+  if(sc.teste)barParts.push('<div style="width:'+Math.max(2,Math.round(sc.teste/total*100))+'%;background:var(--orange);height:6px" title="'+sc.teste+' teste"></div>');
+  var libUrl='https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=BR&view_all_page_id='+pg.pageId+'&search_type=page';
+  return '<div class="evo-page" style="padding:12px 16px">'+
+    '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">'+
+    '<div style="display:flex;align-items:center;gap:8px">'+
+    '<div style="width:8px;height:8px;border-radius:50%;background:'+pg.color+'"></div>'+
+    '<a href="'+libUrl+'" target="_blank" style="color:inherit;text-decoration:none;font-weight:600" title="Abrir biblioteca de anuncios">'+pg.name+'</a>'+
+    '<span style="font-size:12px;color:var(--text-3)">'+ads.length+' ads</span>'+
+    '<span class="class-'+clsMax.cls+'" style="font-size:11px">'+maxD+'d</span>'+
+    '</div>'+
+    '<div style="display:flex;gap:8px;align-items:center;font-size:12px">'+
+    (novos?'<span style="background:var(--cyan-bg);color:var(--cyan);padding:2px 8px;border-radius:4px;font-weight:600">+'+novos+' novos 7d</span>':'')+
+    '<span style="background:var(--bg-3);padding:2px 8px;border-radius:4px;color:var(--text-2)">'+pg.status+'</span>'+
+    '</div></div>'+
+    '<div style="display:flex;border-radius:3px;overflow:hidden;margin-top:8px">'+barParts.join('')+'</div>'+
+    '<div style="display:flex;gap:12px;margin-top:6px;font-size:11px;color:var(--text-3)">'+
+    (sc.veterano?'<span><span style="color:var(--green)">&#9679;</span> '+sc.veterano+' vet</span>':'')+
+    (sc.campeao?'<span><span style="color:var(--accent)">&#9679;</span> '+sc.campeao+' camp</span>':'')+
+    (sc.validando?'<span><span style="color:var(--yellow)">&#9679;</span> '+sc.validando+' val</span>':'')+
+    (sc.teste?'<span><span style="color:var(--orange)">&#9679;</span> '+sc.teste+' teste</span>':'')+
+    '</div></div>';
 }).join('');
 })();
 
